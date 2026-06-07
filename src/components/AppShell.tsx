@@ -33,6 +33,21 @@ export function AppShell({
   const router = useRouter();
   const qc = useQueryClient();
 
+  const adminQ = useQuery({
+    queryKey: ["nav-is-admin"],
+    queryFn: async () => {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) return false;
+      const { data } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", u.user.id)
+        .maybeSingle();
+      return data?.role === "admin";
+    },
+    staleTime: 60_000,
+  });
+
   async function handleSignOut() {
     await qc.cancelQueries();
     qc.clear();
