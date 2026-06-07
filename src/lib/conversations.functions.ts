@@ -140,7 +140,7 @@ export const sendChatMessage = createServerFn({ method: "POST" })
           "id, created_at, date_column, target_column, granularity, results_json, insights_json, anomalies_json",
         )
         .eq("dataset_id", ds.id)
-        .eq("status", "completed")
+        .eq("status", "ready")
         .order("created_at", { ascending: false })
         .limit(1),
       supabase
@@ -149,14 +149,14 @@ export const sendChatMessage = createServerFn({ method: "POST" })
           "id, created_at, horizon, granularity, model_name, metrics, model_comparison, assumptions, forecast_points",
         )
         .eq("dataset_id", ds.id)
-        .eq("status", "completed")
+        .eq("status", "ready")
         .order("created_at", { ascending: false })
         .limit(1),
       supabase
         .from("anomaly_runs")
         .select("id, created_at, methods, summary, anomalies")
         .eq("dataset_id", ds.id)
-        .eq("status", "completed")
+        .eq("status", "ready")
         .order("created_at", { ascending: false })
         .limit(1),
     ]);
