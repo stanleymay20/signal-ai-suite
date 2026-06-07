@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      analyses: {
+        Row: {
+          anomalies_json: Json
+          computed_by: string | null
+          created_at: string
+          dataset_id: string
+          date_column: string | null
+          error_message: string | null
+          granularity: string | null
+          id: string
+          insights_json: Json
+          results_json: Json
+          status: Database["public"]["Enums"]["analysis_status"]
+          target_column: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          anomalies_json?: Json
+          computed_by?: string | null
+          created_at?: string
+          dataset_id: string
+          date_column?: string | null
+          error_message?: string | null
+          granularity?: string | null
+          id?: string
+          insights_json?: Json
+          results_json?: Json
+          status?: Database["public"]["Enums"]["analysis_status"]
+          target_column?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          anomalies_json?: Json
+          computed_by?: string | null
+          created_at?: string
+          dataset_id?: string
+          date_column?: string | null
+          error_message?: string | null
+          granularity?: string | null
+          id?: string
+          insights_json?: Json
+          results_json?: Json
+          status?: Database["public"]["Enums"]["analysis_status"]
+          target_column?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analyses_dataset_id_fkey"
+            columns: ["dataset_id"]
+            isOneToOne: false
+            referencedRelation: "datasets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analyses_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -290,6 +356,7 @@ export type Database = {
       }
     }
     Enums: {
+      analysis_status: "pending" | "running" | "ready" | "failed"
       app_role: "admin" | "member"
       column_data_type:
         | "numeric"
@@ -429,6 +496,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      analysis_status: ["pending", "running", "ready", "failed"],
       app_role: ["admin", "member"],
       column_data_type: [
         "numeric",

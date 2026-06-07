@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import {
   ArrowLeft, Download, Trash2, AlertTriangle, CheckCircle2, AlertCircle,
-  Info, Loader2,
+  Info, Loader2, LineChart as LineChartIcon,
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
@@ -86,6 +86,13 @@ function DatasetDetail() {
           <Button variant="outline" size="sm" asChild>
             <Link to="/datasets"><ArrowLeft className="mr-1 h-4 w-4" /> Datasets</Link>
           </Button>
+          {dataset.status === "ready" && (
+            <Button variant="default" size="sm" asChild>
+              <Link to="/datasets/$datasetId/analysis" params={{ datasetId }}>
+                <LineChartIcon className="mr-1 h-4 w-4" /> Analyze
+              </Link>
+            </Button>
+          )}
           <Button variant="outline" size="sm" disabled={downloadMut.isPending} onClick={() => downloadMut.mutate()}>
             <Download className="mr-1 h-4 w-4" /> Download
           </Button>
