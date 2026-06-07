@@ -21,6 +21,7 @@ import {
   type ReportType,
 } from "./reports";
 import { startTelemetry, type MinimalUsageClient } from "./observability/telemetry";
+import { enforceRateLimit, RATE_LIMITS } from "./observability/rateLimit";
 
 const uuid = z.string().uuid();
 const reportType = z.enum([
@@ -109,6 +110,7 @@ export const generateReport = createServerFn({ method: "POST" })
       metadata: { type: data.type },
     });
     try {
+      await enforceRateLimit(supabase, userId, RATE_LIMITS.report);
       const { data: ds, error: dErr } = await supabase
         .from("datasets")
         .select("id, filename, workspace_id")

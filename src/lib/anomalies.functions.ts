@@ -7,6 +7,7 @@ import { runAnomalyDetection } from "./anomalies/runAnomalyDetection";
 import type { AnomalyMethod, ForecastResidualSource, MethodConfig } from "./anomalies/types";
 import type { Granularity, TimePoint } from "./analysis/types";
 import { startTelemetry, type MinimalUsageClient } from "./observability/telemetry";
+import { enforceRateLimit, RATE_LIMITS } from "./observability/rateLimit";
 
 const uuid = z.string().uuid();
 const granularitySchema = z.enum(["day", "week", "month", "quarter", "year"]);
@@ -108,6 +109,12 @@ export const runAnomalyDetectionFn = createServerFn({ method: "POST" })
       metadata: { target: data.targetColumn },
     });
 
+    try {
+      await enforceRateLimit(supabase, userId, RATE_LIMITS.anomaly);
+    } catch (err) {
+      await tele.error(err);
+      throw err;
+    }
     const { data: ds, error: dsErr } = await supabase
       .from("datasets")
       .select("*")
