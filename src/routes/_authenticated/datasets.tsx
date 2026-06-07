@@ -219,7 +219,7 @@ function DatasetsPage() {
                   <td className="px-4 py-3 font-mono tabular-nums">{d.row_count?.toLocaleString() ?? "—"}</td>
                   <td className="px-4 py-3 font-mono tabular-nums">{d.column_count ?? "—"}</td>
                   <td className="px-4 py-3">
-                    <HealthBadge score={d.dataset_profiles?.[0]?.quality_score ?? null} />
+                    <HealthBadge score={(Array.isArray(d.dataset_profiles) ? d.dataset_profiles[0]?.quality_score : d.dataset_profiles?.quality_score) ?? null} />
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge status={d.status} />
