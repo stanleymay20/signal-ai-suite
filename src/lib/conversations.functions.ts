@@ -16,6 +16,7 @@ import {
 } from "./ai/retrieval";
 import { buildSystemMessage, suggestFollowups } from "./ai/prompts";
 import { resolveAIProvider, type ChatMessage } from "./ai/providers";
+import { startTelemetry, estimateCostUsd, type MinimalUsageClient } from "./observability/telemetry";
 
 const uuid = z.string().uuid();
 
