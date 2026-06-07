@@ -14,6 +14,7 @@ import {
   LineChart as LineChartIcon,
   TrendingUp,
   Activity,
+  MessageSquare,
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
@@ -123,6 +124,11 @@ function DatasetDetail() {
               <Button variant="outline" size="sm" asChild>
                 <Link to="/datasets/$datasetId/anomalies" params={{ datasetId }}>
                   <Activity className="mr-1 h-4 w-4" /> Anomalies
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/datasets/$datasetId/chat" params={{ datasetId }}>
+                  <MessageSquare className="mr-1 h-4 w-4" /> Chat
                 </Link>
               </Button>
             </>
