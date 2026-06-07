@@ -348,7 +348,7 @@ export function deriveCitations(pkg: EvidencePackage): Citation[] {
         detail: {
           timestamp: a.t,
           value: a.value,
-          expected: a.expected,
+          expected: a.expected ?? null,
           severity: a.severity,
           method: a.method,
         },
