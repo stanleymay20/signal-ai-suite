@@ -32,14 +32,17 @@ is derived from real DB rows, not from the model.
 | [08 — Release Notes](./08-release-notes-v0.7.0-rc1.md) | RC scope, phase log, known limitations |
 | [09 — Reporting Pipeline](./09-reporting-pipeline.md) | Phase 7 — hybrid deterministic + AI narrative reports, PDF/PPTX |
 | [10 — Observability & Admin](./10-observability.md) | Phase 8 — `usage_events`, telemetry helper, admin control center |
+| [11 — Enterprise Hardening](./11-enterprise-hardening.md) | Phase 9a — rate limits, signed-URL exports, job queue, retention, user mgmt |
 
-## Quality signals at Phase 8
+## Quality signals at Phase 9a
 
-- 169 unit tests passing
+- 173 unit tests passing (169 prior + 4 new rate-limiter tests)
 - Typecheck clean, ESLint clean (0 errors)
 - CI green
-- RLS enforced on every user-facing table including `reports` and `usage_events`
-- Audit log entries for `report.generated`, `report.deleted`, `report.exported`
-- Usage events recorded for `chat.message`, `report.generate`, `forecast.run`, `anomaly.run`
-- Admin Control Center at `/admin` (admin-role gated) — system health, AI cost, latency, top users, recent log
+- RLS enforced on every user-facing table including `jobs` and `rate_limits`
+- Per-user rate limits on chat, report, forecast, anomaly, export actions
+- Signed-URL report exports (1 h expiry, private `reports` bucket)
+- Background job queue with worker route `/api/public/hooks/jobs-tick` (pg_cron every minute)
+- Daily retention purge of usage events (90 d), audit logs (180 d), rate-limit buckets (7 d)
+- Admin Control Center extended with Users and Workspaces panels (role toggle is audit-logged)
 - No AI-generated metrics, forecasts, anomalies, citations, or risk scores
