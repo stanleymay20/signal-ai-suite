@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import {
   ArrowLeft, Download, Trash2, AlertTriangle, CheckCircle2, AlertCircle,
-  Info, Loader2, LineChart as LineChartIcon, TrendingUp,
+  Info, Loader2, LineChart as LineChartIcon, TrendingUp, Activity,
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
@@ -96,6 +96,11 @@ function DatasetDetail() {
               <Button variant="outline" size="sm" asChild>
                 <Link to="/datasets/$datasetId/forecast" params={{ datasetId }}>
                   <TrendingUp className="mr-1 h-4 w-4" /> Forecast
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/datasets/$datasetId/anomalies" params={{ datasetId }}>
+                  <Activity className="mr-1 h-4 w-4" /> Anomalies
                 </Link>
               </Button>
             </>

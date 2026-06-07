@@ -19,6 +19,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedWorkspacesWorkspaceIdRouteImport } from './routes/_authenticated/workspaces.$workspaceId'
 import { Route as AuthenticatedDatasetsDatasetIdRouteImport } from './routes/_authenticated/datasets_.$datasetId'
 import { Route as AuthenticatedDatasetsDatasetIdForecastRouteImport } from './routes/_authenticated/datasets_.$datasetId.forecast'
+import { Route as AuthenticatedDatasetsDatasetIdAnomaliesRouteImport } from './routes/_authenticated/datasets_.$datasetId.anomalies'
 import { Route as AuthenticatedDatasetsDatasetIdAnalysisRouteImport } from './routes/_authenticated/datasets_.$datasetId.analysis'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -73,6 +74,12 @@ const AuthenticatedDatasetsDatasetIdForecastRoute =
     path: '/forecast',
     getParentRoute: () => AuthenticatedDatasetsDatasetIdRoute,
   } as any)
+const AuthenticatedDatasetsDatasetIdAnomaliesRoute =
+  AuthenticatedDatasetsDatasetIdAnomaliesRouteImport.update({
+    id: '/anomalies',
+    path: '/anomalies',
+    getParentRoute: () => AuthenticatedDatasetsDatasetIdRoute,
+  } as any)
 const AuthenticatedDatasetsDatasetIdAnalysisRoute =
   AuthenticatedDatasetsDatasetIdAnalysisRouteImport.update({
     id: '/analysis',
@@ -90,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRouteWithChildren
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
   '/datasets/$datasetId/analysis': typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
+  '/datasets/$datasetId/anomalies': typeof AuthenticatedDatasetsDatasetIdAnomaliesRoute
   '/datasets/$datasetId/forecast': typeof AuthenticatedDatasetsDatasetIdForecastRoute
 }
 export interface FileRoutesByTo {
@@ -102,6 +110,7 @@ export interface FileRoutesByTo {
   '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRouteWithChildren
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
   '/datasets/$datasetId/analysis': typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
+  '/datasets/$datasetId/anomalies': typeof AuthenticatedDatasetsDatasetIdAnomaliesRoute
   '/datasets/$datasetId/forecast': typeof AuthenticatedDatasetsDatasetIdForecastRoute
 }
 export interface FileRoutesById {
@@ -116,6 +125,7 @@ export interface FileRoutesById {
   '/_authenticated/datasets_/$datasetId': typeof AuthenticatedDatasetsDatasetIdRouteWithChildren
   '/_authenticated/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
   '/_authenticated/datasets_/$datasetId/analysis': typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
+  '/_authenticated/datasets_/$datasetId/anomalies': typeof AuthenticatedDatasetsDatasetIdAnomaliesRoute
   '/_authenticated/datasets_/$datasetId/forecast': typeof AuthenticatedDatasetsDatasetIdForecastRoute
 }
 export interface FileRouteTypes {
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/datasets/$datasetId'
     | '/workspaces/$workspaceId'
     | '/datasets/$datasetId/analysis'
+    | '/datasets/$datasetId/anomalies'
     | '/datasets/$datasetId/forecast'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/datasets/$datasetId'
     | '/workspaces/$workspaceId'
     | '/datasets/$datasetId/analysis'
+    | '/datasets/$datasetId/anomalies'
     | '/datasets/$datasetId/forecast'
   id:
     | '__root__'
@@ -155,6 +167,7 @@ export interface FileRouteTypes {
     | '/_authenticated/datasets_/$datasetId'
     | '/_authenticated/workspaces/$workspaceId'
     | '/_authenticated/datasets_/$datasetId/analysis'
+    | '/_authenticated/datasets_/$datasetId/anomalies'
     | '/_authenticated/datasets_/$datasetId/forecast'
   fileRoutesById: FileRoutesById
 }
@@ -237,6 +250,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDatasetsDatasetIdForecastRouteImport
       parentRoute: typeof AuthenticatedDatasetsDatasetIdRoute
     }
+    '/_authenticated/datasets_/$datasetId/anomalies': {
+      id: '/_authenticated/datasets_/$datasetId/anomalies'
+      path: '/anomalies'
+      fullPath: '/datasets/$datasetId/anomalies'
+      preLoaderRoute: typeof AuthenticatedDatasetsDatasetIdAnomaliesRouteImport
+      parentRoute: typeof AuthenticatedDatasetsDatasetIdRoute
+    }
     '/_authenticated/datasets_/$datasetId/analysis': {
       id: '/_authenticated/datasets_/$datasetId/analysis'
       path: '/analysis'
@@ -264,6 +284,7 @@ const AuthenticatedWorkspacesRouteWithChildren =
 
 interface AuthenticatedDatasetsDatasetIdRouteChildren {
   AuthenticatedDatasetsDatasetIdAnalysisRoute: typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
+  AuthenticatedDatasetsDatasetIdAnomaliesRoute: typeof AuthenticatedDatasetsDatasetIdAnomaliesRoute
   AuthenticatedDatasetsDatasetIdForecastRoute: typeof AuthenticatedDatasetsDatasetIdForecastRoute
 }
 
@@ -271,6 +292,8 @@ const AuthenticatedDatasetsDatasetIdRouteChildren: AuthenticatedDatasetsDatasetI
   {
     AuthenticatedDatasetsDatasetIdAnalysisRoute:
       AuthenticatedDatasetsDatasetIdAnalysisRoute,
+    AuthenticatedDatasetsDatasetIdAnomaliesRoute:
+      AuthenticatedDatasetsDatasetIdAnomaliesRoute,
     AuthenticatedDatasetsDatasetIdForecastRoute:
       AuthenticatedDatasetsDatasetIdForecastRoute,
   }

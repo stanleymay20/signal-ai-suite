@@ -80,6 +80,91 @@ export type Database = {
           },
         ]
       }
+      anomaly_runs: {
+        Row: {
+          aggregate: string
+          anomalies: Json
+          computed_by: string
+          created_at: string
+          dataset_id: string
+          date_column: string
+          error_message: string | null
+          forecast_id: string | null
+          granularity: string | null
+          id: string
+          methods: string[]
+          parameters: Json
+          series: Json
+          status: Database["public"]["Enums"]["anomaly_status"]
+          summary: Json
+          target_column: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          aggregate?: string
+          anomalies?: Json
+          computed_by: string
+          created_at?: string
+          dataset_id: string
+          date_column: string
+          error_message?: string | null
+          forecast_id?: string | null
+          granularity?: string | null
+          id?: string
+          methods?: string[]
+          parameters?: Json
+          series?: Json
+          status?: Database["public"]["Enums"]["anomaly_status"]
+          summary?: Json
+          target_column: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          aggregate?: string
+          anomalies?: Json
+          computed_by?: string
+          created_at?: string
+          dataset_id?: string
+          date_column?: string
+          error_message?: string | null
+          forecast_id?: string | null
+          granularity?: string | null
+          id?: string
+          methods?: string[]
+          parameters?: Json
+          series?: Json
+          status?: Database["public"]["Enums"]["anomaly_status"]
+          summary?: Json
+          target_column?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anomaly_runs_dataset_id_fkey"
+            columns: ["dataset_id"]
+            isOneToOne: false
+            referencedRelation: "datasets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "anomaly_runs_forecast_id_fkey"
+            columns: ["forecast_id"]
+            isOneToOne: false
+            referencedRelation: "forecasts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "anomaly_runs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -441,6 +526,7 @@ export type Database = {
     }
     Enums: {
       analysis_status: "pending" | "running" | "ready" | "failed"
+      anomaly_status: "pending" | "running" | "ready" | "failed"
       app_role: "admin" | "member"
       column_data_type:
         | "numeric"
@@ -582,6 +668,7 @@ export const Constants = {
   public: {
     Enums: {
       analysis_status: ["pending", "running", "ready", "failed"],
+      anomaly_status: ["pending", "running", "ready", "failed"],
       app_role: ["admin", "member"],
       column_data_type: [
         "numeric",
