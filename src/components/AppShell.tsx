@@ -76,6 +76,19 @@ export function AppShell({
               {label}
             </Link>
           ))}
+          {adminQ.data === true && (
+            <Link
+              to="/admin"
+              className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-sidebar-foreground/80 transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              activeProps={{
+                className:
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium bg-sidebar-accent text-sidebar-accent-foreground border-l-2 border-gold",
+              }}
+            >
+              <ShieldCheck className="h-4 w-4" />
+              Admin
+            </Link>
+          )}
         </nav>
         <div className="border-t border-sidebar-border p-3">
           <button
