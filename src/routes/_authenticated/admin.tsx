@@ -1,13 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { AppShell } from "@/components/AppShell";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import {
   getSystemHealth,
   isCurrentUserAdmin,
   listUsageEvents,
+  listAllUsers,
+  setUserRole,
+  listAllWorkspaces,
 } from "@/lib/admin.functions";
-import { AlertTriangle, Activity, DollarSign, Cpu, Users, ShieldAlert } from "lucide-react";
+import {
+  AlertTriangle,
+  Activity,
+  DollarSign,
+  Cpu,
+  Users,
+  ShieldAlert,
+  Shield,
+  Building2,
+} from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin Control Center — Signal AI Suite" }] }),
