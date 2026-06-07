@@ -106,6 +106,7 @@ export const runDatasetForecast = createServerFn({ method: "POST" })
         mape: m.metrics.mape,
         holdoutSize: m.metrics.holdoutSize,
         parameters: m.parameters,
+        backtestPoints: m.backtestPoints,
       }));
 
       const { error: updErr } = await supabase
@@ -120,6 +121,7 @@ export const runDatasetForecast = createServerFn({ method: "POST" })
           metrics: JSON.parse(JSON.stringify(bestModel.metrics)),
           model_comparison: JSON.parse(JSON.stringify(comparison)),
           assumptions: JSON.parse(JSON.stringify(bestModel.assumptions)),
+          backtest_points: JSON.parse(JSON.stringify(bestModel.backtestPoints)),
           parameters: JSON.parse(
             JSON.stringify({
               models: data.models ?? null,
