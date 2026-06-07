@@ -47,7 +47,7 @@ import type {
 } from "@/lib/analysis/types";
 import type { ColumnProfile } from "@/lib/data-profiling/types";
 
-export const Route = createFileRoute("/_authenticated/datasets_/$datasetId/analysis")({
+export const Route = createFileRoute("/_authenticated/datasets_/$datasetId_/analysis")({
   head: () => ({ meta: [{ title: "Analysis — Signal AI Suite" }] }),
   component: AnalysisPage,
 });
