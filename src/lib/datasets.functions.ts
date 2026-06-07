@@ -95,7 +95,7 @@ export const finalizeDataset = createServerFn({ method: "POST" })
         nullable: c.nullable,
         unique_ratio: c.uniqueRatio,
         missing_percentage: c.missingPercentage,
-        stats: c.stats as unknown as Record<string, unknown>,
+        stats: JSON.parse(JSON.stringify(c.stats)),
       }));
       if (colRows.length) {
         const { error: colErr } = await supabase.from("dataset_columns").insert(colRows);
@@ -116,7 +116,7 @@ export const finalizeDataset = createServerFn({ method: "POST" })
         dataset_id: ds.id,
         summary_json: summary,
         quality_score: profile.qualityScore,
-        issues_json: profile.issues,
+        issues_json: JSON.parse(JSON.stringify(profile.issues)),
       }, { onConflict: "dataset_id" });
       if (pErr) throw new Error(pErr.message);
 
