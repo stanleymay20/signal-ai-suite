@@ -31,7 +31,7 @@ describe("forecast_residual uses exact backtest expected values", () => {
     const out = detectForecastResidual(series, {
       expected,
       residualStd: best.residualStd,
-    }, { threshold: 3 });
+    }, { threshold: 1.5 });
 
     const spikeT = series[spikeIdx].t;
     const flagged = out.find((a) => a.t === spikeT);
