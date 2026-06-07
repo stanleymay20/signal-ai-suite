@@ -10,6 +10,14 @@ import {
 } from "lucide-react";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 
@@ -33,26 +41,35 @@ export function AppShell({
   const router = useRouter();
   const qc = useQueryClient();
 
-  const adminQ = useQuery({
-    queryKey: ["nav-is-admin"],
+  const meQ = useQuery({
+    queryKey: ["nav-current-user"],
     queryFn: async () => {
       const { data: u } = await supabase.auth.getUser();
-      if (!u.user) return false;
+      if (!u.user) return null;
       const { data } = await supabase
         .from("profiles")
-        .select("role")
+        .select("role, full_name, email")
         .eq("id", u.user.id)
         .maybeSingle();
-      return data?.role === "admin";
+      return {
+        id: u.user.id,
+        email: data?.email ?? u.user.email ?? "",
+        fullName: data?.full_name ?? null,
+        role: data?.role ?? null,
+      };
     },
     staleTime: 60_000,
   });
+  const isAdmin = meQ.data?.role === "admin";
 
   async function handleSignOut() {
-    await qc.cancelQueries();
-    qc.clear();
-    await supabase.auth.signOut();
-    router.navigate({ to: "/auth", replace: true });
+    try {
+      await qc.cancelQueries();
+      qc.clear();
+      await supabase.auth.signOut();
+    } finally {
+      router.navigate({ to: "/auth", replace: true });
+    }
   }
 
   return (
