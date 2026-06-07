@@ -189,6 +189,51 @@ export type Database = {
         }
         Relationships: []
       }
+      conversations: {
+        Row: {
+          created_at: string
+          created_by: string
+          dataset_id: string | null
+          id: string
+          title: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          dataset_id?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          dataset_id?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_dataset_id_fkey"
+            columns: ["dataset_id"]
+            isOneToOne: false
+            referencedRelation: "datasets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dataset_columns: {
         Row: {
           column_name: string
@@ -417,6 +462,44 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          citations_json: Json
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["message_role"]
+          token_usage_json: Json
+        }
+        Insert: {
+          citations_json?: Json
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["message_role"]
+          token_usage_json?: Json
+        }
+        Update: {
+          citations_json?: Json
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["message_role"]
+          token_usage_json?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -542,6 +625,7 @@ export type Database = {
         | "unknown"
       dataset_status: "uploading" | "profiling" | "ready" | "failed"
       forecast_status: "pending" | "running" | "ready" | "failed"
+      message_role: "user" | "assistant" | "system"
       workspace_role: "owner" | "editor" | "viewer"
     }
     CompositeTypes: {
@@ -685,6 +769,7 @@ export const Constants = {
       ],
       dataset_status: ["uploading", "profiling", "ready", "failed"],
       forecast_status: ["pending", "running", "ready", "failed"],
+      message_role: ["user", "assistant", "system"],
       workspace_role: ["owner", "editor", "viewer"],
     },
   },
