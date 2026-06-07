@@ -12,11 +12,11 @@ describe("computeRiskScore", () => {
     expect(a.score).toBeLessThanOrEqual(100);
   });
 
-  it("empty evidence package yields a non-zero score driven by evidence gaps only", () => {
+  it("empty evidence package yields a small non-zero score driven by evidence gaps", () => {
     const r = computeRiskScore(emptyPkg());
-    // 4 gaps × 0.10 weight = 0.40 → 40
-    expect(r.score).toBe(40);
-    expect(r.level).toBe("elevated");
+    // Only the gaps component contributes: 4/4 × 0.10 weight = 10.
+    expect(r.score).toBe(10);
+    expect(r.level).toBe("low");
     expect(r.drivers.some((d) => d.toLowerCase().includes("evidence gaps"))).toBe(true);
   });
 
