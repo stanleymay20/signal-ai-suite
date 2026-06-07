@@ -18,6 +18,7 @@ import { Route as AuthenticatedDatasetsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedWorkspacesWorkspaceIdRouteImport } from './routes/_authenticated/workspaces.$workspaceId'
 import { Route as AuthenticatedDatasetsDatasetIdRouteImport } from './routes/_authenticated/datasets_.$datasetId'
+import { Route as AuthenticatedDatasetsDatasetIdForecastRouteImport } from './routes/_authenticated/datasets_.$datasetId.forecast'
 import { Route as AuthenticatedDatasetsDatasetIdAnalysisRouteImport } from './routes/_authenticated/datasets_.$datasetId.analysis'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -66,6 +67,12 @@ const AuthenticatedDatasetsDatasetIdRoute =
     path: '/datasets/$datasetId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDatasetsDatasetIdForecastRoute =
+  AuthenticatedDatasetsDatasetIdForecastRouteImport.update({
+    id: '/forecast',
+    path: '/forecast',
+    getParentRoute: () => AuthenticatedDatasetsDatasetIdRoute,
+  } as any)
 const AuthenticatedDatasetsDatasetIdAnalysisRoute =
   AuthenticatedDatasetsDatasetIdAnalysisRouteImport.update({
     id: '/analysis',
@@ -83,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRouteWithChildren
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
   '/datasets/$datasetId/analysis': typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
+  '/datasets/$datasetId/forecast': typeof AuthenticatedDatasetsDatasetIdForecastRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -94,6 +102,7 @@ export interface FileRoutesByTo {
   '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRouteWithChildren
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
   '/datasets/$datasetId/analysis': typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
+  '/datasets/$datasetId/forecast': typeof AuthenticatedDatasetsDatasetIdForecastRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +116,7 @@ export interface FileRoutesById {
   '/_authenticated/datasets_/$datasetId': typeof AuthenticatedDatasetsDatasetIdRouteWithChildren
   '/_authenticated/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
   '/_authenticated/datasets_/$datasetId/analysis': typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
+  '/_authenticated/datasets_/$datasetId/forecast': typeof AuthenticatedDatasetsDatasetIdForecastRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/datasets/$datasetId'
     | '/workspaces/$workspaceId'
     | '/datasets/$datasetId/analysis'
+    | '/datasets/$datasetId/forecast'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/datasets/$datasetId'
     | '/workspaces/$workspaceId'
     | '/datasets/$datasetId/analysis'
+    | '/datasets/$datasetId/forecast'
   id:
     | '__root__'
     | '/'
@@ -143,6 +155,7 @@ export interface FileRouteTypes {
     | '/_authenticated/datasets_/$datasetId'
     | '/_authenticated/workspaces/$workspaceId'
     | '/_authenticated/datasets_/$datasetId/analysis'
+    | '/_authenticated/datasets_/$datasetId/forecast'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDatasetsDatasetIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/datasets_/$datasetId/forecast': {
+      id: '/_authenticated/datasets_/$datasetId/forecast'
+      path: '/forecast'
+      fullPath: '/datasets/$datasetId/forecast'
+      preLoaderRoute: typeof AuthenticatedDatasetsDatasetIdForecastRouteImport
+      parentRoute: typeof AuthenticatedDatasetsDatasetIdRoute
+    }
     '/_authenticated/datasets_/$datasetId/analysis': {
       id: '/_authenticated/datasets_/$datasetId/analysis'
       path: '/analysis'
@@ -244,12 +264,15 @@ const AuthenticatedWorkspacesRouteWithChildren =
 
 interface AuthenticatedDatasetsDatasetIdRouteChildren {
   AuthenticatedDatasetsDatasetIdAnalysisRoute: typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
+  AuthenticatedDatasetsDatasetIdForecastRoute: typeof AuthenticatedDatasetsDatasetIdForecastRoute
 }
 
 const AuthenticatedDatasetsDatasetIdRouteChildren: AuthenticatedDatasetsDatasetIdRouteChildren =
   {
     AuthenticatedDatasetsDatasetIdAnalysisRoute:
       AuthenticatedDatasetsDatasetIdAnalysisRoute,
+    AuthenticatedDatasetsDatasetIdForecastRoute:
+      AuthenticatedDatasetsDatasetIdForecastRoute,
   }
 
 const AuthenticatedDatasetsDatasetIdRouteWithChildren =
