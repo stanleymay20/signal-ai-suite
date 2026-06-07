@@ -24,17 +24,13 @@ function fakeProvider(stub: (prompt: string) => string, fail = false): AIProvide
 describe("generateNarratives", () => {
   it("fills text on every narrative slot without mutating deterministic sections", async () => {
     const base = buildReport({ type: "boardroom", pkg: fullPkg() });
-    const before = JSON.stringify(
-      base.sections.filter((s) => s.type !== "narrative"),
-    );
+    const before = JSON.stringify(base.sections.filter((s) => s.type !== "narrative"));
     const out = await generateNarratives({
       report: base,
       pkg: fullPkg(),
       provider: fakeProvider((u) => `Synthesized: ${u.slice(0, 20)}`),
     });
-    const after = JSON.stringify(
-      out.report.sections.filter((s) => s.type !== "narrative"),
-    );
+    const after = JSON.stringify(out.report.sections.filter((s) => s.type !== "narrative"));
     // KPIs/tables/bullets are not touched.
     expect(after).toBe(before);
 

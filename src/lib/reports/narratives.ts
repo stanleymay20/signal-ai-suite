@@ -27,9 +27,7 @@ export interface GenerateNarrativesResult {
 
 const FALLBACK = "(No narrative could be generated for this section.)";
 
-function isNarrativeSection(
-  s: ReportSection,
-): s is Extract<ReportSection, { type: "narrative" }> {
+function isNarrativeSection(s: ReportSection): s is Extract<ReportSection, { type: "narrative" }> {
   return s.type === "narrative";
 }
 

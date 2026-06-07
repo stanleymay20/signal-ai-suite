@@ -308,7 +308,9 @@ export function buildReport(input: BuildReportInput): ReportModel {
 }
 
 /** Slot ids present in a built report (used by the narrative generator). */
-export function narrativeSlots(report: ReportModel): Array<{ slot: string; heading: string; prompt: string }> {
+export function narrativeSlots(
+  report: ReportModel,
+): Array<{ slot: string; heading: string; prompt: string }> {
   return report.sections
     .filter((s): s is Extract<ReportSection, { type: "narrative" }> => s.type === "narrative")
     .map((s) => ({ slot: s.slot, heading: s.heading, prompt: s.prompt }));

@@ -9,11 +9,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import {
-  buildEvidencePackage,
-  hasAnyEvidence,
-  type EvidencePackage,
-} from "./ai/retrieval";
+import { buildEvidencePackage, hasAnyEvidence, type EvidencePackage } from "./ai/retrieval";
 import { resolveAIProvider } from "./ai/providers";
 import {
   buildReport,
@@ -102,9 +98,7 @@ export const deleteReport = createServerFn({ method: "POST" })
 
 export const generateReport = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) =>
-    z.object({ datasetId: uuid, type: reportType }).parse(input),
-  )
+  .inputValidator((input) => z.object({ datasetId: uuid, type: reportType }).parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
@@ -295,16 +289,17 @@ export const exportReportPptx = createServerFn({ method: "POST" })
     });
     return {
       filename: `${slugify(row.title)}.pptx`,
-      contentType:
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      contentType: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
       base64: bytesToBase64(bytes),
     };
   });
 
 function slugify(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80) || "report";
+  return (
+    s
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 80) || "report"
+  );
 }

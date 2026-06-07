@@ -41,9 +41,7 @@ export function computeRiskScore(pkg: EvidencePackage): RiskScore {
   const drivers: string[] = [];
 
   // Data quality
-  const qualityComponent = pkg.profile
-    ? clamp01((100 - pkg.profile.qualityScore) / 100)
-    : 0;
+  const qualityComponent = pkg.profile ? clamp01((100 - pkg.profile.qualityScore) / 100) : 0;
   if (pkg.profile && pkg.profile.qualityScore < 70) {
     drivers.push(`Data quality score ${pkg.profile.qualityScore}/100`);
   }

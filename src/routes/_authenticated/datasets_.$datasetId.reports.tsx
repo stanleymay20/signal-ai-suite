@@ -3,15 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import {
-  ArrowLeft,
-  FileText,
-  Download,
-  Trash2,
-  Loader2,
-  Sparkles,
-  FilePlus,
-} from "lucide-react";
+import { ArrowLeft, FileText, Download, Trash2, Loader2, Sparkles, FilePlus } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import {
@@ -251,9 +243,9 @@ function EmptyState() {
       <FileText className="h-8 w-8 text-muted-foreground" />
       <p className="font-display text-lg font-semibold">No report selected</p>
       <p className="max-w-md text-sm text-muted-foreground">
-        Pick a report type on the left to generate an evidence-grounded brief. KPIs, tables,
-        risk scores, and citations are deterministic. Narrative sections are filled by the AI
-        layer using only the cited evidence.
+        Pick a report type on the left to generate an evidence-grounded brief. KPIs, tables, risk
+        scores, and citations are deterministic. Narrative sections are filled by the AI layer using
+        only the cited evidence.
       </p>
     </div>
   );
@@ -338,8 +330,8 @@ function ReportView({
 
       <p className="px-5 py-4 text-[10px] italic text-muted-foreground">
         Generated from Signal AI Suite evidence package. All metrics, forecasts, anomalies, and
-        citations are derived from deterministic analysis outputs. AI-generated narrative
-        sections are grounded exclusively in cited evidence available at generation time.
+        citations are derived from deterministic analysis outputs. AI-generated narrative sections
+        are grounded exclusively in cited evidence available at generation time.
       </p>
     </div>
   );

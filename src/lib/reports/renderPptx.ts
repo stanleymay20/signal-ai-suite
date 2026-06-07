@@ -12,11 +12,7 @@ const MUTED = "6B7280";
 const TEXT = "111827";
 const BG_SOFT = "F8FAFC";
 
-function addSlideHeader(
-  slide: pptxgen.Slide,
-  title: string,
-  subtitle?: string,
-): void {
+function addSlideHeader(slide: pptxgen.Slide, title: string, subtitle?: string): void {
   slide.addText(title, {
     x: 0.5,
     y: 0.3,
@@ -153,16 +149,19 @@ function renderSectionSlide(pres: pptxgen, report: ReportModel, section: ReportS
       break;
     }
     case "narrative": {
-      slide.addText(section.text && section.text.length > 0 ? section.text : "(No narrative generated.)", {
-        x: left,
-        y: top,
-        w,
-        h: SLIDE_H - top - 0.8,
-        fontSize: 14,
-        color: TEXT,
-        fontFace: "Calibri",
-        valign: "top",
-      });
+      slide.addText(
+        section.text && section.text.length > 0 ? section.text : "(No narrative generated.)",
+        {
+          x: left,
+          y: top,
+          w,
+          h: SLIDE_H - top - 0.8,
+          fontSize: 14,
+          color: TEXT,
+          fontFace: "Calibri",
+          valign: "top",
+        },
+      );
       break;
     }
   }

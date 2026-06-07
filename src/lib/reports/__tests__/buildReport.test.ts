@@ -38,9 +38,7 @@ describe("buildReport — deterministic shape", () => {
 
   it("boardroom contains an anomaly table and a decisions slot", () => {
     const r = buildReport({ type: "boardroom", pkg: fullPkg() });
-    expect(
-      r.sections.some((s) => s.type === "table" && s.heading === "Top Anomalies"),
-    ).toBe(true);
+    expect(r.sections.some((s) => s.type === "table" && s.heading === "Top Anomalies")).toBe(true);
     expect(narrativeSlots(r).map((n) => n.slot)).toContain("boardroom_decisions");
   });
 
@@ -69,9 +67,7 @@ describe("buildReport — deterministic shape", () => {
 
   it("anomaly_investigation lists top anomalies verbatim from evidence", () => {
     const r = buildReport({ type: "anomaly_investigation", pkg: fullPkg() });
-    const t = r.sections.find(
-      (s): s is Extract<typeof s, { type: "table" }> => s.type === "table",
-    );
+    const t = r.sections.find((s): s is Extract<typeof s, { type: "table" }> => s.type === "table");
     expect(t).toBeTruthy();
     // First row corresponds to the highest-score anomaly (critical, t=2025-08).
     expect(t!.rows[0][0]).toBe("2025-08");

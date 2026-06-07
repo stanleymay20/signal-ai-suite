@@ -155,9 +155,7 @@ function drawTable(ctx: Ctx, columns: string[], rows: string[][]): void {
       const text = String(cell ?? "");
       const max = colW - 12;
       const truncated =
-        ctx.font.widthOfTextAtSize(text, 9) > max
-          ? truncateToWidth(text, ctx.font, 9, max)
-          : text;
+        ctx.font.widthOfTextAtSize(text, 9) > max ? truncateToWidth(text, ctx.font, 9, max) : text;
       ctx.page.drawText(truncated, {
         x: MARGIN + i * colW + 6,
         y: ctx.y - rowH + 5,
