@@ -245,6 +245,90 @@ export type Database = {
           },
         ]
       }
+      forecasts: {
+        Row: {
+          assumptions: Json
+          computed_by: string | null
+          confidence_intervals: Json
+          created_at: string
+          dataset_id: string
+          date_column: string | null
+          error_message: string | null
+          forecast_points: Json
+          granularity: string | null
+          horizon: number
+          id: string
+          metrics: Json
+          model_comparison: Json
+          model_name: string
+          parameters: Json
+          status: Database["public"]["Enums"]["forecast_status"]
+          target_column: string | null
+          train_range: Json
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          assumptions?: Json
+          computed_by?: string | null
+          confidence_intervals?: Json
+          created_at?: string
+          dataset_id: string
+          date_column?: string | null
+          error_message?: string | null
+          forecast_points?: Json
+          granularity?: string | null
+          horizon: number
+          id?: string
+          metrics?: Json
+          model_comparison?: Json
+          model_name: string
+          parameters?: Json
+          status?: Database["public"]["Enums"]["forecast_status"]
+          target_column?: string | null
+          train_range?: Json
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          assumptions?: Json
+          computed_by?: string | null
+          confidence_intervals?: Json
+          created_at?: string
+          dataset_id?: string
+          date_column?: string | null
+          error_message?: string | null
+          forecast_points?: Json
+          granularity?: string | null
+          horizon?: number
+          id?: string
+          metrics?: Json
+          model_comparison?: Json
+          model_name?: string
+          parameters?: Json
+          status?: Database["public"]["Enums"]["forecast_status"]
+          target_column?: string | null
+          train_range?: Json
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forecasts_dataset_id_fkey"
+            columns: ["dataset_id"]
+            isOneToOne: false
+            referencedRelation: "datasets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forecasts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -368,6 +452,7 @@ export type Database = {
         | "categorical"
         | "unknown"
       dataset_status: "uploading" | "profiling" | "ready" | "failed"
+      forecast_status: "pending" | "running" | "ready" | "failed"
       workspace_role: "owner" | "editor" | "viewer"
     }
     CompositeTypes: {
@@ -509,6 +594,7 @@ export const Constants = {
         "unknown",
       ],
       dataset_status: ["uploading", "profiling", "ready", "failed"],
+      forecast_status: ["pending", "running", "ready", "failed"],
       workspace_role: ["owner", "editor", "viewer"],
     },
   },
