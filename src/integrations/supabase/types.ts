@@ -599,6 +599,74 @@ export type Database = {
           },
         ]
       }
+      usage_events: {
+        Row: {
+          action: string
+          actor_id: string | null
+          completion_tokens: number
+          cost_usd: number
+          created_at: string
+          duration_ms: number
+          error_message: string | null
+          id: string
+          metadata: Json
+          model: string | null
+          prompt_tokens: number
+          provider: string | null
+          resource_id: string | null
+          resource_type: string | null
+          status: string
+          total_tokens: number
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          completion_tokens?: number
+          cost_usd?: number
+          created_at?: string
+          duration_ms?: number
+          error_message?: string | null
+          id?: string
+          metadata?: Json
+          model?: string | null
+          prompt_tokens?: number
+          provider?: string | null
+          resource_id?: string | null
+          resource_type?: string | null
+          status: string
+          total_tokens?: number
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          completion_tokens?: number
+          cost_usd?: number
+          created_at?: string
+          duration_ms?: number
+          error_message?: string | null
+          id?: string
+          metadata?: Json
+          model?: string | null
+          prompt_tokens?: number
+          provider?: string | null
+          resource_id?: string | null
+          resource_type?: string | null
+          status?: string
+          total_tokens?: number
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspace_members: {
         Row: {
           created_at: string
