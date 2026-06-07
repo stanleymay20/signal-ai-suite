@@ -84,8 +84,22 @@ describe("groupByAction", () => {
 describe("groupByProviderModel", () => {
   it("ignores rows without provider/model/tokens and sums totals", () => {
     const events = [
-      ev({ provider: "openai", model: "gpt-4o-mini", total_tokens: 100, prompt_tokens: 60, completion_tokens: 40, cost_usd: 0.001 }),
-      ev({ provider: "openai", model: "gpt-4o-mini", total_tokens: 200, prompt_tokens: 100, completion_tokens: 100, cost_usd: 0.002 }),
+      ev({
+        provider: "openai",
+        model: "gpt-4o-mini",
+        total_tokens: 100,
+        prompt_tokens: 60,
+        completion_tokens: 40,
+        cost_usd: 0.001,
+      }),
+      ev({
+        provider: "openai",
+        model: "gpt-4o-mini",
+        total_tokens: 200,
+        prompt_tokens: 100,
+        completion_tokens: 100,
+        cost_usd: 0.002,
+      }),
       ev({ provider: "ollama", model: "llama3", total_tokens: 50, cost_usd: 0 }),
       ev({ provider: null, model: null, total_tokens: 0, cost_usd: 0 }),
     ];

@@ -121,16 +121,15 @@ export function groupByProviderModel(events: UsageEventRow[]): ProviderModelStat
   const map = new Map<string, ProviderModelStat>();
   for (const e of aiOnly) {
     const key = `${e.provider}::${e.model}`;
-    const cur =
-      map.get(key) ?? {
-        provider: e.provider as string,
-        model: e.model as string,
-        count: 0,
-        totalTokens: 0,
-        promptTokens: 0,
-        completionTokens: 0,
-        totalCostUsd: 0,
-      };
+    const cur = map.get(key) ?? {
+      provider: e.provider as string,
+      model: e.model as string,
+      count: 0,
+      totalTokens: 0,
+      promptTokens: 0,
+      completionTokens: 0,
+      totalCostUsd: 0,
+    };
     cur.count += 1;
     cur.totalTokens += e.total_tokens || 0;
     cur.promptTokens += e.prompt_tokens || 0;

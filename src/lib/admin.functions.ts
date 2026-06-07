@@ -35,11 +35,7 @@ type AnySupabase = {
 
 async function ensureAdmin(supabase: unknown, userId: string): Promise<void> {
   const sb = supabase as AnySupabase;
-  const { data, error } = await sb
-    .from("profiles")
-    .select("role")
-    .eq("id", userId)
-    .maybeSingle();
+  const { data, error } = await sb.from("profiles").select("role").eq("id", userId).maybeSingle();
   if (error) throw new Error(error.message);
   if (!data || data.role !== "admin") throw new Error("Admin access required");
 }
@@ -56,7 +52,12 @@ export const isCurrentUserAdmin = createServerFn({ method: "GET" })
   });
 
 const windowSchema = z.object({
-  windowHours: z.number().int().min(1).max(24 * 30).optional(),
+  windowHours: z
+    .number()
+    .int()
+    .min(1)
+    .max(24 * 30)
+    .optional(),
 });
 
 function sinceISO(hours: number): string {
@@ -144,9 +145,7 @@ export const listAllUsers = createServerFn({ method: "GET" })
 
 export const setUserRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) =>
-    z.object({ userId: z.string().uuid(), role: roleEnum }).parse(input),
-  )
+  .inputValidator((input) => z.object({ userId: z.string().uuid(), role: roleEnum }).parse(input))
   .handler(async ({ data, context }) => {
     await ensureAdmin(context.supabase, context.userId);
     if (data.userId === context.userId && data.role !== "admin") {

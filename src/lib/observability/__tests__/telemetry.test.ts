@@ -66,22 +66,14 @@ describe("telemetry", () => {
       }),
     };
     await expect(
-      recordUsageEvent(
-        client,
-        { action: "x", actorId: "u" },
-        { status: "error", durationMs: 0 },
-      ),
+      recordUsageEvent(client, { action: "x", actorId: "u" }, { status: "error", durationMs: 0 }),
     ).resolves.toBeUndefined();
   });
 
   it("startTelemetry times the operation and only settles once", async () => {
     const { client, inserts } = makeClient();
     let t = 1000;
-    const h = startTelemetry(
-      client,
-      { action: "op", actorId: "u" },
-      () => t,
-    );
+    const h = startTelemetry(client, { action: "op", actorId: "u" }, () => t);
     t = 1500;
     await h.success();
     await h.success(); // ignored
@@ -106,20 +98,15 @@ describe("telemetry", () => {
   it("withTelemetry runs extract() to pull token/cost data from result", async () => {
     const { client, inserts } = makeClient();
     const fn = vi.fn(async () => ({ value: 42, prompt: 5, completion: 7 }));
-    const result = await withTelemetry(
-      client,
-      { action: "ok", actorId: "u" },
-      fn,
-      {
-        extract: (r) => ({
-          promptTokens: r.prompt,
-          completionTokens: r.completion,
-          provider: "openai",
-          model: "gpt-4o-mini",
-          costUsd: estimateCostUsd("gpt-4o-mini", r.prompt, r.completion),
-        }),
-      },
-    );
+    const result = await withTelemetry(client, { action: "ok", actorId: "u" }, fn, {
+      extract: (r) => ({
+        promptTokens: r.prompt,
+        completionTokens: r.completion,
+        provider: "openai",
+        model: "gpt-4o-mini",
+        costUsd: estimateCostUsd("gpt-4o-mini", r.prompt, r.completion),
+      }),
+    });
     expect(result.value).toBe(42);
     expect(inserts[0].prompt_tokens).toBe(5);
     expect(inserts[0].completion_tokens).toBe(7);

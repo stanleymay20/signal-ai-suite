@@ -10,13 +10,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const uuid = z.string().uuid();
 
-const jobType = z.enum([
-  "dataset_profile",
-  "analysis",
-  "forecast",
-  "anomaly",
-  "report",
-]);
+const jobType = z.enum(["dataset_profile", "analysis", "forecast", "anomaly", "report"]);
 
 export const enqueueJob = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

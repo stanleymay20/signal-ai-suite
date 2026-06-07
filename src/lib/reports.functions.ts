@@ -36,9 +36,6 @@ function toJson<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T;
 }
 
-
-
-
 // Loading evidence is inlined inside generateReport to avoid leaking the
 // Supabase client's generic type through a helper signature.
 
@@ -272,14 +269,24 @@ async function exportReport(
   const sb = context.supabase as unknown as {
     from: (t: string) => {
       select: (s: string) => {
-        eq: (k: string, v: string) => {
-          maybeSingle: () => Promise<{ data: Record<string, unknown> | null; error: { message: string } | null }>;
+        eq: (
+          k: string,
+          v: string,
+        ) => {
+          maybeSingle: () => Promise<{
+            data: Record<string, unknown> | null;
+            error: { message: string } | null;
+          }>;
         };
       };
       insert: (v: Record<string, unknown>) => Promise<unknown>;
     };
   };
-  const { data: row, error } = await sb.from("reports").select("*").eq("id", reportId).maybeSingle();
+  const { data: row, error } = await sb
+    .from("reports")
+    .select("*")
+    .eq("id", reportId)
+    .maybeSingle();
   if (error) throw new Error(error.message);
   if (!row) throw new Error("Report not found");
 
@@ -304,7 +311,12 @@ async function exportReport(
   await sb.from("audit_logs").insert({
     actor_id: context.userId,
     action: "report.exported",
-    metadata: { report_id: (row as { id: string }).id, format, path: signed.path, bytes: signed.bytes },
+    metadata: {
+      report_id: (row as { id: string }).id,
+      format,
+      path: signed.path,
+      bytes: signed.bytes,
+    },
   });
 
   return {
@@ -335,4 +347,3 @@ function slugify(s: string): string {
       .slice(0, 80) || "report"
   );
 }
-

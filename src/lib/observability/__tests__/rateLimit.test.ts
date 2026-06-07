@@ -19,12 +19,15 @@ describe("enforceRateLimit", () => {
     });
     const res = await enforceRateLimit(c, "u1", RATE_LIMITS.chat);
     expect(res?.allowed).toBe(true);
-    expect(c.rpc).toHaveBeenCalledWith("check_rate_limit", expect.objectContaining({
-      _user_id: "u1",
-      _action: "chat.message",
-      _max: 30,
-      _window_seconds: 60,
-    }));
+    expect(c.rpc).toHaveBeenCalledWith(
+      "check_rate_limit",
+      expect.objectContaining({
+        _user_id: "u1",
+        _action: "chat.message",
+        _max: 30,
+        _window_seconds: 60,
+      }),
+    );
   });
 
   it("throws RateLimitError when not allowed", async () => {
