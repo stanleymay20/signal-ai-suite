@@ -5,18 +5,33 @@ import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { toast } from "sonner";
 import {
-  Database, Upload, Loader2, AlertCircle, CheckCircle2, Clock, FileSpreadsheet,
+  Database,
+  Upload,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  FileSpreadsheet,
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter,
-  DialogHeader, DialogTitle, DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { createDataset, finalizeDataset, listDatasets } from "@/lib/datasets.functions";
@@ -30,7 +45,8 @@ export const Route = createFileRoute("/_authenticated/datasets")({
 const MAX_BYTES = 50 * 1024 * 1024;
 const fileSchema = z.object({
   workspaceId: z.string().uuid(),
-  file: z.instanceof(File)
+  file: z
+    .instanceof(File)
     .refine((f) => f.size > 0, "File is empty")
     .refine((f) => f.size <= MAX_BYTES, "File exceeds 50 MB limit")
     .refine((f) => /\.(csv|xlsx)$/i.test(f.name), "Only .csv and .xlsx are supported"),
@@ -71,9 +87,9 @@ function DatasetsPage() {
           return rows.map((r) => ({ ...r, workspace_id: id, workspace_name: wsMap.get(id) ?? "" }));
         }),
       );
-      return results.flat().sort((a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-      );
+      return results
+        .flat()
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     },
   });
 
@@ -88,14 +104,14 @@ function DatasetsPage() {
           sizeBytes: values.file.size,
         },
       });
-      const up = await supabase.storage
-        .from("datasets")
-        .upload(storagePath, values.file, {
-          cacheControl: "3600",
-          upsert: false,
-          contentType: ext === "csv" ? "text/csv"
+      const up = await supabase.storage.from("datasets").upload(storagePath, values.file, {
+        cacheControl: "3600",
+        upsert: false,
+        contentType:
+          ext === "csv"
+            ? "text/csv"
             : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
+      });
       if (up.error) throw new Error(up.error.message);
       await finalize({ data: { datasetId } });
       return datasetId;
@@ -153,7 +169,9 @@ function DatasetsPage() {
                   defaultValue={wsQ.data?.[0]?.id ?? ""}
                 >
                   {wsQ.data?.map((w) => (
-                    <option key={w.id} value={w.id}>{w.name}</option>
+                    <option key={w.id} value={w.id}>
+                      {w.name}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -174,13 +192,22 @@ function DatasetsPage() {
     >
       {hasWorkspaces && (
         <div className="mb-5 flex max-w-xs items-center gap-2">
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground">Workspace</Label>
-          <Select value={selectedWs || "all"} onValueChange={(v) => setSelectedWs(v === "all" ? "" : v)}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+          <Label className="text-xs uppercase tracking-wider text-muted-foreground">
+            Workspace
+          </Label>
+          <Select
+            value={selectedWs || "all"}
+            onValueChange={(v) => setSelectedWs(v === "all" ? "" : v)}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All workspaces</SelectItem>
               {wsQ.data!.map((w) => (
-                <SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>
+                <SelectItem key={w.id} value={w.id}>
+                  {w.name}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -210,16 +237,30 @@ function DatasetsPage() {
               {dsQ.data!.map((d) => (
                 <tr key={d.id} className="border-t border-border hover:bg-muted/30">
                   <td className="px-4 py-3">
-                    <Link to="/datasets/$datasetId" params={{ datasetId: d.id }} className="flex items-center gap-2 font-medium hover:underline">
+                    <Link
+                      to="/datasets/$datasetId"
+                      params={{ datasetId: d.id }}
+                      className="flex items-center gap-2 font-medium hover:underline"
+                    >
                       <FileSpreadsheet className="h-4 w-4 text-emerald" />
                       <span className="truncate">{d.filename}</span>
-                      <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] uppercase text-muted-foreground">{d.file_type}</span>
+                      <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] uppercase text-muted-foreground">
+                        {d.file_type}
+                      </span>
                     </Link>
                   </td>
-                  <td className="px-4 py-3 font-mono tabular-nums">{d.row_count?.toLocaleString() ?? "—"}</td>
+                  <td className="px-4 py-3 font-mono tabular-nums">
+                    {d.row_count?.toLocaleString() ?? "—"}
+                  </td>
                   <td className="px-4 py-3 font-mono tabular-nums">{d.column_count ?? "—"}</td>
                   <td className="px-4 py-3">
-                    <HealthBadge score={(Array.isArray(d.dataset_profiles) ? d.dataset_profiles[0]?.quality_score : d.dataset_profiles?.quality_score) ?? null} />
+                    <HealthBadge
+                      score={
+                        (Array.isArray(d.dataset_profiles)
+                          ? d.dataset_profiles[0]?.quality_score
+                          : d.dataset_profiles?.quality_score) ?? null
+                      }
+                    />
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge status={d.status} />
@@ -239,15 +280,33 @@ function DatasetsPage() {
 
 function StatusBadge({ status }: { status: string }) {
   const map = {
-    ready: { icon: CheckCircle2, cls: "text-emerald bg-emerald/10 border-emerald/30", label: "Ready" },
-    profiling: { icon: Loader2, cls: "text-gold-foreground bg-gold/10 border-gold/30 animate-pulse", label: "Profiling" },
-    uploading: { icon: Clock, cls: "text-muted-foreground bg-muted border-border", label: "Uploading" },
-    failed: { icon: AlertCircle, cls: "text-destructive bg-destructive/10 border-destructive/30", label: "Failed" },
+    ready: {
+      icon: CheckCircle2,
+      cls: "text-emerald bg-emerald/10 border-emerald/30",
+      label: "Ready",
+    },
+    profiling: {
+      icon: Loader2,
+      cls: "text-gold-foreground bg-gold/10 border-gold/30 animate-pulse",
+      label: "Profiling",
+    },
+    uploading: {
+      icon: Clock,
+      cls: "text-muted-foreground bg-muted border-border",
+      label: "Uploading",
+    },
+    failed: {
+      icon: AlertCircle,
+      cls: "text-destructive bg-destructive/10 border-destructive/30",
+      label: "Failed",
+    },
   } as const;
   const k = (status in map ? status : "uploading") as keyof typeof map;
   const { icon: Icon, cls, label } = map[k];
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium ${cls}`}>
+    <span
+      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium ${cls}`}
+    >
       <Icon className="h-3 w-3" /> {label}
     </span>
   );
@@ -258,7 +317,9 @@ function EmptyState() {
     <div className="rounded-xl border border-dashed border-border bg-card p-12 text-center">
       <Database className="mx-auto h-10 w-10 text-muted-foreground" />
       <h2 className="mt-4 font-display text-xl font-semibold">Create a workspace first</h2>
-      <p className="mt-1 text-sm text-muted-foreground">Datasets belong to workspaces for tenant isolation.</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Datasets belong to workspaces for tenant isolation.
+      </p>
       <Link to="/workspaces" className="mt-4 inline-block">
         <Button>Go to workspaces</Button>
       </Link>
@@ -271,7 +332,9 @@ function NoDatasets() {
     <div className="rounded-xl border border-dashed border-border bg-card p-12 text-center">
       <Database className="mx-auto h-10 w-10 text-muted-foreground" />
       <h2 className="mt-4 font-display text-xl font-semibold">No datasets yet</h2>
-      <p className="mt-1 text-sm text-muted-foreground">Upload a CSV or XLSX file to get started.</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Upload a CSV or XLSX file to get started.
+      </p>
     </div>
   );
 }

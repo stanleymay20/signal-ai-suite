@@ -31,8 +31,14 @@ function classify(v: string): ColumnDataType {
 /** Aggregate type from sampled non-missing values. */
 export function inferColumnType(values: unknown[], uniqueRatio: number): ColumnDataType {
   const counts: Record<ColumnDataType, number> = {
-    numeric: 0, integer: 0, boolean: 0, date: 0, datetime: 0,
-    string: 0, categorical: 0, unknown: 0,
+    numeric: 0,
+    integer: 0,
+    boolean: 0,
+    date: 0,
+    datetime: 0,
+    string: 0,
+    categorical: 0,
+    unknown: 0,
   };
   let total = 0;
   for (const raw of values) {
@@ -42,8 +48,14 @@ export function inferColumnType(values: unknown[], uniqueRatio: number): ColumnD
       counts[Number.isInteger(raw) ? "integer" : "numeric"]++;
       continue;
     }
-    if (typeof raw === "boolean") { counts.boolean++; continue; }
-    if (raw instanceof Date) { counts.datetime++; continue; }
+    if (typeof raw === "boolean") {
+      counts.boolean++;
+      continue;
+    }
+    if (raw instanceof Date) {
+      counts.datetime++;
+      continue;
+    }
     counts[classify(String(raw))]++;
   }
   if (total === 0) return "unknown";

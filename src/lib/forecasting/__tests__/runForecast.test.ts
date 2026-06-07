@@ -16,7 +16,10 @@ describe("runForecast", () => {
   });
 
   it("returns 4 model results for ample monthly history", () => {
-    const vals = Array.from({ length: 36 }, (_, i) => 100 + i + 10 * Math.sin((i / 12) * Math.PI * 2));
+    const vals = Array.from(
+      { length: 36 },
+      (_, i) => 100 + i + 10 * Math.sin((i / 12) * Math.PI * 2),
+    );
     const bundle = runForecast(monthly(vals), { horizon: 6, granularity: "month" });
     expect(bundle.models.length).toBe(4);
     expect(bundle.horizon).toBe(6);
@@ -49,7 +52,10 @@ describe("runForecast", () => {
   });
 
   it("populates train range and assumptions", () => {
-    const bundle = runForecast(monthly([1, 2, 3, 4, 5, 6, 7, 8]), { horizon: 2, granularity: "month" });
+    const bundle = runForecast(monthly([1, 2, 3, 4, 5, 6, 7, 8]), {
+      horizon: 2,
+      granularity: "month",
+    });
     expect(bundle.trainRange.count).toBe(8);
     expect(bundle.trainRange.start).toBeTruthy();
     expect(bundle.models[0].assumptions.length).toBeGreaterThan(0);

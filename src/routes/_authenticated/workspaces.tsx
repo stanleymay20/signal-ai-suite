@@ -120,7 +120,13 @@ function WorkspacesPage() {
             <form onSubmit={handleCreate} className="space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" name="name" required maxLength={80} placeholder="Acme Revenue Ops" />
+                <Input
+                  id="name"
+                  name="name"
+                  required
+                  maxLength={80}
+                  placeholder="Acme Revenue Ops"
+                />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="description">Description (optional)</Label>
@@ -171,9 +177,7 @@ function WorkspacesPage() {
                 {w.description || "No description."}
               </p>
               <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
-                <span className="font-mono">
-                  {new Date(w.created_at).toLocaleDateString()}
-                </span>
+                <span className="font-mono">{new Date(w.created_at).toLocaleDateString()}</span>
                 <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
               </div>
             </Link>

@@ -44,11 +44,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <Button onClick={this.reset} variant="default" size="sm">
               Try again
             </Button>
-            <Button
-              onClick={() => (window.location.href = "/")}
-              variant="outline"
-              size="sm"
-            >
+            <Button onClick={() => (window.location.href = "/")} variant="outline" size="sm">
               Go home
             </Button>
           </div>

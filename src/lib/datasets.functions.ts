@@ -10,17 +10,26 @@ const uuid = z.string().uuid();
 export const createDataset = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
-    z.object({
-      workspaceId: uuid,
-      filename: z.string().min(1).max(255),
-      fileType: fileTypeSchema,
-      sizeBytes: z.number().int().nonnegative().max(50 * 1024 * 1024),
-    }).parse(input),
+    z
+      .object({
+        workspaceId: uuid,
+        filename: z.string().min(1).max(255),
+        fileType: fileTypeSchema,
+        sizeBytes: z
+          .number()
+          .int()
+          .nonnegative()
+          .max(50 * 1024 * 1024),
+      })
+      .parse(input),
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: ws, error: wsErr } = await supabase
-      .from("workspaces").select("id").eq("id", data.workspaceId).maybeSingle();
+      .from("workspaces")
+      .select("id")
+      .eq("id", data.workspaceId)
+      .maybeSingle();
     if (wsErr) throw new Error(wsErr.message);
     if (!ws) throw new Error("Workspace not found or access denied");
 
@@ -41,7 +50,8 @@ export const createDataset = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
 
     await supabase.from("audit_logs").insert({
-      actor_id: userId, action: "dataset.created",
+      actor_id: userId,
+      action: "dataset.created",
       metadata: { dataset_id: datasetId, workspace_id: data.workspaceId, filename: data.filename },
     });
 
@@ -55,7 +65,10 @@ export const finalizeDataset = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
 
     const { data: ds, error: dsErr } = await supabase
-      .from("datasets").select("*").eq("id", data.datasetId).maybeSingle();
+      .from("datasets")
+      .select("*")
+      .eq("id", data.datasetId)
+      .maybeSingle();
     if (dsErr) throw new Error(dsErr.message);
     if (!ds) throw new Error("Dataset not found");
 
@@ -78,12 +91,15 @@ export const finalizeDataset = createServerFn({ method: "POST" })
 
       const profile = profileDataset(parsed.rows, parsed.columns);
 
-      const { error: updErr } = await supabase.from("datasets").update({
-        status: "ready",
-        row_count: profile.rowCount,
-        column_count: profile.columnCount,
-        error_message: null,
-      }).eq("id", ds.id);
+      const { error: updErr } = await supabase
+        .from("datasets")
+        .update({
+          status: "ready",
+          row_count: profile.rowCount,
+          column_count: profile.columnCount,
+          error_message: null,
+        })
+        .eq("id", ds.id);
       if (updErr) throw new Error(updErr.message);
 
       await supabase.from("dataset_columns").delete().eq("dataset_id", ds.id);
@@ -112,23 +128,34 @@ export const finalizeDataset = createServerFn({ method: "POST" })
         dateColumns: profile.dateColumns,
       };
 
-      const { error: pErr } = await supabase.from("dataset_profiles").upsert({
-        dataset_id: ds.id,
-        summary_json: summary,
-        quality_score: profile.qualityScore,
-        issues_json: JSON.parse(JSON.stringify(profile.issues)),
-      }, { onConflict: "dataset_id" });
+      const { error: pErr } = await supabase.from("dataset_profiles").upsert(
+        {
+          dataset_id: ds.id,
+          summary_json: summary,
+          quality_score: profile.qualityScore,
+          issues_json: JSON.parse(JSON.stringify(profile.issues)),
+        },
+        { onConflict: "dataset_id" },
+      );
       if (pErr) throw new Error(pErr.message);
 
       await supabase.from("audit_logs").insert({
-        actor_id: userId, action: "dataset.profiled",
-        metadata: { dataset_id: ds.id, quality_score: profile.qualityScore, rows: profile.rowCount },
+        actor_id: userId,
+        action: "dataset.profiled",
+        metadata: {
+          dataset_id: ds.id,
+          quality_score: profile.qualityScore,
+          rows: profile.rowCount,
+        },
       });
 
       return { ok: true as const, qualityScore: profile.qualityScore };
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Profiling failed";
-      await supabase.from("datasets").update({ status: "failed", error_message: msg }).eq("id", ds.id);
+      await supabase
+        .from("datasets")
+        .update({ status: "failed", error_message: msg })
+        .eq("id", ds.id);
       throw new Error(msg);
     }
   });
@@ -140,7 +167,9 @@ export const listDatasets = createServerFn({ method: "GET" })
     const { supabase } = context;
     const { data: rows, error } = await supabase
       .from("datasets")
-      .select("id, filename, file_type, status, row_count, column_count, size_bytes, created_at, error_message, dataset_profiles(quality_score)")
+      .select(
+        "id, filename, file_type, status, row_count, column_count, size_bytes, created_at, error_message, dataset_profiles(quality_score)",
+      )
       .eq("workspace_id", data.workspaceId)
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
@@ -153,12 +182,19 @@ export const getDataset = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     const { supabase } = context;
     const { data: dataset, error } = await supabase
-      .from("datasets").select("*").eq("id", data.datasetId).maybeSingle();
+      .from("datasets")
+      .select("*")
+      .eq("id", data.datasetId)
+      .maybeSingle();
     if (error) throw new Error(error.message);
     if (!dataset) throw new Error("Dataset not found");
 
     const [{ data: columns }, { data: profile }] = await Promise.all([
-      supabase.from("dataset_columns").select("*").eq("dataset_id", data.datasetId).order("position"),
+      supabase
+        .from("dataset_columns")
+        .select("*")
+        .eq("dataset_id", data.datasetId)
+        .order("position"),
       supabase.from("dataset_profiles").select("*").eq("dataset_id", data.datasetId).maybeSingle(),
     ]);
 
@@ -171,7 +207,10 @@ export const deleteDataset = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: ds, error } = await supabase
-      .from("datasets").select("id, storage_path, workspace_id").eq("id", data.datasetId).maybeSingle();
+      .from("datasets")
+      .select("id, storage_path, workspace_id")
+      .eq("id", data.datasetId)
+      .maybeSingle();
     if (error) throw new Error(error.message);
     if (!ds) throw new Error("Dataset not found");
 
@@ -180,7 +219,8 @@ export const deleteDataset = createServerFn({ method: "POST" })
     if (dErr) throw new Error(dErr.message);
 
     await supabase.from("audit_logs").insert({
-      actor_id: userId, action: "dataset.deleted",
+      actor_id: userId,
+      action: "dataset.deleted",
       metadata: { dataset_id: ds.id, workspace_id: ds.workspace_id },
     });
     return { ok: true as const };
@@ -192,11 +232,15 @@ export const getDatasetSignedUrl = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     const { supabase } = context;
     const { data: ds, error } = await supabase
-      .from("datasets").select("storage_path, filename").eq("id", data.datasetId).maybeSingle();
+      .from("datasets")
+      .select("storage_path, filename")
+      .eq("id", data.datasetId)
+      .maybeSingle();
     if (error) throw new Error(error.message);
     if (!ds) throw new Error("Dataset not found");
     const { data: signed, error: sErr } = await supabase.storage
-      .from("datasets").createSignedUrl(ds.storage_path, 60 * 5, { download: ds.filename });
+      .from("datasets")
+      .createSignedUrl(ds.storage_path, 60 * 5, { download: ds.filename });
     if (sErr || !signed) throw new Error(sErr?.message ?? "Failed to sign URL");
     return { url: signed.signedUrl };
   });

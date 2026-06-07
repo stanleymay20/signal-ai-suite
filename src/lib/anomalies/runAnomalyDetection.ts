@@ -6,8 +6,13 @@ import { detectRollingZ } from "./rollingZ";
 import { detectForecastResidual } from "./forecastResidual";
 import { mean, std } from "./stats";
 import type {
-  AnomalyBundle, AnomalyMethod, AnomalyResult, AnomalySeverity,
-  AnomalySummary, ForecastResidualSource, MethodConfig,
+  AnomalyBundle,
+  AnomalyMethod,
+  AnomalyResult,
+  AnomalySeverity,
+  AnomalySummary,
+  ForecastResidualSource,
+  MethodConfig,
 } from "./types";
 
 export interface RunAnomalyOptions {
@@ -17,7 +22,11 @@ export interface RunAnomalyOptions {
 }
 
 const ALL_METHODS: AnomalyMethod[] = [
-  "zscore", "mad", "iqr", "rolling_zscore", "forecast_residual",
+  "zscore",
+  "mad",
+  "iqr",
+  "rolling_zscore",
+  "forecast_residual",
 ];
 
 function emptySummary(): AnomalySummary {

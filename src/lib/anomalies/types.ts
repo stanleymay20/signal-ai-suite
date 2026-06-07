@@ -1,11 +1,6 @@
 import type { TimePoint } from "../analysis/types";
 
-export type AnomalyMethod =
-  | "zscore"
-  | "mad"
-  | "iqr"
-  | "rolling_zscore"
-  | "forecast_residual";
+export type AnomalyMethod = "zscore" | "mad" | "iqr" | "rolling_zscore" | "forecast_residual";
 
 export type AnomalySeverity = "low" | "medium" | "high" | "critical";
 

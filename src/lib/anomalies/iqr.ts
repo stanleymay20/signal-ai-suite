@@ -23,7 +23,7 @@ export function detectIqr(points: TimePoint[], opts: IqrOptions = {}): AnomalyRe
   const out: AnomalyResult[] = [];
   for (const p of points) {
     if (p.v < lower || p.v > upper) {
-      const excess = p.v > upper ? (p.v - upper) : (lower - p.v);
+      const excess = p.v > upper ? p.v - upper : lower - p.v;
       // ratio = how many IQR fence-widths beyond the fence (>=0); add 1 so threshold = 1.
       const ratio = 1 + excess / iqr;
       const deviation = p.v - median;

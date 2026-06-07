@@ -2,7 +2,11 @@ import { describe, it, expect } from "vitest";
 import { detectAnomalies } from "../anomalies";
 import type { TimePoint } from "../types";
 
-const tp = (i: number, v: number): TimePoint => ({ t: new Date(2024, 0, 1 + i).toISOString(), v, n: 1 });
+const tp = (i: number, v: number): TimePoint => ({
+  t: new Date(2024, 0, 1 + i).toISOString(),
+  v,
+  n: 1,
+});
 
 describe("detectAnomalies", () => {
   it("returns no anomalies for short series", () => {

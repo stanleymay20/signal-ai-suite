@@ -3,26 +3,42 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import {
-  ArrowLeft, Download, Trash2, AlertTriangle, CheckCircle2, AlertCircle,
-  Info, Loader2, LineChart as LineChartIcon, TrendingUp, Activity,
+  ArrowLeft,
+  Download,
+  Trash2,
+  AlertTriangle,
+  CheckCircle2,
+  AlertCircle,
+  Info,
+  Loader2,
+  LineChart as LineChartIcon,
+  TrendingUp,
+  Activity,
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { HealthBadge } from "@/components/datasets/HealthBadge";
-import {
-  getDataset, getDatasetSignedUrl, deleteDataset,
-} from "@/lib/datasets.functions";
+import { getDataset, getDatasetSignedUrl, deleteDataset } from "@/lib/datasets.functions";
 
 export const Route = createFileRoute("/_authenticated/datasets_/$datasetId")({
   head: () => ({ meta: [{ title: "Dataset — TimeSeriesGPT" }] }),
   component: DatasetDetail,
 });
 
-type Issue = { severity: "info" | "warning" | "critical"; code: string; message: string; column?: string };
+type Issue = {
+  severity: "info" | "warning" | "critical";
+  code: string;
+  message: string;
+  column?: string;
+};
 type Summary = {
-  rowCount: number; columnCount: number;
-  duplicateRowPercentage: number; missingCellPercentage: number;
-  numericColumns: number; categoricalColumns: number; dateColumns: number;
+  rowCount: number;
+  columnCount: number;
+  duplicateRowPercentage: number;
+  missingCellPercentage: number;
+  numericColumns: number;
+  categoricalColumns: number;
+  dateColumns: number;
 };
 
 function DatasetDetail() {
@@ -44,7 +60,9 @@ function DatasetDetail() {
 
   const downloadMut = useMutation({
     mutationFn: () => sign({ data: { datasetId } }),
-    onSuccess: ({ url }) => { window.location.href = url; },
+    onSuccess: ({ url }) => {
+      window.location.href = url;
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -68,7 +86,9 @@ function DatasetDetail() {
   if (q.isError || !q.data) {
     return (
       <AppShell title="Dataset not found">
-        <Link to="/datasets" className="text-sm text-primary hover:underline">← Back to datasets</Link>
+        <Link to="/datasets" className="text-sm text-primary hover:underline">
+          ← Back to datasets
+        </Link>
       </AppShell>
     );
   }
@@ -84,7 +104,9 @@ function DatasetDetail() {
       actions={
         <div className="flex gap-2">
           <Button variant="outline" size="sm" asChild>
-            <Link to="/datasets"><ArrowLeft className="mr-1 h-4 w-4" /> Datasets</Link>
+            <Link to="/datasets">
+              <ArrowLeft className="mr-1 h-4 w-4" /> Datasets
+            </Link>
           </Button>
           {dataset.status === "ready" && (
             <>
@@ -105,11 +127,22 @@ function DatasetDetail() {
               </Button>
             </>
           )}
-          <Button variant="outline" size="sm" disabled={downloadMut.isPending} onClick={() => downloadMut.mutate()}>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={downloadMut.isPending}
+            onClick={() => downloadMut.mutate()}
+          >
             <Download className="mr-1 h-4 w-4" /> Download
           </Button>
-          <Button variant="destructive" size="sm" disabled={deleteMut.isPending}
-            onClick={() => { if (confirm("Delete this dataset and its file?")) deleteMut.mutate(); }}>
+          <Button
+            variant="destructive"
+            size="sm"
+            disabled={deleteMut.isPending}
+            onClick={() => {
+              if (confirm("Delete this dataset and its file?")) deleteMut.mutate();
+            }}
+          >
             <Trash2 className="mr-1 h-4 w-4" /> Delete
           </Button>
         </div>
@@ -120,7 +153,9 @@ function DatasetDetail() {
           <AlertTriangle className="mt-0.5 h-4 w-4 text-destructive" />
           <div>
             <p className="font-medium text-destructive">Profiling failed</p>
-            <p className="mt-0.5 text-muted-foreground">{dataset.error_message ?? "Unknown error"}</p>
+            <p className="mt-0.5 text-muted-foreground">
+              {dataset.error_message ?? "Unknown error"}
+            </p>
           </div>
         </div>
       )}
@@ -146,7 +181,9 @@ function DatasetDetail() {
           <section className="rounded-xl border border-border bg-card">
             <header className="flex items-center justify-between border-b border-border px-5 py-3">
               <h2 className="font-display text-base font-semibold">Schema & column profile</h2>
-              <span className="font-mono text-xs text-muted-foreground">{columns.length} columns</span>
+              <span className="font-mono text-xs text-muted-foreground">
+                {columns.length} columns
+              </span>
             </header>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -170,9 +207,13 @@ function DatasetDetail() {
                             {c.data_type}
                           </span>
                         </td>
-                        <td className="px-4 py-3 font-mono tabular-nums">{c.missing_percentage ?? 0}%</td>
                         <td className="px-4 py-3 font-mono tabular-nums">
-                          {c.unique_ratio !== null ? `${(Number(c.unique_ratio) * 100).toFixed(1)}%` : "—"}
+                          {c.missing_percentage ?? 0}%
+                        </td>
+                        <td className="px-4 py-3 font-mono tabular-nums">
+                          {c.unique_ratio !== null
+                            ? `${(Number(c.unique_ratio) * 100).toFixed(1)}%`
+                            : "—"}
                         </td>
                         <td className="px-4 py-3 text-xs text-muted-foreground">
                           <ColumnStatPreview stats={stats} />
@@ -187,12 +228,18 @@ function DatasetDetail() {
 
           <aside className="space-y-6">
             <div className="rounded-xl border border-border bg-card p-5">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Health score</p>
+              <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Health score
+              </p>
               <div className="mt-2 flex items-baseline gap-2">
-                <span className="font-display text-5xl font-semibold tabular-nums">{profile.quality_score}</span>
+                <span className="font-display text-5xl font-semibold tabular-nums">
+                  {profile.quality_score}
+                </span>
                 <span className="text-sm text-muted-foreground">/ 100</span>
               </div>
-              <div className="mt-3"><HealthBadge score={profile.quality_score} /></div>
+              <div className="mt-3">
+                <HealthBadge score={profile.quality_score} />
+              </div>
               {summary && (
                 <dl className="mt-5 space-y-1.5 text-xs text-muted-foreground">
                   <Row k="Numeric columns" v={String(summary.numericColumns)} />
@@ -212,7 +259,9 @@ function DatasetDetail() {
                 </div>
               ) : (
                 <ul className="divide-y divide-border text-sm">
-                  {issues.map((i, idx) => <IssueItem key={idx} issue={i} />)}
+                  {issues.map((i, idx) => (
+                    <IssueItem key={idx} issue={i} />
+                  ))}
                 </ul>
               )}
             </div>
@@ -226,7 +275,9 @@ function DatasetDetail() {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
-      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{label}</p>
+      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </p>
       <p className="mt-1 font-display text-2xl font-semibold tabular-nums">{value}</p>
     </div>
   );
@@ -234,40 +285,67 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function Row({ k, v }: { k: string; v: string }) {
   return (
-    <div className="flex justify-between"><dt>{k}</dt><dd className="font-mono tabular-nums text-foreground">{v}</dd></div>
+    <div className="flex justify-between">
+      <dt>{k}</dt>
+      <dd className="font-mono tabular-nums text-foreground">{v}</dd>
+    </div>
   );
 }
 
 function ColumnStatPreview({ stats }: { stats: Record<string, unknown> }) {
-  const min = stats.min, max = stats.max, mean = stats.mean;
+  const min = stats.min,
+    max = stats.max,
+    mean = stats.mean;
   const top = stats.topValues as Array<{ value: string; count: number }> | undefined;
   if (typeof mean === "number") {
     return (
       <span className="font-mono">
-        min {Number(min).toLocaleString()} · max {Number(max).toLocaleString()} · μ {Number(mean).toFixed(2)}
+        min {Number(min).toLocaleString()} · max {Number(max).toLocaleString()} · μ{" "}
+        {Number(mean).toFixed(2)}
       </span>
     );
   }
   if (typeof min === "string" && typeof max === "string") {
-    return <span className="font-mono">{min.slice(0, 10)} → {max.slice(0, 10)}</span>;
+    return (
+      <span className="font-mono">
+        {min.slice(0, 10)} → {max.slice(0, 10)}
+      </span>
+    );
   }
   if (top && top.length) {
-    return <span>{top.slice(0, 3).map((t) => `${t.value} (${t.count})`).join(", ")}</span>;
+    return (
+      <span>
+        {top
+          .slice(0, 3)
+          .map((t) => `${t.value} (${t.count})`)
+          .join(", ")}
+      </span>
+    );
   }
   return <span>—</span>;
 }
 
 function IssueItem({ issue }: { issue: Issue }) {
-  const Icon = issue.severity === "critical" ? AlertTriangle : issue.severity === "warning" ? AlertCircle : Info;
-  const tone = issue.severity === "critical" ? "text-destructive"
-    : issue.severity === "warning" ? "text-gold-foreground" : "text-muted-foreground";
+  const Icon =
+    issue.severity === "critical"
+      ? AlertTriangle
+      : issue.severity === "warning"
+        ? AlertCircle
+        : Info;
+  const tone =
+    issue.severity === "critical"
+      ? "text-destructive"
+      : issue.severity === "warning"
+        ? "text-gold-foreground"
+        : "text-muted-foreground";
   return (
     <li className="flex items-start gap-3 px-5 py-3">
       <Icon className={`mt-0.5 h-4 w-4 ${tone}`} />
       <div className="min-w-0">
         <p className="text-foreground">{issue.message}</p>
         <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-          {issue.code}{issue.column ? ` · ${issue.column}` : ""}
+          {issue.code}
+          {issue.column ? ` · ${issue.column}` : ""}
         </p>
       </div>
     </li>

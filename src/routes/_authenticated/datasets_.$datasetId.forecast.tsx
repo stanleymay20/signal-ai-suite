@@ -3,23 +3,31 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { ArrowLeft, Play, Loader2, TrendingUp, AlertCircle } from "lucide-react";
 import {
-  ArrowLeft, Play, Loader2, TrendingUp, AlertCircle,
-} from "lucide-react";
-import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  Area, ComposedChart, Legend,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Area,
+  ComposedChart,
+  Legend,
 } from "recharts";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { getDataset } from "@/lib/datasets.functions";
-import {
-  runDatasetForecast, getLatestForecast,
-} from "@/lib/forecasts.functions";
+import { runDatasetForecast, getLatestForecast } from "@/lib/forecasts.functions";
 import { detectTimeSeries } from "@/lib/analysis/detectTimeSeries";
 import type { ColumnProfile } from "@/lib/data-profiling/types";
 import type {
-  ConfidenceInterval, ForecastModel, ForecastPoint, ModelResult, TrainRange,
+  ConfidenceInterval,
+  ForecastModel,
+  ForecastPoint,
+  ModelResult,
+  TrainRange,
 } from "@/lib/forecasting/types";
 import type { TimePoint } from "@/lib/analysis/types";
 
@@ -92,7 +100,12 @@ function ForecastPage() {
           dateColumn: dateCol,
           targetColumn: targetCol,
           granularity: (granularity || undefined) as
-            | "day" | "week" | "month" | "quarter" | "year" | undefined,
+            | "day"
+            | "week"
+            | "month"
+            | "quarter"
+            | "year"
+            | undefined,
           aggregate,
           horizon,
         },
@@ -105,12 +118,18 @@ function ForecastPage() {
   });
 
   if (dsQ.isLoading) {
-    return <AppShell title="Loading…"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></AppShell>;
+    return (
+      <AppShell title="Loading…">
+        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      </AppShell>
+    );
   }
   if (dsQ.isError || !dsQ.data) {
     return (
       <AppShell title="Dataset not found">
-        <Link to="/datasets" className="text-sm text-primary hover:underline">← Back to datasets</Link>
+        <Link to="/datasets" className="text-sm text-primary hover:underline">
+          ← Back to datasets
+        </Link>
       </AppShell>
     );
   }
@@ -119,24 +138,36 @@ function ForecastPage() {
   const ready = dataset.status === "ready";
 
   const params = (last?.parameters ?? {}) as {
-    history?: TimePoint[]; allModels?: ModelResult[];
+    history?: TimePoint[];
+    allModels?: ModelResult[];
   };
   const history: TimePoint[] = Array.isArray(params.history) ? params.history : [];
   const allModels: ModelResult[] = Array.isArray(params.allModels) ? params.allModels : [];
   const forecastPoints: ForecastPoint[] = Array.isArray(last?.forecast_points)
-    ? (last!.forecast_points as unknown as ForecastPoint[]) : [];
+    ? (last!.forecast_points as unknown as ForecastPoint[])
+    : [];
   const intervals: ConfidenceInterval[] = Array.isArray(last?.confidence_intervals)
-    ? (last!.confidence_intervals as unknown as ConfidenceInterval[]) : [];
+    ? (last!.confidence_intervals as unknown as ConfidenceInterval[])
+    : [];
   const trainRange = (last?.train_range ?? null) as unknown as TrainRange | null;
   const assumptions: string[] = Array.isArray(last?.assumptions)
-    ? (last!.assumptions as unknown as string[]) : [];
+    ? (last!.assumptions as unknown as string[])
+    : [];
   const comparison = Array.isArray(last?.model_comparison)
     ? (last!.model_comparison as unknown as Array<{
-        model: ForecastModel; mae: number | null; rmse: number | null;
-        mape: number | null; holdoutSize: number; parameters: Record<string, number | string>;
-      }>) : [];
+        model: ForecastModel;
+        mae: number | null;
+        rmse: number | null;
+        mape: number | null;
+        holdoutSize: number;
+        parameters: Record<string, number | string>;
+      }>)
+    : [];
   const metrics = (last?.metrics ?? {}) as {
-    mae: number | null; rmse: number | null; mape: number | null; holdoutSize: number;
+    mae: number | null;
+    rmse: number | null;
+    mape: number | null;
+    holdoutSize: number;
   };
 
   return (
@@ -153,7 +184,8 @@ function ForecastPage() {
     >
       {!ready && (
         <div className="rounded-lg border border-border bg-card p-4 text-sm">
-          Dataset is not ready for forecasting. Current status: <span className="font-mono">{dataset.status}</span>
+          Dataset is not ready for forecasting. Current status:{" "}
+          <span className="font-mono">{dataset.status}</span>
         </div>
       )}
 
@@ -161,24 +193,45 @@ function ForecastPage() {
         <section className="rounded-xl border border-border bg-card p-5">
           <h2 className="font-display text-base font-semibold">Configure forecast</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            All models are deterministic and reproducible. Holdout backtesting picks the best by RMSE.
+            All models are deterministic and reproducible. Holdout backtesting picks the best by
+            RMSE.
           </p>
 
           <div className="mt-4 grid gap-4 md:grid-cols-5">
             <Field label="Date column">
-              <select className="select" value={dateCol} onChange={(e) => setDateCol(e.target.value)}>
+              <select
+                className="select"
+                value={dateCol}
+                onChange={(e) => setDateCol(e.target.value)}
+              >
                 <option value="">— Select —</option>
-                {candidates.dateColumns.map((n) => <option key={n} value={n}>{n}</option>)}
+                {candidates.dateColumns.map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
               </select>
             </Field>
             <Field label="Target (numeric)">
-              <select className="select" value={targetCol} onChange={(e) => setTargetCol(e.target.value)}>
+              <select
+                className="select"
+                value={targetCol}
+                onChange={(e) => setTargetCol(e.target.value)}
+              >
                 <option value="">— Select —</option>
-                {candidates.numericColumns.map((n) => <option key={n} value={n}>{n}</option>)}
+                {candidates.numericColumns.map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
               </select>
             </Field>
             <Field label="Granularity">
-              <select className="select" value={granularity} onChange={(e) => setGranularity(e.target.value)}>
+              <select
+                className="select"
+                value={granularity}
+                onChange={(e) => setGranularity(e.target.value)}
+              >
                 <option value="">Auto</option>
                 <option value="day">Day</option>
                 <option value="week">Week</option>
@@ -188,14 +241,26 @@ function ForecastPage() {
               </select>
             </Field>
             <Field label="Aggregate">
-              <select className="select" value={aggregate} onChange={(e) => setAggregate(e.target.value as "mean" | "sum")}>
+              <select
+                className="select"
+                value={aggregate}
+                onChange={(e) => setAggregate(e.target.value as "mean" | "sum")}
+              >
                 <option value="mean">Mean</option>
                 <option value="sum">Sum</option>
               </select>
             </Field>
             <Field label="Horizon (buckets)">
-              <input className="select" type="number" min={1} max={120} value={horizon}
-                onChange={(e) => setHorizon(Math.max(1, Math.min(120, Number(e.target.value) || 1)))} />
+              <input
+                className="select"
+                type="number"
+                min={1}
+                max={120}
+                value={horizon}
+                onChange={(e) =>
+                  setHorizon(Math.max(1, Math.min(120, Number(e.target.value) || 1)))
+                }
+              />
             </Field>
           </div>
 
@@ -206,9 +271,13 @@ function ForecastPage() {
               disabled={!dateCol || !targetCol || runMut.isPending || last?.status === "running"}
             >
               {runMut.isPending || last?.status === "running" ? (
-                <><Loader2 className="mr-1 h-4 w-4 animate-spin" /> Forecasting…</>
+                <>
+                  <Loader2 className="mr-1 h-4 w-4 animate-spin" /> Forecasting…
+                </>
               ) : (
-                <><Play className="mr-1 h-4 w-4" /> Run forecast</>
+                <>
+                  <Play className="mr-1 h-4 w-4" /> Run forecast
+                </>
               )}
             </Button>
             {last?.status === "failed" && (
@@ -219,7 +288,9 @@ function ForecastPage() {
             {last?.status === "ready" && (
               <span className="text-xs text-muted-foreground">
                 Last run {new Date(last.created_at).toLocaleString()} · best:{" "}
-                <span className="font-mono">{MODEL_LABELS[last.model_name as ForecastModel] ?? last.model_name}</span>
+                <span className="font-mono">
+                  {MODEL_LABELS[last.model_name as ForecastModel] ?? last.model_name}
+                </span>
               </span>
             )}
           </div>
@@ -237,12 +308,21 @@ function ForecastPage() {
           />
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <MetricsCard metrics={metrics} bestModel={last.model_name as ForecastModel}
-              horizon={last.horizon} granularity={last.granularity} trainRange={trainRange} />
+            <MetricsCard
+              metrics={metrics}
+              bestModel={last.model_name as ForecastModel}
+              horizon={last.horizon}
+              granularity={last.granularity}
+              trainRange={trainRange}
+            />
             <AssumptionsCard assumptions={assumptions} />
           </div>
 
-          <ComparisonCard comparison={comparison} best={last.model_name as ForecastModel} allModels={allModels} />
+          <ComparisonCard
+            comparison={comparison}
+            best={last.model_name as ForecastModel}
+            allModels={allModels}
+          />
         </div>
       )}
 
@@ -269,13 +349,23 @@ function useMemoEffect(fn: () => void, key: string) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{label}</span>
+      <span className="mb-1 block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </span>
       {children}
     </label>
   );
 }
 
-function Card({ title, action, children }: { title: string; action?: React.ReactNode; children: React.ReactNode }) {
+function Card({
+  title,
+  action,
+  children,
+}: {
+  title: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
     <section className="rounded-xl border border-border bg-card">
       <header className="flex items-center justify-between border-b border-border px-5 py-3">
@@ -288,10 +378,17 @@ function Card({ title, action, children }: { title: string; action?: React.React
 }
 
 function ForecastChartCard({
-  history, points, intervals, targetColumn, best,
+  history,
+  points,
+  intervals,
+  targetColumn,
+  best,
 }: {
-  history: TimePoint[]; points: ForecastPoint[]; intervals: ConfidenceInterval[];
-  targetColumn: string; best: ForecastModel;
+  history: TimePoint[];
+  points: ForecastPoint[];
+  intervals: ConfidenceInterval[];
+  targetColumn: string;
+  best: ForecastModel;
 }) {
   const chartData = useMemo(() => {
     const lower = new Map(intervals.map((iv) => [iv.t, iv.lower]));
@@ -318,41 +415,77 @@ function ForecastChartCard({
         <ResponsiveContainer>
           <ComposedChart data={chartData} margin={{ top: 8, right: 24, bottom: 0, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis dataKey="t" tickFormatter={(t) => formatT(String(t))} fontSize={11}
-              stroke="hsl(var(--muted-foreground))" />
+            <XAxis
+              dataKey="t"
+              tickFormatter={(t) => formatT(String(t))}
+              fontSize={11}
+              stroke="hsl(var(--muted-foreground))"
+            />
             <YAxis fontSize={11} stroke="hsl(var(--muted-foreground))" width={56} />
             <Tooltip
               contentStyle={{
-                background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))",
-                borderRadius: 8, fontSize: 12,
+                background: "hsl(var(--popover))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: 8,
+                fontSize: 12,
               }}
               labelFormatter={(t) => new Date(String(t)).toLocaleDateString()}
             />
             <Legend wrapperStyle={{ fontSize: 11 }} />
-            <Area type="monotone" dataKey="band" name="Confidence" stroke="none"
-              fill="hsl(var(--primary))" fillOpacity={0.15} />
-            <Line type="monotone" dataKey="actual" name="Actual"
-              stroke="hsl(var(--primary))" dot={false} strokeWidth={2} />
-            <Line type="monotone" dataKey="yhat" name="Forecast"
-              stroke="hsl(var(--gold))" dot={false} strokeWidth={2} strokeDasharray="5 3" />
+            <Area
+              type="monotone"
+              dataKey="band"
+              name="Confidence"
+              stroke="none"
+              fill="hsl(var(--primary))"
+              fillOpacity={0.15}
+            />
+            <Line
+              type="monotone"
+              dataKey="actual"
+              name="Actual"
+              stroke="hsl(var(--primary))"
+              dot={false}
+              strokeWidth={2}
+            />
+            <Line
+              type="monotone"
+              dataKey="yhat"
+              name="Forecast"
+              stroke="hsl(var(--gold))"
+              dot={false}
+              strokeWidth={2}
+              strokeDasharray="5 3"
+            />
           </ComposedChart>
         </ResponsiveContainer>
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
-        {history.length} historical · {points.length} forecast buckets · ~95% band from holdout residuals
+        {history.length} historical · {points.length} forecast buckets · ~95% band from holdout
+        residuals
       </p>
     </Card>
   );
 }
 
 function MetricsCard({
-  metrics, bestModel, horizon, granularity, trainRange,
+  metrics,
+  bestModel,
+  horizon,
+  granularity,
+  trainRange,
 }: {
   metrics: { mae: number | null; rmse: number | null; mape: number | null; holdoutSize: number };
-  bestModel: ForecastModel; horizon: number; granularity: string | null; trainRange: TrainRange | null;
+  bestModel: ForecastModel;
+  horizon: number;
+  granularity: string | null;
+  trainRange: TrainRange | null;
 }) {
   return (
-    <Card title="Metrics & training" action={<span className="font-mono text-[10px] text-muted-foreground">holdout backtest</span>}>
+    <Card
+      title="Metrics & training"
+      action={<span className="font-mono text-[10px] text-muted-foreground">holdout backtest</span>}
+    >
       <dl className="grid grid-cols-3 gap-3 text-sm">
         <Metric k="MAE" v={fmtNum(metrics.mae)} />
         <Metric k="RMSE" v={fmtNum(metrics.rmse)} />
@@ -363,7 +496,14 @@ function MetricsCard({
         <Row k="Best model" v={MODEL_LABELS[bestModel] ?? bestModel} />
         <Row k="Horizon" v={`${horizon} ${granularity ?? "bucket"}${horizon === 1 ? "" : "s"}`} />
         <Row k="Holdout size" v={String(metrics.holdoutSize)} />
-        <Row k="Train range" v={trainRange ? `${formatT(trainRange.start ?? "")} → ${formatT(trainRange.end ?? "")} (${trainRange.count})` : "—"} />
+        <Row
+          k="Train range"
+          v={
+            trainRange
+              ? `${formatT(trainRange.start ?? "")} → ${formatT(trainRange.end ?? "")} (${trainRange.count})`
+              : "—"
+          }
+        />
       </dl>
     </Card>
   );
@@ -372,7 +512,9 @@ function MetricsCard({
 function Metric({ k, v }: { k: string; v: string }) {
   return (
     <div className="rounded-lg border border-border bg-background p-3">
-      <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{k}</div>
+      <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {k}
+      </div>
       <div className="mt-1 font-display text-lg tabular-nums">{v}</div>
     </div>
   );
@@ -381,7 +523,8 @@ function Metric({ k, v }: { k: string; v: string }) {
 function Row({ k, v }: { k: string; v: string }) {
   return (
     <div className="grid grid-cols-[140px_1fr] gap-2">
-      <dt className="text-muted-foreground">{k}</dt><dd>{v}</dd>
+      <dt className="text-muted-foreground">{k}</dt>
+      <dd>{v}</dd>
     </div>
   );
 }
@@ -406,17 +549,26 @@ function AssumptionsCard({ assumptions }: { assumptions: string[] }) {
 }
 
 function ComparisonCard({
-  comparison, best, allModels,
+  comparison,
+  best,
+  allModels,
 }: {
   comparison: Array<{
-    model: ForecastModel; mae: number | null; rmse: number | null;
-    mape: number | null; holdoutSize: number; parameters: Record<string, number | string>;
+    model: ForecastModel;
+    mae: number | null;
+    rmse: number | null;
+    mape: number | null;
+    holdoutSize: number;
+    parameters: Record<string, number | string>;
   }>;
   best: ForecastModel;
   allModels: ModelResult[];
 }) {
   return (
-    <Card title="Model comparison" action={<span className="font-mono text-[10px] text-muted-foreground">ranked by RMSE</span>}>
+    <Card
+      title="Model comparison"
+      action={<span className="font-mono text-[10px] text-muted-foreground">ranked by RMSE</span>}
+    >
       <div className="overflow-x-auto">
         <table className="w-full border-separate border-spacing-0 text-sm">
           <thead>
@@ -433,15 +585,32 @@ function ComparisonCard({
             {comparison.map((c) => (
               <tr key={c.model} className={c.model === best ? "bg-primary/5" : ""}>
                 <td className="border-t border-border px-2 py-2 font-medium">
-                  {MODEL_LABELS[c.model]} {c.model === best && <span className="ml-1 rounded bg-emerald/20 px-1.5 py-0.5 font-mono text-[10px] text-emerald">BEST</span>}
+                  {MODEL_LABELS[c.model]}{" "}
+                  {c.model === best && (
+                    <span className="ml-1 rounded bg-emerald/20 px-1.5 py-0.5 font-mono text-[10px] text-emerald">
+                      BEST
+                    </span>
+                  )}
                 </td>
                 <td className="border-t border-border px-2 py-2 font-mono text-xs text-muted-foreground">
-                  {Object.keys(c.parameters).length === 0 ? "—" : Object.entries(c.parameters).map(([k, v]) => `${k}=${v}`).join(", ")}
+                  {Object.keys(c.parameters).length === 0
+                    ? "—"
+                    : Object.entries(c.parameters)
+                        .map(([k, v]) => `${k}=${v}`)
+                        .join(", ")}
                 </td>
-                <td className="border-t border-border px-2 py-2 text-right font-mono tabular-nums">{fmtNum(c.mae)}</td>
-                <td className="border-t border-border px-2 py-2 text-right font-mono tabular-nums">{fmtNum(c.rmse)}</td>
-                <td className="border-t border-border px-2 py-2 text-right font-mono tabular-nums">{c.mape === null ? "—" : `${fmtNum(c.mape)}%`}</td>
-                <td className="border-t border-border px-2 py-2 text-right font-mono tabular-nums">{c.holdoutSize}</td>
+                <td className="border-t border-border px-2 py-2 text-right font-mono tabular-nums">
+                  {fmtNum(c.mae)}
+                </td>
+                <td className="border-t border-border px-2 py-2 text-right font-mono tabular-nums">
+                  {fmtNum(c.rmse)}
+                </td>
+                <td className="border-t border-border px-2 py-2 text-right font-mono tabular-nums">
+                  {c.mape === null ? "—" : `${fmtNum(c.mape)}%`}
+                </td>
+                <td className="border-t border-border px-2 py-2 text-right font-mono tabular-nums">
+                  {c.holdoutSize}
+                </td>
               </tr>
             ))}
           </tbody>

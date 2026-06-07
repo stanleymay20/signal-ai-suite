@@ -3,7 +3,8 @@ import type { DistributionResult, HistogramBin } from "./types";
 function quantile(sorted: number[], q: number): number {
   if (sorted.length === 0) return NaN;
   const pos = (sorted.length - 1) * q;
-  const lo = Math.floor(pos), hi = Math.ceil(pos);
+  const lo = Math.floor(pos),
+    hi = Math.ceil(pos);
   if (lo === hi) return sorted[lo];
   return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
 }

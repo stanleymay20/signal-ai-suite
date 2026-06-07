@@ -33,7 +33,12 @@ describe("buildSeries", () => {
       { d: "2024-01-01", v: 10 },
       { d: "2024-01-01", v: 20 },
     ];
-    const r = buildSeries(rows, { dateColumn: "d", targetColumn: "v", granularity: "day", aggregate: "sum" });
+    const r = buildSeries(rows, {
+      dateColumn: "d",
+      targetColumn: "v",
+      granularity: "day",
+      aggregate: "sum",
+    });
     expect(r.points[0].v).toBe(30);
   });
 

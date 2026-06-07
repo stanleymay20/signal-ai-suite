@@ -2,7 +2,11 @@ import { describe, it, expect } from "vitest";
 import { movingAverage, defaultMovingAverageWindows } from "../movingAverage";
 import type { TimePoint } from "../types";
 
-const tp = (i: number, v: number): TimePoint => ({ t: new Date(2024, 0, 1 + i).toISOString(), v, n: 1 });
+const tp = (i: number, v: number): TimePoint => ({
+  t: new Date(2024, 0, 1 + i).toISOString(),
+  v,
+  n: 1,
+});
 
 describe("movingAverage", () => {
   it("returns null until window fills, then trailing average", () => {

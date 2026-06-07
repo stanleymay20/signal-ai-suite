@@ -41,9 +41,12 @@ function generate(
   period: number | null,
 ): ForecastPoint[] {
   switch (model) {
-    case "naive": return predictNaive(history, futureTs);
-    case "moving_average": return predictMovingAverage(history, futureTs, maWindow);
-    case "linear_trend": return predictLinearTrend(history, futureTs);
+    case "naive":
+      return predictNaive(history, futureTs);
+    case "moving_average":
+      return predictMovingAverage(history, futureTs, maWindow);
+    case "linear_trend":
+      return predictLinearTrend(history, futureTs);
     case "seasonal_naive":
       if (!period || history.length < period) return predictNaive(history, futureTs);
       return predictSeasonalNaive(history, futureTs, period);
@@ -62,7 +65,10 @@ function buildIntervals(points: ForecastPoint[], std: number, z: number): Confid
 function modelAssumptions(model: ForecastModel, params: Record<string, number | string>): string[] {
   switch (model) {
     case "naive":
-      return ["Future values equal the last observed value.", "No trend or seasonality is modelled."];
+      return [
+        "Future values equal the last observed value.",
+        "No trend or seasonality is modelled.",
+      ];
     case "moving_average":
       return [
         `Future values equal the mean of the last ${params.window} observations.`,
@@ -94,10 +100,16 @@ export function runForecast(history: TimePoint[], opts: RunForecastOptions): For
   const enabled = opts.models ?? ALL_MODELS;
 
   const n = history.length;
-  const maWindow = Math.max(2, Math.min(opts.movingAverageWindow ?? 6, Math.max(2, Math.floor(n / 3))));
+  const maWindow = Math.max(
+    2,
+    Math.min(opts.movingAverageWindow ?? 6, Math.max(2, Math.floor(n / 3))),
+  );
 
   // Holdout split
-  const holdoutCap = Math.min(opts.horizon, Math.max(1, Math.floor(n * (opts.holdoutFraction ?? 0.2))));
+  const holdoutCap = Math.min(
+    opts.horizon,
+    Math.max(1, Math.floor(n * (opts.holdoutFraction ?? 0.2))),
+  );
   const trainSize = n - holdoutCap;
   const canBacktest = trainSize >= 2 && holdoutCap >= 1;
   const train = canBacktest ? history.slice(0, trainSize) : history;

@@ -1,9 +1,25 @@
 import type { SeasonalityBucket, SeasonalityResult, TimePoint } from "./types";
 
-const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTH_LABELS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 const DOW_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-function meanBuckets(map: Map<number, { sum: number; n: number }>, labels: string[]): SeasonalityBucket[] {
+function meanBuckets(
+  map: Map<number, { sum: number; n: number }>,
+  labels: string[],
+): SeasonalityBucket[] {
   return labels.map((label, i) => {
     const e = map.get(i);
     return {
@@ -35,9 +51,13 @@ export function computeSeasonality(points: TimePoint[]): SeasonalityResult {
     const dowJsSunday = d.getUTCDay();
     const dow = (dowJsSunday + 6) % 7; // Mon=0..Sun=6
     const mb = monthMap.get(m) ?? { sum: 0, n: 0 };
-    mb.sum += p.v; mb.n += 1; monthMap.set(m, mb);
+    mb.sum += p.v;
+    mb.n += 1;
+    monthMap.set(m, mb);
     const db = dowMap.get(dow) ?? { sum: 0, n: 0 };
-    db.sum += p.v; db.n += 1; dowMap.set(dow, db);
+    db.sum += p.v;
+    db.n += 1;
+    dowMap.set(dow, db);
   }
 
   const monthOfYear = meanBuckets(monthMap, MONTH_LABELS);
@@ -50,9 +70,16 @@ export function computeSeasonality(points: TimePoint[]): SeasonalityResult {
 
   let strongest: SeasonalityResult["strongest"] = null;
   let strength = 0;
-  if (monthsActive >= 6 && cvMonth >= cvDow) { strongest = "monthOfYear"; strength = cvMonth; }
-  else if (dowActive >= 5) { strongest = "dayOfWeek"; strength = cvDow; }
-  else if (monthsActive >= 3) { strongest = "monthOfYear"; strength = cvMonth; }
+  if (monthsActive >= 6 && cvMonth >= cvDow) {
+    strongest = "monthOfYear";
+    strength = cvMonth;
+  } else if (dowActive >= 5) {
+    strongest = "dayOfWeek";
+    strength = cvDow;
+  } else if (monthsActive >= 3) {
+    strongest = "monthOfYear";
+    strength = cvMonth;
+  }
 
   const detected = strength >= 0.1;
 

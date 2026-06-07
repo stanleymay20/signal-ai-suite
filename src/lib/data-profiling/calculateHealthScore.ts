@@ -25,7 +25,8 @@ export function calculateHealthScore(d: Input): number {
     const unknownPct = d.columns.filter((c) => c.dataType === "unknown").length / d.columns.length;
     score -= Math.min(15, unknownPct * 100 * 0.3);
 
-    const constantPct = d.columns.filter((c) => c.stats.count > 0 && c.uniqueRatio === 0).length / d.columns.length;
+    const constantPct =
+      d.columns.filter((c) => c.stats.count > 0 && c.uniqueRatio === 0).length / d.columns.length;
     score -= Math.min(10, constantPct * 100 * 0.2);
   }
 
