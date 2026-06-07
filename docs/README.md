@@ -33,6 +33,7 @@ is derived from real DB rows, not from the model.
 | [09 — Reporting Pipeline](./09-reporting-pipeline.md) | Phase 7 — hybrid deterministic + AI narrative reports, PDF/PPTX |
 | [10 — Observability & Admin](./10-observability.md) | Phase 8 — `usage_events`, telemetry helper, admin control center |
 | [11 — Enterprise Hardening](./11-enterprise-hardening.md) | Phase 9a — rate limits, signed-URL exports, job queue, retention, user mgmt |
+| [12 — Deployment Checklist](./12-deployment-checklist.md) | Phase 9b — env vars, Supabase setup, buckets, pg_cron, monitoring, rollback |
 
 ## Quality signals at Phase 9a
 
