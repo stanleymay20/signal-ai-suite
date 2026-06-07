@@ -72,10 +72,11 @@ function AuthPage() {
   async function handleGoogle() {
     setLoading(true);
     try {
-      // Lovable broker requires the live origin; it appends its own OAuth path.
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-      });
+      // Let the Lovable broker default the redirect_uri to the current origin.
+      // Passing an explicit redirect_uri can cause "State verification failed"
+      // when the initiate and callback origins differ (preview vs published,
+      // in-app browsers with partitioned storage, etc.).
+      const result = await lovable.auth.signInWithOAuth("google");
       if (result.error) {
         toast.error(result.error.message || "Google sign-in failed");
         setLoading(false);
