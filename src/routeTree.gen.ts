@@ -19,6 +19,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedWorkspacesWorkspaceIdRouteImport } from './routes/_authenticated/workspaces.$workspaceId'
 import { Route as AuthenticatedDatasetsDatasetIdRouteImport } from './routes/_authenticated/datasets_.$datasetId'
+import { Route as ApiPublicHooksJobsTickRouteImport } from './routes/api/public/hooks/jobs-tick'
 import { Route as AuthenticatedDatasetsDatasetIdReportsRouteImport } from './routes/_authenticated/datasets_.$datasetId.reports'
 import { Route as AuthenticatedDatasetsDatasetIdForecastRouteImport } from './routes/_authenticated/datasets_.$datasetId.forecast'
 import { Route as AuthenticatedDatasetsDatasetIdChatRouteImport } from './routes/_authenticated/datasets_.$datasetId.chat'
@@ -76,6 +77,11 @@ const AuthenticatedDatasetsDatasetIdRoute =
     path: '/datasets/$datasetId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicHooksJobsTickRoute = ApiPublicHooksJobsTickRouteImport.update({
+  id: '/api/public/hooks/jobs-tick',
+  path: '/api/public/hooks/jobs-tick',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedDatasetsDatasetIdReportsRoute =
   AuthenticatedDatasetsDatasetIdReportsRouteImport.update({
     id: '/reports',
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/datasets/$datasetId/chat': typeof AuthenticatedDatasetsDatasetIdChatRoute
   '/datasets/$datasetId/forecast': typeof AuthenticatedDatasetsDatasetIdForecastRoute
   '/datasets/$datasetId/reports': typeof AuthenticatedDatasetsDatasetIdReportsRoute
+  '/api/public/hooks/jobs-tick': typeof ApiPublicHooksJobsTickRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/datasets/$datasetId/chat': typeof AuthenticatedDatasetsDatasetIdChatRoute
   '/datasets/$datasetId/forecast': typeof AuthenticatedDatasetsDatasetIdForecastRoute
   '/datasets/$datasetId/reports': typeof AuthenticatedDatasetsDatasetIdReportsRoute
+  '/api/public/hooks/jobs-tick': typeof ApiPublicHooksJobsTickRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/_authenticated/datasets_/$datasetId/chat': typeof AuthenticatedDatasetsDatasetIdChatRoute
   '/_authenticated/datasets_/$datasetId/forecast': typeof AuthenticatedDatasetsDatasetIdForecastRoute
   '/_authenticated/datasets_/$datasetId/reports': typeof AuthenticatedDatasetsDatasetIdReportsRoute
+  '/api/public/hooks/jobs-tick': typeof ApiPublicHooksJobsTickRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -174,6 +183,7 @@ export interface FileRouteTypes {
     | '/datasets/$datasetId/chat'
     | '/datasets/$datasetId/forecast'
     | '/datasets/$datasetId/reports'
+    | '/api/public/hooks/jobs-tick'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/datasets/$datasetId/chat'
     | '/datasets/$datasetId/forecast'
     | '/datasets/$datasetId/reports'
+    | '/api/public/hooks/jobs-tick'
   id:
     | '__root__'
     | '/'
@@ -207,6 +218,7 @@ export interface FileRouteTypes {
     | '/_authenticated/datasets_/$datasetId/chat'
     | '/_authenticated/datasets_/$datasetId/forecast'
     | '/_authenticated/datasets_/$datasetId/reports'
+    | '/api/public/hooks/jobs-tick'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -214,6 +226,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiPublicHooksJobsTickRoute: typeof ApiPublicHooksJobsTickRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -287,6 +300,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/datasets/$datasetId'
       preLoaderRoute: typeof AuthenticatedDatasetsDatasetIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/hooks/jobs-tick': {
+      id: '/api/public/hooks/jobs-tick'
+      path: '/api/public/hooks/jobs-tick'
+      fullPath: '/api/public/hooks/jobs-tick'
+      preLoaderRoute: typeof ApiPublicHooksJobsTickRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/datasets_/$datasetId/reports': {
       id: '/_authenticated/datasets_/$datasetId/reports'
@@ -393,6 +413,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiPublicHooksJobsTickRoute: ApiPublicHooksJobsTickRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -57,20 +57,18 @@ type ReportDetail = {
   created_at: string;
 };
 
-function downloadBase64(filename: string, contentType: string, base64: string) {
-  const bin = atob(base64);
-  const arr = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-  const blob = new Blob([arr], { type: contentType });
-  const url = URL.createObjectURL(blob);
+function downloadSigned(filename: string, signedUrl: string) {
+  // Open the signed URL — Storage forces a download via the response
+  // Content-Disposition header (we pass download=filename when signing).
   const a = document.createElement("a");
-  a.href = url;
+  a.href = signedUrl;
   a.download = filename;
+  a.rel = "noopener";
   document.body.appendChild(a);
   a.click();
   a.remove();
-  URL.revokeObjectURL(url);
 }
+
 
 function ReportsPage() {
   const { datasetId } = Route.useParams();
@@ -123,14 +121,15 @@ function ReportsPage() {
 
   const pdfMut = useMutation({
     mutationFn: (reportId: string) => pdf({ data: { reportId } }),
-    onSuccess: (r) => downloadBase64(r.filename, r.contentType, r.base64),
+    onSuccess: (r) => downloadSigned(r.filename, r.signedUrl),
     onError: (e: Error) => toast.error(e.message),
   });
   const pptxMut = useMutation({
     mutationFn: (reportId: string) => pptx({ data: { reportId } }),
-    onSuccess: (r) => downloadBase64(r.filename, r.contentType, r.base64),
+    onSuccess: (r) => downloadSigned(r.filename, r.signedUrl),
     onError: (e: Error) => toast.error(e.message),
   });
+
 
   return (
     <AppShell

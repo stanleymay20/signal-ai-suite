@@ -462,6 +462,78 @@ export type Database = {
           },
         ]
       }
+      jobs: {
+        Row: {
+          attempts: number
+          created_at: string
+          created_by: string
+          dataset_id: string | null
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          max_attempts: number
+          payload: Json
+          result: Json | null
+          scheduled_at: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["job_status"]
+          type: Database["public"]["Enums"]["job_type"]
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          created_by: string
+          dataset_id?: string | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          max_attempts?: number
+          payload?: Json
+          result?: Json | null
+          scheduled_at?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["job_status"]
+          type: Database["public"]["Enums"]["job_type"]
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          created_by?: string
+          dataset_id?: string | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          max_attempts?: number
+          payload?: Json
+          result?: Json | null
+          scheduled_at?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["job_status"]
+          type?: Database["public"]["Enums"]["job_type"]
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_dataset_id_fkey"
+            columns: ["dataset_id"]
+            isOneToOne: false
+            referencedRelation: "datasets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jobs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           citations_json: Json
@@ -527,6 +599,27 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
+        }
+        Relationships: []
+      }
+      rate_limits: {
+        Row: {
+          action: string
+          count: number
+          user_id: string
+          window_start: string
+        }
+        Insert: {
+          action: string
+          count?: number
+          user_id: string
+          window_start: string
+        }
+        Update: {
+          action?: string
+          count?: number
+          user_id?: string
+          window_start?: string
         }
         Relationships: []
       }
@@ -731,6 +824,42 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_rate_limit: {
+        Args: {
+          _action: string
+          _max: number
+          _user_id: string
+          _window_seconds: number
+        }
+        Returns: Json
+      }
+      claim_next_job: {
+        Args: never
+        Returns: {
+          attempts: number
+          created_at: string
+          created_by: string
+          dataset_id: string | null
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          max_attempts: number
+          payload: Json
+          result: Json | null
+          scheduled_at: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["job_status"]
+          type: Database["public"]["Enums"]["job_type"]
+          updated_at: string
+          workspace_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "jobs"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -745,6 +874,14 @@ export type Database = {
       is_workspace_owner: {
         Args: { _user_id: string; _workspace_id: string }
         Returns: boolean
+      }
+      purge_telemetry_retention: {
+        Args: {
+          _audit_days?: number
+          _rate_limit_days?: number
+          _usage_days?: number
+        }
+        Returns: Json
       }
     }
     Enums: {
@@ -762,6 +899,13 @@ export type Database = {
         | "unknown"
       dataset_status: "uploading" | "profiling" | "ready" | "failed"
       forecast_status: "pending" | "running" | "ready" | "failed"
+      job_status: "queued" | "running" | "succeeded" | "failed" | "cancelled"
+      job_type:
+        | "dataset_profile"
+        | "analysis"
+        | "forecast"
+        | "anomaly"
+        | "report"
       message_role: "user" | "assistant" | "system"
       report_type:
         | "executive_summary"
@@ -912,6 +1056,14 @@ export const Constants = {
       ],
       dataset_status: ["uploading", "profiling", "ready", "failed"],
       forecast_status: ["pending", "running", "ready", "failed"],
+      job_status: ["queued", "running", "succeeded", "failed", "cancelled"],
+      job_type: [
+        "dataset_profile",
+        "analysis",
+        "forecast",
+        "anomaly",
+        "report",
+      ],
       message_role: ["user", "assistant", "system"],
       report_type: [
         "executive_summary",

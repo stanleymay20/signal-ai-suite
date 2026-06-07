@@ -21,6 +21,7 @@ import {
   type ReportType,
 } from "./reports";
 import { startTelemetry, type MinimalUsageClient } from "./observability/telemetry";
+import { enforceRateLimit, RATE_LIMITS } from "./observability/rateLimit";
 
 const uuid = z.string().uuid();
 const reportType = z.enum([
@@ -35,16 +36,8 @@ function toJson<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T;
 }
 
-function bytesToBase64(bytes: Uint8Array): string {
-  // Worker + browser-safe base64 encoder (no Buffer required at the type level).
-  let bin = "";
-  const chunk = 0x8000;
-  for (let i = 0; i < bytes.length; i += chunk) {
-    bin += String.fromCharCode(...bytes.subarray(i, i + chunk));
-  }
-  // btoa exists in Workers and Node ≥16.
-  return btoa(bin);
-}
+
+
 
 // Loading evidence is inlined inside generateReport to avoid leaking the
 // Supabase client's generic type through a helper signature.
@@ -109,6 +102,7 @@ export const generateReport = createServerFn({ method: "POST" })
       metadata: { type: data.type },
     });
     try {
+      await enforceRateLimit(supabase, userId, RATE_LIMITS.report);
       const { data: ds, error: dErr } = await supabase
         .from("datasets")
         .select("id, filename, workspace_id")
@@ -262,57 +256,75 @@ function rowToReportModel(row: {
   };
 }
 
+async function exportReport(
+  context: { supabase: { from: (t: string) => unknown }; userId: string },
+  reportId: string,
+  format: "pdf" | "pptx",
+): Promise<{
+  signedUrl: string;
+  path: string;
+  expiresIn: number;
+  filename: string;
+  contentType: string;
+}> {
+  await enforceRateLimit(context.supabase, context.userId, RATE_LIMITS.export);
+
+  const sb = context.supabase as unknown as {
+    from: (t: string) => {
+      select: (s: string) => {
+        eq: (k: string, v: string) => {
+          maybeSingle: () => Promise<{ data: Record<string, unknown> | null; error: { message: string } | null }>;
+        };
+      };
+      insert: (v: Record<string, unknown>) => Promise<unknown>;
+    };
+  };
+  const { data: row, error } = await sb.from("reports").select("*").eq("id", reportId).maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!row) throw new Error("Report not found");
+
+  const model = rowToReportModel(row as never);
+  const bytes = format === "pdf" ? await renderReportPdf(model) : await renderReportPptx(model);
+  const filename = `${slugify(model.title)}.${format}`;
+  const contentType =
+    format === "pdf"
+      ? "application/pdf"
+      : "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+
+  const { uploadAndSignReport } = await import("./observability/reportStorage");
+  const signed = await uploadAndSignReport({
+    workspaceId: (row as { workspace_id: string }).workspace_id,
+    reportId: (row as { id: string }).id,
+    format,
+    filename,
+    contentType,
+    bytes,
+  });
+
+  await sb.from("audit_logs").insert({
+    actor_id: context.userId,
+    action: "report.exported",
+    metadata: { report_id: (row as { id: string }).id, format, path: signed.path, bytes: signed.bytes },
+  });
+
+  return {
+    signedUrl: signed.signedUrl,
+    path: signed.path,
+    expiresIn: signed.expiresIn,
+    filename,
+    contentType,
+  };
+}
+
 export const exportReportPdf = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ reportId: uuid }).parse(input))
-  .handler(async ({ data, context }) => {
-    const { data: row, error } = await context.supabase
-      .from("reports")
-      .select("*")
-      .eq("id", data.reportId)
-      .maybeSingle();
-    if (error) throw new Error(error.message);
-    if (!row) throw new Error("Report not found");
-
-    const model = rowToReportModel(row);
-    const bytes = await renderReportPdf(model);
-    await context.supabase.from("audit_logs").insert({
-      actor_id: context.userId,
-      action: "report.exported",
-      metadata: { report_id: row.id, format: "pdf" },
-    });
-    return {
-      filename: `${slugify(row.title)}.pdf`,
-      contentType: "application/pdf",
-      base64: bytesToBase64(bytes),
-    };
-  });
+  .handler(async ({ data, context }) => exportReport(context, data.reportId, "pdf"));
 
 export const exportReportPptx = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ reportId: uuid }).parse(input))
-  .handler(async ({ data, context }) => {
-    const { data: row, error } = await context.supabase
-      .from("reports")
-      .select("*")
-      .eq("id", data.reportId)
-      .maybeSingle();
-    if (error) throw new Error(error.message);
-    if (!row) throw new Error("Report not found");
-
-    const model = rowToReportModel(row);
-    const bytes = await renderReportPptx(model);
-    await context.supabase.from("audit_logs").insert({
-      actor_id: context.userId,
-      action: "report.exported",
-      metadata: { report_id: row.id, format: "pptx" },
-    });
-    return {
-      filename: `${slugify(row.title)}.pptx`,
-      contentType: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-      base64: bytesToBase64(bytes),
-    };
-  });
+  .handler(async ({ data, context }) => exportReport(context, data.reportId, "pptx"));
 
 function slugify(s: string): string {
   return (
@@ -323,3 +335,4 @@ function slugify(s: string): string {
       .slice(0, 80) || "report"
   );
 }
+

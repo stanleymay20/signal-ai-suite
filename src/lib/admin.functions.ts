@@ -119,3 +119,64 @@ export const listUsageEvents = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return rows ?? [];
   });
+
+// ============================================================================
+// USER & WORKSPACE MANAGEMENT (admin-only)
+// ============================================================================
+
+const roleEnum = z.enum(["admin", "member"]);
+
+export const listAllUsers = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({ limit: z.number().int().min(1).max(500).optional() }).parse(input ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    await ensureAdmin(context.supabase, context.userId);
+    const { data: rows, error } = await context.supabase
+      .from("profiles")
+      .select("id, full_name, email, avatar_url, role, created_at")
+      .order("created_at", { ascending: false })
+      .limit(data.limit ?? 200);
+    if (error) throw new Error(error.message);
+    return rows ?? [];
+  });
+
+export const setUserRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({ userId: z.string().uuid(), role: roleEnum }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await ensureAdmin(context.supabase, context.userId);
+    if (data.userId === context.userId && data.role !== "admin") {
+      throw new Error("You cannot demote yourself");
+    }
+    const { error } = await context.supabase
+      .from("profiles")
+      .update({ role: data.role } as never)
+      .eq("id", data.userId);
+    if (error) throw new Error(error.message);
+    await context.supabase.from("audit_logs").insert({
+      actor_id: context.userId,
+      action: "admin.role_changed",
+      metadata: { target_user_id: data.userId, new_role: data.role },
+    });
+    return { ok: true };
+  });
+
+export const listAllWorkspaces = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({ limit: z.number().int().min(1).max(500).optional() }).parse(input ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    await ensureAdmin(context.supabase, context.userId);
+    const { data: rows, error } = await context.supabase
+      .from("workspaces")
+      .select("id, name, description, owner_id, created_at")
+      .order("created_at", { ascending: false })
+      .limit(data.limit ?? 200);
+    if (error) throw new Error(error.message);
+    return rows ?? [];
+  });

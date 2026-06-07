@@ -17,6 +17,7 @@ import {
 import { buildSystemMessage, suggestFollowups } from "./ai/prompts";
 import { resolveAIProvider, type ChatMessage } from "./ai/providers";
 import { startTelemetry, estimateCostUsd, type MinimalUsageClient } from "./observability/telemetry";
+import { enforceRateLimit, RATE_LIMITS } from "./observability/rateLimit";
 
 const uuid = z.string().uuid();
 
@@ -117,6 +118,7 @@ export const sendChatMessage = createServerFn({ method: "POST" })
       resourceId: data.conversationId,
     });
     try {
+    await enforceRateLimit(supabase, context.userId, RATE_LIMITS.chat);
     const { data: conv, error: cErr } = await supabase
       .from("conversations")
       .select("id, dataset_id, workspace_id")
