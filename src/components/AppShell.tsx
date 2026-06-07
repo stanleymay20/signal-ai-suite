@@ -10,6 +10,14 @@ import {
 } from "lucide-react";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 
@@ -33,26 +41,35 @@ export function AppShell({
   const router = useRouter();
   const qc = useQueryClient();
 
-  const adminQ = useQuery({
-    queryKey: ["nav-is-admin"],
+  const meQ = useQuery({
+    queryKey: ["nav-current-user"],
     queryFn: async () => {
       const { data: u } = await supabase.auth.getUser();
-      if (!u.user) return false;
+      if (!u.user) return null;
       const { data } = await supabase
         .from("profiles")
-        .select("role")
+        .select("role, full_name, email")
         .eq("id", u.user.id)
         .maybeSingle();
-      return data?.role === "admin";
+      return {
+        id: u.user.id,
+        email: data?.email ?? u.user.email ?? "",
+        fullName: data?.full_name ?? null,
+        role: data?.role ?? null,
+      };
     },
     staleTime: 60_000,
   });
+  const isAdmin = meQ.data?.role === "admin";
 
   async function handleSignOut() {
-    await qc.cancelQueries();
-    qc.clear();
-    await supabase.auth.signOut();
-    router.navigate({ to: "/auth", replace: true });
+    try {
+      await qc.cancelQueries();
+      qc.clear();
+      await supabase.auth.signOut();
+    } finally {
+      router.navigate({ to: "/auth", replace: true });
+    }
   }
 
   return (
@@ -76,7 +93,7 @@ export function AppShell({
               {label}
             </Link>
           ))}
-          {adminQ.data === true && (
+          {isAdmin && (
             <Link
               to="/admin"
               className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-sidebar-foreground/80 transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -108,9 +125,42 @@ export function AppShell({
           </div>
           <div className="flex items-center gap-2">
             {actions}
-            <Button variant="ghost" size="icon" className="md:hidden" onClick={handleSignOut}>
-              <UserIcon className="h-4 w-4" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden" aria-label="Account menu">
+                  <UserIcon className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="flex flex-col">
+                  <span className="text-sm font-medium">{meQ.data?.fullName ?? "Signed in"}</span>
+                  {meQ.data?.email && (
+                    <span className="text-xs font-normal text-muted-foreground">
+                      {meQ.data.email}
+                    </span>
+                  )}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {NAV.map(({ to, label, icon: Icon }) => (
+                  <DropdownMenuItem key={to} asChild>
+                    <Link to={to} className="flex items-center gap-2">
+                      <Icon className="h-4 w-4" /> {label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin" className="flex items-center gap-2">
+                      <ShieldCheck className="h-4 w-4" /> Admin
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={handleSignOut} className="text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
         <div className="flex-1 px-6 py-6">{children}</div>
