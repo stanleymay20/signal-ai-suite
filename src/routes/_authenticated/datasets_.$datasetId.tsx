@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import {
   ArrowLeft, Download, Trash2, AlertTriangle, CheckCircle2, AlertCircle,
-  Info, Loader2, LineChart as LineChartIcon, TrendingUp,
+  Info, Loader2, LineChart as LineChartIcon, TrendingUp, Activity,
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
