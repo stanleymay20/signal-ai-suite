@@ -4,6 +4,9 @@
 
 import pptxgen from "pptxgenjs";
 import type { ReportModel, ReportSection } from "./types";
+import { BRAND_LOGO_PNG_BASE64, BRAND_NAME, BRAND_TAGLINE } from "./brandLogo";
+
+const LOGO_DATA_URL = `data:image/png;base64,${BRAND_LOGO_PNG_BASE64}`;
 
 const SLIDE_W = 13.333; // 16:9 inches
 const SLIDE_H = 7.5;
@@ -172,12 +175,32 @@ function renderSectionSlide(pres: pptxgen, report: ReportModel, section: ReportS
 function renderTitleSlide(pres: pptxgen, report: ReportModel): void {
   const slide = pres.addSlide();
   slide.background = { color: ACCENT };
+  slide.addImage({ data: LOGO_DATA_URL, x: 0.6, y: 0.6, w: 1.1, h: 1.1 });
+  slide.addText(BRAND_NAME, {
+    x: 1.85,
+    y: 0.75,
+    w: SLIDE_W - 2.5,
+    h: 0.5,
+    fontSize: 22,
+    bold: true,
+    color: "FFFFFF",
+    fontFace: "Calibri",
+  });
+  slide.addText(BRAND_TAGLINE, {
+    x: 1.85,
+    y: 1.25,
+    w: SLIDE_W - 2.5,
+    h: 0.35,
+    fontSize: 11,
+    color: "DBE3FF",
+    fontFace: "Calibri",
+  });
   slide.addText(report.title, {
     x: 0.6,
-    y: 2.3,
+    y: 2.6,
     w: SLIDE_W - 1.2,
-    h: 1.2,
-    fontSize: 36,
+    h: 1.4,
+    fontSize: 34,
     bold: true,
     color: "FFFFFF",
     fontFace: "Calibri",
@@ -186,7 +209,7 @@ function renderTitleSlide(pres: pptxgen, report: ReportModel): void {
     `Generated ${new Date(report.generatedAt).toUTCString()}\nRisk ${report.risk.score}/100 — ${report.risk.level}`,
     {
       x: 0.6,
-      y: 3.6,
+      y: 4.0,
       w: SLIDE_W - 1.2,
       h: 1.0,
       fontSize: 16,

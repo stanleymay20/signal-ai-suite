@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Database, FolderKanban, MessageSquare, TrendingUp, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — TimeSeriesGPT" }] }),
+  head: () => ({ meta: [{ title: "Dashboard — Signal AI Suite" }] }),
   component: Dashboard,
 });
 
@@ -50,7 +50,7 @@ function Dashboard() {
   return (
     <AppShell
       title={`Good to see you, ${displayName}.`}
-      subtitle="Your TimeSeriesGPT command center."
+      subtitle="Your Signal AI Suite command center."
       actions={
         <Link to="/workspaces">
           <Button size="sm">

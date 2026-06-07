@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_authenticated/workspaces/$workspaceId")({
-  head: () => ({ meta: [{ title: "Workspace — TimeSeriesGPT" }] }),
+  head: () => ({ meta: [{ title: "Workspace — Signal AI Suite" }] }),
   component: WorkspaceDetail,
 });
 

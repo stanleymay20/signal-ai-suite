@@ -14,10 +14,10 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — TimeSeriesGPT" },
+      { title: "Sign in — Signal AI Suite" },
       {
         name: "description",
-        content: "Sign in to TimeSeriesGPT to analyze and forecast your time-series data.",
+        content: "Sign in to Signal AI Suite to analyze and forecast your time-series data.",
       },
     ],
   }),
@@ -125,7 +125,7 @@ function AuthPage() {
             grounded in your own numbers.
           </p>
           <div className="rounded-lg border border-primary-foreground/15 bg-primary-foreground/5 p-4 font-mono text-xs text-primary-foreground/80">
-            <p className="text-gold">▍ Why teams pick TimeSeriesGPT</p>
+            <p className="text-gold">▍ Why teams pick Signal AI Suite</p>
             <ul className="mt-3 space-y-1.5">
               <li>· Explainable forecasts with confidence intervals</li>
               <li>· Multi-tenant workspaces, RLS by default</li>
@@ -138,12 +138,14 @@ function AuthPage() {
       {/* Auth pane */}
       <div className="flex items-center justify-center bg-background p-6">
         <div className="w-full max-w-md">
-          <div className="mb-8 lg:hidden">
-            <Logo />
+          <div className="mb-8 flex flex-col items-center text-center">
+            <Logo showTagline />
           </div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight">Welcome</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Sign in to your TimeSeriesGPT workspace.
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-center">
+            Welcome to Signal AI Suite
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground text-center">
+            Sign in to turn your data into decisions.
           </p>
 
           <Button

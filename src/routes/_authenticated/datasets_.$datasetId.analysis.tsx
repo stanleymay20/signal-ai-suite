@@ -48,7 +48,7 @@ import type {
 import type { ColumnProfile } from "@/lib/data-profiling/types";
 
 export const Route = createFileRoute("/_authenticated/datasets_/$datasetId/analysis")({
-  head: () => ({ meta: [{ title: "Analysis — TimeSeriesGPT" }] }),
+  head: () => ({ meta: [{ title: "Analysis — Signal AI Suite" }] }),
   component: AnalysisPage,
 });
 

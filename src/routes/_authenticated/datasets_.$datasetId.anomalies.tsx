@@ -31,7 +31,7 @@ import type {
 } from "@/lib/anomalies/types";
 
 export const Route = createFileRoute("/_authenticated/datasets_/$datasetId/anomalies")({
-  head: () => ({ meta: [{ title: "Anomalies — TimeSeriesGPT" }] }),
+  head: () => ({ meta: [{ title: "Anomalies — Signal AI Suite" }] }),
   component: AnomaliesPage,
 });
 

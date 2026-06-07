@@ -29,7 +29,7 @@ import {
 } from "@/lib/conversations.functions";
 
 export const Route = createFileRoute("/_authenticated/datasets_/$datasetId/chat")({
-  head: () => ({ meta: [{ title: "Chat — SignalGPT" }] }),
+  head: () => ({ meta: [{ title: "Chat — Signal AI Suite" }] }),
   component: ChatPage,
 });
 
@@ -306,8 +306,8 @@ function EmptyState({ onCreate, pending }: { onCreate: () => void; pending: bool
       <Sparkles className="h-8 w-8 text-primary" />
       <h2 className="font-display text-lg font-semibold">Start a conversation</h2>
       <p className="max-w-md text-sm text-muted-foreground">
-        SignalGPT explains the evidence already produced by your analysis, forecast, and anomaly
-        runs — every answer comes with citations.
+        Signal AI Suite explains the evidence already produced by your analysis, forecast, and
+        anomaly runs — every answer comes with citations.
       </p>
       <Button size="sm" onClick={onCreate} disabled={pending}>
         <MessageSquarePlus className="mr-1 h-4 w-4" /> New chat

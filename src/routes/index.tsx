@@ -14,13 +14,16 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "TimeSeriesGPT — Conversational Time-Series Intelligence" },
+      { title: "Signal AI Suite — Conversational Time-Series Intelligence" },
       {
         name: "description",
         content:
-          "Upload a CSV. Ask anything. TimeSeriesGPT forecasts, detects anomalies, and explains trends with grounded, auditable AI.",
+          "Upload a CSV. Ask anything. Signal AI Suite forecasts, detects anomalies, and explains trends with grounded, auditable AI.",
       },
-      { property: "og:title", content: "TimeSeriesGPT — Conversational Time-Series Intelligence" },
+      {
+        property: "og:title",
+        content: "Signal AI Suite — Conversational Time-Series Intelligence",
+      },
       {
         property: "og:description",
         content:
@@ -35,7 +38,7 @@ const FEATURES = [
   {
     icon: Brain,
     title: "Ask in natural language",
-    body: "Why did revenue spike in March? Forecast EMEA next quarter. TimeSeriesGPT answers — grounded in your data.",
+    body: "Why did revenue spike in March? Forecast EMEA next quarter. Signal AI Suite answers — grounded in your data.",
   },
   {
     icon: TrendingUp,
@@ -108,13 +111,13 @@ function Landing() {
           <div className="mx-auto max-w-3xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald" />
-              SignalGPT · v1 · Phase 1 Foundation
+              Signal AI Suite · v1 · Phase 1 Foundation
             </span>
             <h1 className="mt-6 font-display text-5xl font-semibold leading-[1.05] tracking-tight md:text-7xl">
               Talk to your <span className="gradient-gold-text">time series.</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-              TimeSeriesGPT is ChatGPT for analysts. Upload a dataset, ask anything, and get
+              Signal AI Suite is ChatGPT for analysts. Upload a dataset, ask anything, and get
               explainable forecasts, anomaly detection, and executive briefings — with every number
               traceable to source.
             </p>
@@ -256,8 +259,8 @@ function Landing() {
             No vendor lock-in. Ever.
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-primary-foreground/70">
-            TimeSeriesGPT speaks Ollama, vLLM, OpenAI-compatible APIs, Qwen, DeepSeek and Llama. Run
-            fully local for regulated industries.
+            Signal AI Suite speaks Ollama, vLLM, OpenAI-compatible APIs, Qwen, DeepSeek and Llama.
+            Run fully local for regulated industries.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-2 font-mono text-xs">
             {["Ollama", "vLLM", "OpenAI-compatible", "Qwen", "DeepSeek", "Llama", "Lovable AI"].map(
@@ -285,7 +288,7 @@ function Landing() {
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-muted-foreground md:flex-row">
           <Logo />
           <p className="font-mono text-xs">
-            © {new Date().getFullYear()} TimeSeriesGPT · SignalGPT
+            © {new Date().getFullYear()} Signal AI Suite · Signal AI Suite
           </p>
         </div>
       </footer>

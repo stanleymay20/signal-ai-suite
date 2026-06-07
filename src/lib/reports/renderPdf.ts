@@ -5,6 +5,7 @@
 
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import type { ReportModel, ReportSection } from "./types";
+import { BRAND_NAME, BRAND_TAGLINE, brandLogoPngBytes } from "./brandLogo";
 
 const PAGE_W = 612; // US Letter
 const PAGE_H = 792;
@@ -266,6 +267,7 @@ export async function renderReportPdf(report: ReportModel): Promise<Uint8Array> 
   const doc = await PDFDocument.create();
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
+  const logo = await doc.embedPng(brandLogoPngBytes());
   const ctx: Ctx = {
     doc,
     font,
@@ -273,6 +275,30 @@ export async function renderReportPdf(report: ReportModel): Promise<Uint8Array> 
     page: doc.addPage([PAGE_W, PAGE_H]),
     y: PAGE_H - MARGIN,
   };
+
+  // Cover brand header: logo + wordmark + tagline
+  const logoSize = 36;
+  ctx.page.drawImage(logo, {
+    x: MARGIN,
+    y: ctx.y - logoSize,
+    width: logoSize,
+    height: logoSize,
+  });
+  ctx.page.drawText(BRAND_NAME, {
+    x: MARGIN + logoSize + 10,
+    y: ctx.y - 18,
+    size: 14,
+    font: bold,
+    color: COLOR_ACCENT,
+  });
+  ctx.page.drawText(BRAND_TAGLINE, {
+    x: MARGIN + logoSize + 10,
+    y: ctx.y - 32,
+    size: 8,
+    font,
+    color: COLOR_MUTED,
+  });
+  ctx.y -= logoSize + 14;
 
   // Title block
   drawHeading(ctx, report.title, 1);
