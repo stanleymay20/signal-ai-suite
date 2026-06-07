@@ -6,6 +6,7 @@ import { buildSeries } from "./analysis/timeSeries";
 import { runAnomalyDetection } from "./anomalies/runAnomalyDetection";
 import type { AnomalyMethod, ForecastResidualSource, MethodConfig } from "./anomalies/types";
 import type { Granularity, TimePoint } from "./analysis/types";
+import { startTelemetry, type MinimalUsageClient } from "./observability/telemetry";
 
 const uuid = z.string().uuid();
 const granularitySchema = z.enum(["day", "week", "month", "quarter", "year"]);
@@ -99,6 +100,13 @@ export const runAnomalyDetectionFn = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const tele = startTelemetry(supabase as unknown as MinimalUsageClient, {
+      action: "anomaly.run",
+      actorId: userId,
+      resourceType: "dataset",
+      resourceId: data.datasetId,
+      metadata: { target: data.targetColumn },
+    });
 
     const { data: ds, error: dsErr } = await supabase
       .from("datasets")
@@ -205,6 +213,13 @@ export const runAnomalyDetectionFn = createServerFn({ method: "POST" })
         },
       });
 
+      await tele.success({
+        metadata: {
+          anomaly_run_id: runId,
+          total_anomalies: bundle.summary.totalAnomalies,
+          methods: bundle.methods,
+        },
+      });
       return { runId, totalAnomalies: bundle.summary.totalAnomalies };
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Anomaly detection failed";
@@ -212,6 +227,7 @@ export const runAnomalyDetectionFn = createServerFn({ method: "POST" })
         .from("anomaly_runs")
         .update({ status: "failed", error_message: msg })
         .eq("id", runId);
+      await tele.error(e, { metadata: { anomaly_run_id: runId } });
       throw new Error(msg);
     }
   });

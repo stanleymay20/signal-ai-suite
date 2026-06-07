@@ -16,6 +16,7 @@ import {
 } from "./ai/retrieval";
 import { buildSystemMessage, suggestFollowups } from "./ai/prompts";
 import { resolveAIProvider, type ChatMessage } from "./ai/providers";
+import { startTelemetry, estimateCostUsd, type MinimalUsageClient } from "./observability/telemetry";
 
 const uuid = z.string().uuid();
 
@@ -108,8 +109,14 @@ export const sendChatMessage = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase } = context;
-
-    // 1. Load conversation + dataset.
+    const telemetryClient = supabase as unknown as MinimalUsageClient;
+    const tele = startTelemetry(telemetryClient, {
+      action: "chat.message",
+      actorId: context.userId,
+      resourceType: "conversation",
+      resourceId: data.conversationId,
+    });
+    try {
     const { data: conv, error: cErr } = await supabase
       .from("conversations")
       .select("id, dataset_id, workspace_id")
@@ -196,6 +203,7 @@ export const sendChatMessage = createServerFn({ method: "POST" })
         .select("*")
         .single();
       if (aErr) throw new Error(aErr.message);
+      await tele.success({ metadata: { reason: "no_evidence" } });
       return {
         message: aRow,
         citations: [] as Citation[],
@@ -233,12 +241,20 @@ export const sendChatMessage = createServerFn({ method: "POST" })
 
     let answer: string;
     let usage: Record<string, unknown> = {};
+    let providerName: string | null = null;
+    let modelName: string | null = null;
+    let promptTokens = 0;
+    let completionTokens = 0;
     try {
       const result = await provider.chat(chatMessages, {
         temperature: 0.2,
         maxTokens: 1024,
       });
       answer = result.content || "(empty response)";
+      providerName = result.provider;
+      modelName = result.model;
+      promptTokens = result.usage.promptTokens ?? 0;
+      completionTokens = result.usage.completionTokens ?? 0;
       usage = {
         provider: result.provider,
         model: result.model,
@@ -273,9 +289,23 @@ export const sendChatMessage = createServerFn({ method: "POST" })
       .update({ updated_at: new Date().toISOString() })
       .eq("id", conv.id);
 
+    await tele.success({
+      provider: providerName,
+      model: modelName,
+      promptTokens,
+      completionTokens,
+      totalTokens: promptTokens + completionTokens,
+      costUsd: estimateCostUsd(modelName, promptTokens, completionTokens),
+      metadata: { citations: citations.length },
+    });
+
     return {
       message: aRow,
       citations,
       followups: suggestFollowups(pkg),
     };
+    } catch (err) {
+      await tele.error(err);
+      throw err;
+    }
   });

@@ -31,12 +31,15 @@ is derived from real DB rows, not from the model.
 | [07 — AI Grounding Flow](./07-ai-grounding-flow.md) | Evidence package, citation engine, prompts |
 | [08 — Release Notes](./08-release-notes-v0.7.0-rc1.md) | RC scope, phase log, known limitations |
 | [09 — Reporting Pipeline](./09-reporting-pipeline.md) | Phase 7 — hybrid deterministic + AI narrative reports, PDF/PPTX |
+| [10 — Observability & Admin](./10-observability.md) | Phase 8 — `usage_events`, telemetry helper, admin control center |
 
-## Quality signals at Phase 7
+## Quality signals at Phase 8
 
-- 154 unit tests passing
+- 169 unit tests passing
 - Typecheck clean, ESLint clean (0 errors)
 - CI green
-- RLS enforced on every user-facing table including `reports`
+- RLS enforced on every user-facing table including `reports` and `usage_events`
 - Audit log entries for `report.generated`, `report.deleted`, `report.exported`
+- Usage events recorded for `chat.message`, `report.generate`, `forecast.run`, `anomaly.run`
+- Admin Control Center at `/admin` (admin-role gated) — system health, AI cost, latency, top users, recent log
 - No AI-generated metrics, forecasts, anomalies, citations, or risk scores

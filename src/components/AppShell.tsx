@@ -1,10 +1,17 @@
 import type { ReactNode } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
-import { LayoutDashboard, FolderKanban, Database, LogOut, User as UserIcon } from "lucide-react";
+import {
+  LayoutDashboard,
+  FolderKanban,
+  Database,
+  LogOut,
+  User as UserIcon,
+  ShieldCheck,
+} from "lucide-react";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -25,6 +32,21 @@ export function AppShell({
 }) {
   const router = useRouter();
   const qc = useQueryClient();
+
+  const adminQ = useQuery({
+    queryKey: ["nav-is-admin"],
+    queryFn: async () => {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) return false;
+      const { data } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", u.user.id)
+        .maybeSingle();
+      return data?.role === "admin";
+    },
+    staleTime: 60_000,
+  });
 
   async function handleSignOut() {
     await qc.cancelQueries();
@@ -54,6 +76,19 @@ export function AppShell({
               {label}
             </Link>
           ))}
+          {adminQ.data === true && (
+            <Link
+              to="/admin"
+              className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-sidebar-foreground/80 transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              activeProps={{
+                className:
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium bg-sidebar-accent text-sidebar-accent-foreground border-l-2 border-gold",
+              }}
+            >
+              <ShieldCheck className="h-4 w-4" />
+              Admin
+            </Link>
+          )}
         </nav>
         <div className="border-t border-sidebar-border p-3">
           <button
