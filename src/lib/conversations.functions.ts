@@ -260,8 +260,8 @@ export const sendChatMessage = createServerFn({ method: "POST" })
         conversation_id: conv.id,
         role: "assistant",
         content: answer,
-        citations_json: citations as unknown as object,
-        token_usage_json: usage as unknown as object,
+        citations_json: JSON.parse(JSON.stringify(citations)),
+        token_usage_json: JSON.parse(JSON.stringify(usage)),
       })
       .select("*")
       .single();
