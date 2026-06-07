@@ -140,17 +140,23 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
+    let lastEvent: string | null = null;
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY") {
-        // User clicked the email reset link — send them to the reset screen.
         if (typeof window !== "undefined" && window.location.pathname !== "/reset-password") {
           router.navigate({ to: "/reset-password", replace: true });
         }
         return;
       }
-      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      // Only react to true session transitions. USER_UPDATED / TOKEN_REFRESHED
+      // can be emitted as a side-effect of getUser() inside route loaders,
+      // which would create an invalidation loop. Also de-dupe consecutive
+      // identical events that Supabase sometimes fires on tab focus.
+      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT") return;
+      if (event === lastEvent) return;
+      lastEvent = event;
       router.invalidate();
-      if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+      if (event === "SIGNED_IN") queryClient.invalidateQueries();
     });
     return () => sub.subscription.unsubscribe();
   }, [router, queryClient]);
