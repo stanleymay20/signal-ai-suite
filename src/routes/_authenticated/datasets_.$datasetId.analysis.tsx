@@ -53,7 +53,7 @@ function AnalysisPage() {
       nullable: c.nullable,
       uniqueRatio: c.unique_ratio ?? 0,
       missingPercentage: c.missing_percentage ?? 0,
-      stats: (c.stats ?? {}) as ColumnProfile["stats"],
+      stats: (c.stats ?? {}) as unknown as ColumnProfile["stats"],
     }));
   }, [dsQ.data]);
 
@@ -294,11 +294,11 @@ function TrendCard({
   anomalies: AnomalyPoint[]; targetColumn: string | null; granularity: string | null;
 }) {
   const chartData = useMemo(() => {
-    const byT: Record<string, { t: string; v: number } & Record<string, number | null>> = {};
+    const byT: Record<string, Record<string, string | number | null>> = {};
     for (const p of series) byT[p.t] = { t: p.t, v: p.v };
     for (const ma of movingAverages) {
       for (const p of ma.points) {
-        if (byT[p.t]) (byT[p.t] as Record<string, number | null>)[`ma${ma.window}`] = p.ma;
+        if (byT[p.t]) byT[p.t][`ma${ma.window}`] = p.ma;
       }
     }
     return Object.values(byT);
