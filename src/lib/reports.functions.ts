@@ -50,64 +50,8 @@ function bytesToBase64(bytes: Uint8Array): string {
   return btoa(bin);
 }
 
-async function loadEvidence(
-  supabase: ReturnType<typeof requireSupabaseAuth>["context"] extends never
-    ? never
-    : Awaited<ReturnType<(typeof requireSupabaseAuth)["handler"]>>["supabase"],
-  datasetId: string,
-): Promise<{ pkg: EvidencePackage; datasetName: string; workspaceId: string }> {
-  const { data: ds, error: dErr } = await supabase
-    .from("datasets")
-    .select("id, filename, workspace_id")
-    .eq("id", datasetId)
-    .maybeSingle();
-  if (dErr) throw new Error(dErr.message);
-  if (!ds) throw new Error("Dataset not found");
-
-  const [profileQ, analysisQ, forecastQ, anomalyQ] = await Promise.all([
-    supabase
-      .from("dataset_profiles")
-      .select("quality_score, summary_json, issues_json")
-      .eq("dataset_id", ds.id)
-      .maybeSingle(),
-    supabase
-      .from("analyses")
-      .select(
-        "id, created_at, date_column, target_column, granularity, results_json, insights_json, anomalies_json",
-      )
-      .eq("dataset_id", ds.id)
-      .eq("status", "ready")
-      .order("created_at", { ascending: false })
-      .limit(1),
-    supabase
-      .from("forecasts")
-      .select(
-        "id, created_at, horizon, granularity, model_name, metrics, model_comparison, assumptions, forecast_points",
-      )
-      .eq("dataset_id", ds.id)
-      .eq("status", "ready")
-      .order("created_at", { ascending: false })
-      .limit(1),
-    supabase
-      .from("anomaly_runs")
-      .select("id, created_at, methods, summary, anomalies")
-      .eq("dataset_id", ds.id)
-      .eq("status", "ready")
-      .order("created_at", { ascending: false })
-      .limit(1),
-  ]);
-
-  const pkg = buildEvidencePackage({
-    datasetId: ds.id,
-    datasetName: ds.filename,
-    profile: profileQ.data ?? null,
-    analysis: analysisQ.data?.[0] ?? null,
-    forecast: forecastQ.data?.[0] ?? null,
-    anomalyRun: anomalyQ.data?.[0] ?? null,
-  });
-
-  return { pkg, datasetName: ds.filename, workspaceId: ds.workspace_id };
-}
+// Loading evidence is inlined inside generateReport to avoid leaking the
+// Supabase client's generic type through a helper signature.
 
 export const listReports = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
