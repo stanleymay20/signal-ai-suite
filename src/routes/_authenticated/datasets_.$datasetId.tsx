@@ -15,6 +15,7 @@ import {
   TrendingUp,
   Activity,
   MessageSquare,
+  FileText,
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
