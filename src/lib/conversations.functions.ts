@@ -203,6 +203,7 @@ export const sendChatMessage = createServerFn({ method: "POST" })
         .select("*")
         .single();
       if (aErr) throw new Error(aErr.message);
+      await tele.success({ metadata: { reason: "no_evidence" } });
       return {
         message: aRow,
         citations: [] as Citation[],
@@ -240,12 +241,20 @@ export const sendChatMessage = createServerFn({ method: "POST" })
 
     let answer: string;
     let usage: Record<string, unknown> = {};
+    let providerName: string | null = null;
+    let modelName: string | null = null;
+    let promptTokens = 0;
+    let completionTokens = 0;
     try {
       const result = await provider.chat(chatMessages, {
         temperature: 0.2,
         maxTokens: 1024,
       });
       answer = result.content || "(empty response)";
+      providerName = result.provider;
+      modelName = result.model;
+      promptTokens = result.usage.promptTokens ?? 0;
+      completionTokens = result.usage.completionTokens ?? 0;
       usage = {
         provider: result.provider,
         model: result.model,
