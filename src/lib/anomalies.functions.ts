@@ -46,37 +46,37 @@ interface ForecastRow {
   parameters: unknown;
   model_name: string;
   metrics: unknown;
+  backtest_points: unknown;
+}
+
+interface BacktestPointRow {
+  t: string;
+  actual: number;
+  predicted: number;
+  residual: number;
 }
 
 function extractForecastSource(forecast: ForecastRow | null): ForecastResidualSource | null {
   if (!forecast) return null;
+  // Prefer the column-level backtest points (best model). Fall back to looking
+  // them up inside the serialized allModels bundle for older rows.
+  let backtest: BacktestPointRow[] = Array.isArray(forecast.backtest_points)
+    ? (forecast.backtest_points as BacktestPointRow[])
+    : [];
   const params = (forecast.parameters ?? {}) as {
-    history?: TimePoint[];
     allModels?: Array<{
       model: string;
       residualStd: number;
-      points?: Array<{ t: string; yhat: number }>;
+      backtestPoints?: BacktestPointRow[];
     }>;
   };
-  const metrics = (forecast.metrics ?? {}) as { holdoutSize?: number };
   const best = params.allModels?.find((m) => m.model === forecast.model_name);
-  if (!best || !params.history || best.residualStd <= 0) return null;
-  // Use the backtest implied expected values: re-derive from the historical
-  // tail of length `holdoutSize` by treating each history point's expected as
-  // the best model's in-sample fit. We approximate with the residualStd-based
-  // band rather than reconstructing fits, so we only flag points whose
-  // residual vs the model's in-sample mean exceeds the threshold.
-  const holdoutSize = metrics.holdoutSize ?? 0;
-  if (holdoutSize === 0) return null;
-  const tail = params.history.slice(-holdoutSize);
-  // Pair holdout actuals with predicted values that the runForecast pipeline
-  // generated during backtest. Those predictions are not stored individually
-  // by timestamp, so we approximate expected = mean of holdout actuals minus
-  // residual std; instead, surface only the residualStd and pair t→observed
-  // mean as expected baseline.
-  const mu = tail.reduce((s, p) => s + p.v, 0) / Math.max(tail.length, 1);
+  if (backtest.length === 0 && best?.backtestPoints) backtest = best.backtestPoints;
+  if (!best || best.residualStd <= 0 || backtest.length === 0) return null;
   return {
-    expected: tail.map((p) => ({ t: p.t, expected: mu })),
+    expected: backtest
+      .filter((b) => Number.isFinite(b.predicted))
+      .map((b) => ({ t: b.t, expected: b.predicted })),
     residualStd: best.residualStd,
   };
 }
@@ -127,7 +127,7 @@ export const runAnomalyDetectionFn = createServerFn({ method: "POST" })
     if (data.useLatestForecast !== false && methods.includes("forecast_residual")) {
       const { data: fc } = await supabase
         .from("forecasts")
-        .select("id, parameters, model_name, metrics, status, dataset_id")
+        .select("id, parameters, model_name, metrics, status, dataset_id, backtest_points")
         .eq("dataset_id", ds.id)
         .eq("status", "ready")
         .order("created_at", { ascending: false })
@@ -135,7 +135,7 @@ export const runAnomalyDetectionFn = createServerFn({ method: "POST" })
         .maybeSingle();
       if (fc) {
         forecastId = fc.id;
-        forecastSource = extractForecastSource(fc as ForecastRow);
+        forecastSource = extractForecastSource(fc as unknown as ForecastRow);
       }
     }
 
