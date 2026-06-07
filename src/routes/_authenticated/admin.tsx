@@ -319,7 +319,7 @@ function AdminPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              disabled={roleMut.isPending || isSelf}
+                              disabled={roleMut.isPending}
                               onClick={() =>
                                 roleMut.mutate({ userId: u.id, role: nextRole })
                               }
