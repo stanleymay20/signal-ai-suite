@@ -127,20 +127,13 @@ export function AppShell({
             {actions}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="md:hidden"
-                  aria-label="Account menu"
-                >
+                <Button variant="ghost" size="icon" className="md:hidden" aria-label="Account menu">
                   <UserIcon className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel className="flex flex-col">
-                  <span className="text-sm font-medium">
-                    {meQ.data?.fullName ?? "Signed in"}
-                  </span>
+                  <span className="text-sm font-medium">{meQ.data?.fullName ?? "Signed in"}</span>
                   {meQ.data?.email && (
                     <span className="text-xs font-normal text-muted-foreground">
                       {meQ.data.email}
