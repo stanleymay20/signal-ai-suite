@@ -101,116 +101,136 @@ export const generateReport = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ datasetId: uuid, type: reportType }).parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-
-    const { data: ds, error: dErr } = await supabase
-      .from("datasets")
-      .select("id, filename, workspace_id")
-      .eq("id", data.datasetId)
-      .maybeSingle();
-    if (dErr) throw new Error(dErr.message);
-    if (!ds) throw new Error("Dataset not found");
-
-    const [profileQ, analysisQ, forecastQ, anomalyQ] = await Promise.all([
-      supabase
-        .from("dataset_profiles")
-        .select("quality_score, summary_json, issues_json")
-        .eq("dataset_id", ds.id)
-        .maybeSingle(),
-      supabase
-        .from("analyses")
-        .select(
-          "id, created_at, date_column, target_column, granularity, results_json, insights_json, anomalies_json",
-        )
-        .eq("dataset_id", ds.id)
-        .eq("status", "ready")
-        .order("created_at", { ascending: false })
-        .limit(1),
-      supabase
-        .from("forecasts")
-        .select(
-          "id, created_at, horizon, granularity, model_name, metrics, model_comparison, assumptions, forecast_points",
-        )
-        .eq("dataset_id", ds.id)
-        .eq("status", "ready")
-        .order("created_at", { ascending: false })
-        .limit(1),
-      supabase
-        .from("anomaly_runs")
-        .select("id, created_at, methods, summary, anomalies")
-        .eq("dataset_id", ds.id)
-        .eq("status", "ready")
-        .order("created_at", { ascending: false })
-        .limit(1),
-    ]);
-
-    const pkg: EvidencePackage = buildEvidencePackage({
-      datasetId: ds.id,
-      datasetName: ds.filename,
-      profile: profileQ.data ?? null,
-      analysis: analysisQ.data?.[0] ?? null,
-      forecast: forecastQ.data?.[0] ?? null,
-      anomalyRun: anomalyQ.data?.[0] ?? null,
+    const tele = startTelemetry(supabase as unknown as MinimalUsageClient, {
+      action: "report.generate",
+      actorId: userId,
+      resourceType: "dataset",
+      resourceId: data.datasetId,
+      metadata: { type: data.type },
     });
+    try {
+      const { data: ds, error: dErr } = await supabase
+        .from("datasets")
+        .select("id, filename, workspace_id")
+        .eq("id", data.datasetId)
+        .maybeSingle();
+      if (dErr) throw new Error(dErr.message);
+      if (!ds) throw new Error("Dataset not found");
 
-    if (!hasAnyEvidence(pkg)) {
-      throw new Error(
-        "No evidence available yet. Run profile, analysis, forecast, or anomaly detection first.",
-      );
-    }
+      const [profileQ, analysisQ, forecastQ, anomalyQ] = await Promise.all([
+        supabase
+          .from("dataset_profiles")
+          .select("quality_score, summary_json, issues_json")
+          .eq("dataset_id", ds.id)
+          .maybeSingle(),
+        supabase
+          .from("analyses")
+          .select(
+            "id, created_at, date_column, target_column, granularity, results_json, insights_json, anomalies_json",
+          )
+          .eq("dataset_id", ds.id)
+          .eq("status", "ready")
+          .order("created_at", { ascending: false })
+          .limit(1),
+        supabase
+          .from("forecasts")
+          .select(
+            "id, created_at, horizon, granularity, model_name, metrics, model_comparison, assumptions, forecast_points",
+          )
+          .eq("dataset_id", ds.id)
+          .eq("status", "ready")
+          .order("created_at", { ascending: false })
+          .limit(1),
+        supabase
+          .from("anomaly_runs")
+          .select("id, created_at, methods, summary, anomalies")
+          .eq("dataset_id", ds.id)
+          .eq("status", "ready")
+          .order("created_at", { ascending: false })
+          .limit(1),
+      ]);
 
-    const now = new Date();
-    const baseReport = buildReport({ type: data.type, pkg, now });
+      const pkg: EvidencePackage = buildEvidencePackage({
+        datasetId: ds.id,
+        datasetName: ds.filename,
+        profile: profileQ.data ?? null,
+        analysis: analysisQ.data?.[0] ?? null,
+        forecast: forecastQ.data?.[0] ?? null,
+        anomalyRun: anomalyQ.data?.[0] ?? null,
+      });
 
-    // Fill narrative slots (best-effort; never invents deterministic fields).
-    const provider = resolveAIProvider({
-      AI_PROVIDER: process.env.AI_PROVIDER,
-      OLLAMA_BASE_URL: process.env.OLLAMA_BASE_URL,
-      OLLAMA_MODEL: process.env.OLLAMA_MODEL,
-      OPENAI_BASE_URL: process.env.OPENAI_BASE_URL,
-      OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-      OPENAI_MODEL: process.env.OPENAI_MODEL,
-      LOVABLE_API_KEY: process.env.LOVABLE_API_KEY,
-    });
-    const narrated = await generateNarratives({ report: baseReport, pkg, provider });
+      if (!hasAnyEvidence(pkg)) {
+        throw new Error(
+          "No evidence available yet. Run profile, analysis, forecast, or anomaly detection first.",
+        );
+      }
 
-    const snapshot = snapshotEvidence(pkg, now.toISOString());
+      const now = new Date();
+      const baseReport = buildReport({ type: data.type, pkg, now });
 
-    const insertPayload = {
-      workspace_id: ds.workspace_id,
-      dataset_id: data.datasetId,
-      created_by: userId,
-      type: data.type,
-      title: narrated.report.title,
-      sections: toJson(narrated.report.sections),
-      narratives: toJson(narrated.narratives),
-      citations: toJson(narrated.report.citations),
-      risk_score: toJson(narrated.report.risk),
-      evidence_snapshot: toJson(snapshot),
-      ai_model: narrated.model,
-      ai_provider: narrated.provider,
-    } as never;
+      const provider = resolveAIProvider({
+        AI_PROVIDER: process.env.AI_PROVIDER,
+        OLLAMA_BASE_URL: process.env.OLLAMA_BASE_URL,
+        OLLAMA_MODEL: process.env.OLLAMA_MODEL,
+        OPENAI_BASE_URL: process.env.OPENAI_BASE_URL,
+        OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+        OPENAI_MODEL: process.env.OPENAI_MODEL,
+        LOVABLE_API_KEY: process.env.LOVABLE_API_KEY,
+      });
+      const narrated = await generateNarratives({ report: baseReport, pkg, provider });
 
-    const { data: row, error } = await supabase
-      .from("reports")
-      .insert(insertPayload)
-      .select("*")
-      .single();
-    if (error) throw new Error(error.message);
+      const snapshot = snapshotEvidence(pkg, now.toISOString());
 
-    await supabase.from("audit_logs").insert({
-      actor_id: userId,
-      action: "report.generated",
-      metadata: {
-        report_id: row.id,
+      const insertPayload = {
+        workspace_id: ds.workspace_id,
         dataset_id: data.datasetId,
+        created_by: userId,
         type: data.type,
-        risk_score: narrated.report.risk.score,
-        ai_provider: narrated.provider,
+        title: narrated.report.title,
+        sections: toJson(narrated.report.sections),
+        narratives: toJson(narrated.narratives),
+        citations: toJson(narrated.report.citations),
+        risk_score: toJson(narrated.report.risk),
+        evidence_snapshot: toJson(snapshot),
         ai_model: narrated.model,
-      },
-    });
+        ai_provider: narrated.provider,
+      } as never;
 
-    return { report: row };
+      const { data: row, error } = await supabase
+        .from("reports")
+        .insert(insertPayload)
+        .select("*")
+        .single();
+      if (error) throw new Error(error.message);
+
+      await supabase.from("audit_logs").insert({
+        actor_id: userId,
+        action: "report.generated",
+        metadata: {
+          report_id: row.id,
+          dataset_id: data.datasetId,
+          type: data.type,
+          risk_score: narrated.report.risk.score,
+          ai_provider: narrated.provider,
+          ai_model: narrated.model,
+        },
+      });
+
+      await tele.success({
+        provider: narrated.provider,
+        model: narrated.model,
+        metadata: {
+          report_id: row.id,
+          type: data.type,
+          risk_score: narrated.report.risk.score,
+        },
+      });
+
+      return { report: row };
+    } catch (err) {
+      await tele.error(err);
+      throw err;
+    }
   });
 
 function rowToReportModel(row: {
