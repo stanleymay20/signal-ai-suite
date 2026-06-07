@@ -86,8 +86,7 @@ describe("provider abstraction", () => {
   });
 
   it("OllamaProvider surfaces HTTP errors", async () => {
-    const fakeFetch: typeof fetch = async () =>
-      new Response("boom", { status: 500 });
+    const fakeFetch: typeof fetch = async () => new Response("boom", { status: 500 });
     const p = new OllamaProvider({
       baseUrl: "http://x:11434",
       model: "m",

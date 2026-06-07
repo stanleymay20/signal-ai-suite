@@ -30,9 +30,7 @@ export function renderEvidence(pkg: EvidencePackage): string {
     const p = pkg.profile;
     lines.push("");
     lines.push("PROFILE:");
-    lines.push(
-      `- rows=${p.rowCount}, cols=${p.columnCount}, quality_score=${p.qualityScore}/100`,
-    );
+    lines.push(`- rows=${p.rowCount}, cols=${p.columnCount}, quality_score=${p.qualityScore}/100`);
     lines.push(`- missing=${p.missingPct}%, duplicates=${p.duplicatePct}%`);
     lines.push(
       `- numeric=${p.numericColumns}, date=${p.dateColumns}, categorical=${p.categoricalColumns}`,
@@ -127,8 +125,7 @@ export function suggestFollowups(pkg: EvidencePackage): string[] {
   const out: string[] = [];
   if (pkg.analysis) out.push("What trends and seasonality stand out?");
   if (pkg.forecast) out.push("Which forecast model performed best and why?");
-  if (pkg.anomalies && pkg.anomalies.total > 0)
-    out.push("Explain the most severe anomaly.");
+  if (pkg.anomalies && pkg.anomalies.total > 0) out.push("Explain the most severe anomaly.");
   if (pkg.profile) out.push("Summarize the dataset's quality and biggest risks.");
   if (!pkg.analysis) out.push("Run an analysis to unlock trend explanations.");
   if (!pkg.forecast) out.push("Run a forecast to compare models.");

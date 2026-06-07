@@ -37,9 +37,7 @@ function fullPkg() {
       created_at: "2026-01-03T00:00:00Z",
       methods: ["zscore"],
       summary: { total: 1 },
-      anomalies: [
-        { t: "2025-08", value: 100, severity: "high", method: "zscore", score: 4 },
-      ],
+      anomalies: [{ t: "2025-08", value: 100, severity: "high", method: "zscore", score: 4 }],
     },
   });
 }

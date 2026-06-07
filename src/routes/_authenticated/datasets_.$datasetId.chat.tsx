@@ -270,10 +270,7 @@ function ChatPage() {
                 </div>
               )}
 
-              <form
-                onSubmit={onSubmit}
-                className="border-t border-border p-3"
-              >
+              <form onSubmit={onSubmit} className="border-t border-border p-3">
                 <div className="mx-auto flex max-w-3xl items-end gap-2">
                   <textarea
                     ref={inputRef}
@@ -338,9 +335,7 @@ function MessageBubble({ message }: { message: Message }) {
       <div className={`min-w-0 flex-1 ${isUser ? "text-right" : ""}`}>
         <div
           className={`inline-block max-w-[90%] whitespace-pre-wrap rounded-lg px-4 py-2.5 text-sm ${
-            isUser
-              ? "bg-primary text-primary-foreground"
-              : "bg-muted/50 text-foreground"
+            isUser ? "bg-primary text-primary-foreground" : "bg-muted/50 text-foreground"
           }`}
         >
           {message.content}
@@ -388,8 +383,6 @@ function citationLabel(c: Citation): string {
     case "forecast":
       return `forecast · ${d.model ?? "?"} rmse=${d.rmse ?? "?"}`;
     case "anomaly":
-      return d.timestamp
-        ? `anomaly · ${d.timestamp}`
-        : `anomalies · ${d.total ?? "?"}`;
+      return d.timestamp ? `anomaly · ${d.timestamp}` : `anomalies · ${d.total ?? "?"}`;
   }
 }
