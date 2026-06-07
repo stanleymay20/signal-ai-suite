@@ -530,6 +530,75 @@ export type Database = {
         }
         Relationships: []
       }
+      reports: {
+        Row: {
+          ai_model: string | null
+          ai_provider: string | null
+          citations: Json
+          created_at: string
+          created_by: string
+          dataset_id: string
+          evidence_snapshot: Json
+          id: string
+          narratives: Json
+          risk_score: Json
+          sections: Json
+          title: string
+          type: Database["public"]["Enums"]["report_type"]
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          ai_model?: string | null
+          ai_provider?: string | null
+          citations?: Json
+          created_at?: string
+          created_by: string
+          dataset_id: string
+          evidence_snapshot?: Json
+          id?: string
+          narratives?: Json
+          risk_score?: Json
+          sections?: Json
+          title: string
+          type: Database["public"]["Enums"]["report_type"]
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          ai_model?: string | null
+          ai_provider?: string | null
+          citations?: Json
+          created_at?: string
+          created_by?: string
+          dataset_id?: string
+          evidence_snapshot?: Json
+          id?: string
+          narratives?: Json
+          risk_score?: Json
+          sections?: Json
+          title?: string
+          type?: Database["public"]["Enums"]["report_type"]
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_dataset_id_fkey"
+            columns: ["dataset_id"]
+            isOneToOne: false
+            referencedRelation: "datasets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspace_members: {
         Row: {
           created_at: string
@@ -626,6 +695,12 @@ export type Database = {
       dataset_status: "uploading" | "profiling" | "ready" | "failed"
       forecast_status: "pending" | "running" | "ready" | "failed"
       message_role: "user" | "assistant" | "system"
+      report_type:
+        | "executive_summary"
+        | "boardroom"
+        | "risk_brief"
+        | "forecast_brief"
+        | "anomaly_investigation"
       workspace_role: "owner" | "editor" | "viewer"
     }
     CompositeTypes: {
@@ -770,6 +845,13 @@ export const Constants = {
       dataset_status: ["uploading", "profiling", "ready", "failed"],
       forecast_status: ["pending", "running", "ready", "failed"],
       message_role: ["user", "assistant", "system"],
+      report_type: [
+        "executive_summary",
+        "boardroom",
+        "risk_brief",
+        "forecast_brief",
+        "anomaly_investigation",
+      ],
       workspace_role: ["owner", "editor", "viewer"],
     },
   },
