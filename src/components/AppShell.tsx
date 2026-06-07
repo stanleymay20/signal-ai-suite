@@ -93,7 +93,7 @@ export function AppShell({
               {label}
             </Link>
           ))}
-          {adminQ.data === true && (
+          {isAdmin && (
             <Link
               to="/admin"
               className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-sidebar-foreground/80 transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -125,9 +125,49 @@ export function AppShell({
           </div>
           <div className="flex items-center gap-2">
             {actions}
-            <Button variant="ghost" size="icon" className="md:hidden" onClick={handleSignOut}>
-              <UserIcon className="h-4 w-4" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden"
+                  aria-label="Account menu"
+                >
+                  <UserIcon className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="flex flex-col">
+                  <span className="text-sm font-medium">
+                    {meQ.data?.fullName ?? "Signed in"}
+                  </span>
+                  {meQ.data?.email && (
+                    <span className="text-xs font-normal text-muted-foreground">
+                      {meQ.data.email}
+                    </span>
+                  )}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {NAV.map(({ to, label, icon: Icon }) => (
+                  <DropdownMenuItem key={to} asChild>
+                    <Link to={to} className="flex items-center gap-2">
+                      <Icon className="h-4 w-4" /> {label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin" className="flex items-center gap-2">
+                      <ShieldCheck className="h-4 w-4" /> Admin
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={handleSignOut} className="text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
         <div className="flex-1 px-6 py-6">{children}</div>
