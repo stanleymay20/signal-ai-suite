@@ -15,14 +15,27 @@ import {
   type UsageEventRow,
 } from "./observability/aggregations";
 
-async function ensureAdmin(supabase: {
-  from: (t: "profiles") => {
+// Loose type so this module doesn't depend on the full Supabase generic chain
+// (which has had inference-depth issues with TS2589 on newly-added tables).
+type AnySupabase = {
+  from: (t: string) => {
     select: (s: string) => {
-      eq: (k: string, v: string) => { maybeSingle: () => Promise<{ data: { role: string } | null; error: { message: string } | null }> };
+      eq: (
+        k: string,
+        v: string,
+      ) => {
+        maybeSingle: () => Promise<{
+          data: { role?: string } | null;
+          error: { message: string } | null;
+        }>;
+      };
     };
   };
-}, userId: string): Promise<void> {
-  const { data, error } = await supabase
+};
+
+async function ensureAdmin(supabase: unknown, userId: string): Promise<void> {
+  const sb = supabase as AnySupabase;
+  const { data, error } = await sb
     .from("profiles")
     .select("role")
     .eq("id", userId)
