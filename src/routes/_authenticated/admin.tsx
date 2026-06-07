@@ -293,9 +293,6 @@ function AdminPage() {
                   </thead>
                   <tbody>
                     {(usersQ.data ?? []).map((u) => {
-                      const isSelf = u.id === adminQ.data?.isAdmin
-                        ? false // adminQ doesn't carry id; check disabled via roleMut error
-                        : false;
                       const nextRole = u.role === "admin" ? "member" : "admin";
                       return (
                         <tr key={u.id} className="border-t border-border/60 align-top">
