@@ -36,16 +36,8 @@ function toJson<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T;
 }
 
-function bytesToBase64(bytes: Uint8Array): string {
-  // Worker + browser-safe base64 encoder (no Buffer required at the type level).
-  let bin = "";
-  const chunk = 0x8000;
-  for (let i = 0; i < bytes.length; i += chunk) {
-    bin += String.fromCharCode(...bytes.subarray(i, i + chunk));
-  }
-  // btoa exists in Workers and Node ≥16.
-  return btoa(bin);
-}
+
+
 
 // Loading evidence is inlined inside generateReport to avoid leaking the
 // Supabase client's generic type through a helper signature.
