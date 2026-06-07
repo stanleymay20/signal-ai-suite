@@ -157,6 +157,9 @@ export const runDatasetForecast = createServerFn({ method: "POST" })
         },
       });
 
+      await tele.success({
+        metadata: { forecast_id: forecastId, best_model: bundle.best },
+      });
       return { forecastId, best: bundle.best };
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Forecast failed";
@@ -164,6 +167,7 @@ export const runDatasetForecast = createServerFn({ method: "POST" })
         .from("forecasts")
         .update({ status: "failed", error_message: msg })
         .eq("id", forecastId);
+      await tele.error(e, { metadata: { forecast_id: forecastId } });
       throw new Error(msg);
     }
   });
