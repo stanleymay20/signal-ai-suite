@@ -38,6 +38,147 @@ export type Database = {
         }
         Relationships: []
       }
+      dataset_columns: {
+        Row: {
+          column_name: string
+          created_at: string
+          data_type: Database["public"]["Enums"]["column_data_type"]
+          dataset_id: string
+          id: string
+          missing_percentage: number | null
+          nullable: boolean
+          position: number
+          stats: Json
+          unique_ratio: number | null
+        }
+        Insert: {
+          column_name: string
+          created_at?: string
+          data_type?: Database["public"]["Enums"]["column_data_type"]
+          dataset_id: string
+          id?: string
+          missing_percentage?: number | null
+          nullable?: boolean
+          position: number
+          stats?: Json
+          unique_ratio?: number | null
+        }
+        Update: {
+          column_name?: string
+          created_at?: string
+          data_type?: Database["public"]["Enums"]["column_data_type"]
+          dataset_id?: string
+          id?: string
+          missing_percentage?: number | null
+          nullable?: boolean
+          position?: number
+          stats?: Json
+          unique_ratio?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dataset_columns_dataset_id_fkey"
+            columns: ["dataset_id"]
+            isOneToOne: false
+            referencedRelation: "datasets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dataset_profiles: {
+        Row: {
+          created_at: string
+          dataset_id: string
+          id: string
+          issues_json: Json
+          quality_score: number
+          summary_json: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dataset_id: string
+          id?: string
+          issues_json?: Json
+          quality_score?: number
+          summary_json?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dataset_id?: string
+          id?: string
+          issues_json?: Json
+          quality_score?: number
+          summary_json?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dataset_profiles_dataset_id_fkey"
+            columns: ["dataset_id"]
+            isOneToOne: true
+            referencedRelation: "datasets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      datasets: {
+        Row: {
+          column_count: number | null
+          created_at: string
+          error_message: string | null
+          file_type: string
+          filename: string
+          id: string
+          row_count: number | null
+          size_bytes: number | null
+          status: Database["public"]["Enums"]["dataset_status"]
+          storage_path: string
+          updated_at: string
+          uploaded_by: string
+          workspace_id: string
+        }
+        Insert: {
+          column_count?: number | null
+          created_at?: string
+          error_message?: string | null
+          file_type: string
+          filename: string
+          id?: string
+          row_count?: number | null
+          size_bytes?: number | null
+          status?: Database["public"]["Enums"]["dataset_status"]
+          storage_path: string
+          updated_at?: string
+          uploaded_by: string
+          workspace_id: string
+        }
+        Update: {
+          column_count?: number | null
+          created_at?: string
+          error_message?: string | null
+          file_type?: string
+          filename?: string
+          id?: string
+          row_count?: number | null
+          size_bytes?: number | null
+          status?: Database["public"]["Enums"]["dataset_status"]
+          storage_path?: string
+          updated_at?: string
+          uploaded_by?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "datasets_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -150,6 +291,16 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "member"
+      column_data_type:
+        | "numeric"
+        | "integer"
+        | "boolean"
+        | "date"
+        | "datetime"
+        | "string"
+        | "categorical"
+        | "unknown"
+      dataset_status: "uploading" | "profiling" | "ready" | "failed"
       workspace_role: "owner" | "editor" | "viewer"
     }
     CompositeTypes: {
@@ -279,6 +430,17 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "member"],
+      column_data_type: [
+        "numeric",
+        "integer",
+        "boolean",
+        "date",
+        "datetime",
+        "string",
+        "categorical",
+        "unknown",
+      ],
+      dataset_status: ["uploading", "profiling", "ready", "failed"],
       workspace_role: ["owner", "editor", "viewer"],
     },
   },

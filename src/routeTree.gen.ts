@@ -14,8 +14,10 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedWorkspacesRouteImport } from './routes/_authenticated/workspaces'
+import { Route as AuthenticatedDatasetsRouteImport } from './routes/_authenticated/datasets'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedWorkspacesWorkspaceIdRouteImport } from './routes/_authenticated/workspaces.$workspaceId'
+import { Route as AuthenticatedDatasetsDatasetIdRouteImport } from './routes/_authenticated/datasets_.$datasetId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -41,6 +43,11 @@ const AuthenticatedWorkspacesRoute = AuthenticatedWorkspacesRouteImport.update({
   path: '/workspaces',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDatasetsRoute = AuthenticatedDatasetsRouteImport.update({
+  id: '/datasets',
+  path: '/datasets',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -52,13 +59,21 @@ const AuthenticatedWorkspacesWorkspaceIdRoute =
     path: '/$workspaceId',
     getParentRoute: () => AuthenticatedWorkspacesRoute,
   } as any)
+const AuthenticatedDatasetsDatasetIdRoute =
+  AuthenticatedDatasetsDatasetIdRouteImport.update({
+    id: '/datasets_/$datasetId',
+    path: '/datasets/$datasetId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/datasets': typeof AuthenticatedDatasetsRoute
   '/workspaces': typeof AuthenticatedWorkspacesRouteWithChildren
+  '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRoute
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
 }
 export interface FileRoutesByTo {
@@ -66,7 +81,9 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/datasets': typeof AuthenticatedDatasetsRoute
   '/workspaces': typeof AuthenticatedWorkspacesRouteWithChildren
+  '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRoute
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
 }
 export interface FileRoutesById {
@@ -76,7 +93,9 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/datasets': typeof AuthenticatedDatasetsRoute
   '/_authenticated/workspaces': typeof AuthenticatedWorkspacesRouteWithChildren
+  '/_authenticated/datasets_/$datasetId': typeof AuthenticatedDatasetsDatasetIdRoute
   '/_authenticated/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
 }
 export interface FileRouteTypes {
@@ -86,7 +105,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/dashboard'
+    | '/datasets'
     | '/workspaces'
+    | '/datasets/$datasetId'
     | '/workspaces/$workspaceId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -94,7 +115,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/dashboard'
+    | '/datasets'
     | '/workspaces'
+    | '/datasets/$datasetId'
     | '/workspaces/$workspaceId'
   id:
     | '__root__'
@@ -103,7 +126,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/_authenticated/dashboard'
+    | '/_authenticated/datasets'
     | '/_authenticated/workspaces'
+    | '/_authenticated/datasets_/$datasetId'
     | '/_authenticated/workspaces/$workspaceId'
   fileRoutesById: FileRoutesById
 }
@@ -151,6 +176,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkspacesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/datasets': {
+      id: '/_authenticated/datasets'
+      path: '/datasets'
+      fullPath: '/datasets'
+      preLoaderRoute: typeof AuthenticatedDatasetsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -164,6 +196,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/workspaces/$workspaceId'
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdRouteImport
       parentRoute: typeof AuthenticatedWorkspacesRoute
+    }
+    '/_authenticated/datasets_/$datasetId': {
+      id: '/_authenticated/datasets_/$datasetId'
+      path: '/datasets/$datasetId'
+      fullPath: '/datasets/$datasetId'
+      preLoaderRoute: typeof AuthenticatedDatasetsDatasetIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
@@ -185,12 +224,16 @@ const AuthenticatedWorkspacesRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDatasetsRoute: typeof AuthenticatedDatasetsRoute
   AuthenticatedWorkspacesRoute: typeof AuthenticatedWorkspacesRouteWithChildren
+  AuthenticatedDatasetsDatasetIdRoute: typeof AuthenticatedDatasetsDatasetIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDatasetsRoute: AuthenticatedDatasetsRoute,
   AuthenticatedWorkspacesRoute: AuthenticatedWorkspacesRouteWithChildren,
+  AuthenticatedDatasetsDatasetIdRoute: AuthenticatedDatasetsDatasetIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
