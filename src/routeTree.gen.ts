@@ -21,11 +21,11 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedWorkspacesWorkspaceIdRouteImport } from './routes/_authenticated/workspaces.$workspaceId'
 import { Route as AuthenticatedDatasetsDatasetIdRouteImport } from './routes/_authenticated/datasets_.$datasetId'
 import { Route as ApiPublicHooksJobsTickRouteImport } from './routes/api/public/hooks/jobs-tick'
-import { Route as AuthenticatedDatasetsDatasetIdReportsRouteImport } from './routes/_authenticated/datasets_.$datasetId.reports'
-import { Route as AuthenticatedDatasetsDatasetIdForecastRouteImport } from './routes/_authenticated/datasets_.$datasetId.forecast'
-import { Route as AuthenticatedDatasetsDatasetIdChatRouteImport } from './routes/_authenticated/datasets_.$datasetId.chat'
-import { Route as AuthenticatedDatasetsDatasetIdAnomaliesRouteImport } from './routes/_authenticated/datasets_.$datasetId.anomalies'
-import { Route as AuthenticatedDatasetsDatasetIdAnalysisRouteImport } from './routes/_authenticated/datasets_.$datasetId.analysis'
+import { Route as AuthenticatedDatasetsDatasetIdReportsRouteImport } from './routes/_authenticated/datasets_.$datasetId_.reports'
+import { Route as AuthenticatedDatasetsDatasetIdForecastRouteImport } from './routes/_authenticated/datasets_.$datasetId_.forecast'
+import { Route as AuthenticatedDatasetsDatasetIdChatRouteImport } from './routes/_authenticated/datasets_.$datasetId_.chat'
+import { Route as AuthenticatedDatasetsDatasetIdAnomaliesRouteImport } from './routes/_authenticated/datasets_.$datasetId_.anomalies'
+import { Route as AuthenticatedDatasetsDatasetIdAnalysisRouteImport } from './routes/_authenticated/datasets_.$datasetId_.analysis'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -90,33 +90,33 @@ const ApiPublicHooksJobsTickRoute = ApiPublicHooksJobsTickRouteImport.update({
 } as any)
 const AuthenticatedDatasetsDatasetIdReportsRoute =
   AuthenticatedDatasetsDatasetIdReportsRouteImport.update({
-    id: '/reports',
-    path: '/reports',
-    getParentRoute: () => AuthenticatedDatasetsDatasetIdRoute,
+    id: '/datasets_/$datasetId_/reports',
+    path: '/datasets/$datasetId/reports',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedDatasetsDatasetIdForecastRoute =
   AuthenticatedDatasetsDatasetIdForecastRouteImport.update({
-    id: '/forecast',
-    path: '/forecast',
-    getParentRoute: () => AuthenticatedDatasetsDatasetIdRoute,
+    id: '/datasets_/$datasetId_/forecast',
+    path: '/datasets/$datasetId/forecast',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedDatasetsDatasetIdChatRoute =
   AuthenticatedDatasetsDatasetIdChatRouteImport.update({
-    id: '/chat',
-    path: '/chat',
-    getParentRoute: () => AuthenticatedDatasetsDatasetIdRoute,
+    id: '/datasets_/$datasetId_/chat',
+    path: '/datasets/$datasetId/chat',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedDatasetsDatasetIdAnomaliesRoute =
   AuthenticatedDatasetsDatasetIdAnomaliesRouteImport.update({
-    id: '/anomalies',
-    path: '/anomalies',
-    getParentRoute: () => AuthenticatedDatasetsDatasetIdRoute,
+    id: '/datasets_/$datasetId_/anomalies',
+    path: '/datasets/$datasetId/anomalies',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedDatasetsDatasetIdAnalysisRoute =
   AuthenticatedDatasetsDatasetIdAnalysisRouteImport.update({
-    id: '/analysis',
-    path: '/analysis',
-    getParentRoute: () => AuthenticatedDatasetsDatasetIdRoute,
+    id: '/datasets_/$datasetId_/analysis',
+    path: '/datasets/$datasetId/analysis',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -128,7 +128,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/datasets': typeof AuthenticatedDatasetsRoute
   '/workspaces': typeof AuthenticatedWorkspacesRouteWithChildren
-  '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRouteWithChildren
+  '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRoute
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
   '/datasets/$datasetId/analysis': typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
   '/datasets/$datasetId/anomalies': typeof AuthenticatedDatasetsDatasetIdAnomaliesRoute
@@ -146,7 +146,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/datasets': typeof AuthenticatedDatasetsRoute
   '/workspaces': typeof AuthenticatedWorkspacesRouteWithChildren
-  '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRouteWithChildren
+  '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRoute
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
   '/datasets/$datasetId/analysis': typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
   '/datasets/$datasetId/anomalies': typeof AuthenticatedDatasetsDatasetIdAnomaliesRoute
@@ -166,13 +166,13 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/datasets': typeof AuthenticatedDatasetsRoute
   '/_authenticated/workspaces': typeof AuthenticatedWorkspacesRouteWithChildren
-  '/_authenticated/datasets_/$datasetId': typeof AuthenticatedDatasetsDatasetIdRouteWithChildren
+  '/_authenticated/datasets_/$datasetId': typeof AuthenticatedDatasetsDatasetIdRoute
   '/_authenticated/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
-  '/_authenticated/datasets_/$datasetId/analysis': typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
-  '/_authenticated/datasets_/$datasetId/anomalies': typeof AuthenticatedDatasetsDatasetIdAnomaliesRoute
-  '/_authenticated/datasets_/$datasetId/chat': typeof AuthenticatedDatasetsDatasetIdChatRoute
-  '/_authenticated/datasets_/$datasetId/forecast': typeof AuthenticatedDatasetsDatasetIdForecastRoute
-  '/_authenticated/datasets_/$datasetId/reports': typeof AuthenticatedDatasetsDatasetIdReportsRoute
+  '/_authenticated/datasets_/$datasetId_/analysis': typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
+  '/_authenticated/datasets_/$datasetId_/anomalies': typeof AuthenticatedDatasetsDatasetIdAnomaliesRoute
+  '/_authenticated/datasets_/$datasetId_/chat': typeof AuthenticatedDatasetsDatasetIdChatRoute
+  '/_authenticated/datasets_/$datasetId_/forecast': typeof AuthenticatedDatasetsDatasetIdForecastRoute
+  '/_authenticated/datasets_/$datasetId_/reports': typeof AuthenticatedDatasetsDatasetIdReportsRoute
   '/api/public/hooks/jobs-tick': typeof ApiPublicHooksJobsTickRoute
 }
 export interface FileRouteTypes {
@@ -225,11 +225,11 @@ export interface FileRouteTypes {
     | '/_authenticated/workspaces'
     | '/_authenticated/datasets_/$datasetId'
     | '/_authenticated/workspaces/$workspaceId'
-    | '/_authenticated/datasets_/$datasetId/analysis'
-    | '/_authenticated/datasets_/$datasetId/anomalies'
-    | '/_authenticated/datasets_/$datasetId/chat'
-    | '/_authenticated/datasets_/$datasetId/forecast'
-    | '/_authenticated/datasets_/$datasetId/reports'
+    | '/_authenticated/datasets_/$datasetId_/analysis'
+    | '/_authenticated/datasets_/$datasetId_/anomalies'
+    | '/_authenticated/datasets_/$datasetId_/chat'
+    | '/_authenticated/datasets_/$datasetId_/forecast'
+    | '/_authenticated/datasets_/$datasetId_/reports'
     | '/api/public/hooks/jobs-tick'
   fileRoutesById: FileRoutesById
 }
@@ -328,40 +328,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksJobsTickRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/datasets_/$datasetId/reports': {
-      id: '/_authenticated/datasets_/$datasetId/reports'
-      path: '/reports'
+    '/_authenticated/datasets_/$datasetId_/reports': {
+      id: '/_authenticated/datasets_/$datasetId_/reports'
+      path: '/datasets/$datasetId/reports'
       fullPath: '/datasets/$datasetId/reports'
       preLoaderRoute: typeof AuthenticatedDatasetsDatasetIdReportsRouteImport
-      parentRoute: typeof AuthenticatedDatasetsDatasetIdRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/datasets_/$datasetId/forecast': {
-      id: '/_authenticated/datasets_/$datasetId/forecast'
-      path: '/forecast'
+    '/_authenticated/datasets_/$datasetId_/forecast': {
+      id: '/_authenticated/datasets_/$datasetId_/forecast'
+      path: '/datasets/$datasetId/forecast'
       fullPath: '/datasets/$datasetId/forecast'
       preLoaderRoute: typeof AuthenticatedDatasetsDatasetIdForecastRouteImport
-      parentRoute: typeof AuthenticatedDatasetsDatasetIdRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/datasets_/$datasetId/chat': {
-      id: '/_authenticated/datasets_/$datasetId/chat'
-      path: '/chat'
+    '/_authenticated/datasets_/$datasetId_/chat': {
+      id: '/_authenticated/datasets_/$datasetId_/chat'
+      path: '/datasets/$datasetId/chat'
       fullPath: '/datasets/$datasetId/chat'
       preLoaderRoute: typeof AuthenticatedDatasetsDatasetIdChatRouteImport
-      parentRoute: typeof AuthenticatedDatasetsDatasetIdRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/datasets_/$datasetId/anomalies': {
-      id: '/_authenticated/datasets_/$datasetId/anomalies'
-      path: '/anomalies'
+    '/_authenticated/datasets_/$datasetId_/anomalies': {
+      id: '/_authenticated/datasets_/$datasetId_/anomalies'
+      path: '/datasets/$datasetId/anomalies'
       fullPath: '/datasets/$datasetId/anomalies'
       preLoaderRoute: typeof AuthenticatedDatasetsDatasetIdAnomaliesRouteImport
-      parentRoute: typeof AuthenticatedDatasetsDatasetIdRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/datasets_/$datasetId/analysis': {
-      id: '/_authenticated/datasets_/$datasetId/analysis'
-      path: '/analysis'
+    '/_authenticated/datasets_/$datasetId_/analysis': {
+      id: '/_authenticated/datasets_/$datasetId_/analysis'
+      path: '/datasets/$datasetId/analysis'
       fullPath: '/datasets/$datasetId/analysis'
       preLoaderRoute: typeof AuthenticatedDatasetsDatasetIdAnalysisRouteImport
-      parentRoute: typeof AuthenticatedDatasetsDatasetIdRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
@@ -381,7 +381,12 @@ const AuthenticatedWorkspacesRouteWithChildren =
     AuthenticatedWorkspacesRouteChildren,
   )
 
-interface AuthenticatedDatasetsDatasetIdRouteChildren {
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDatasetsRoute: typeof AuthenticatedDatasetsRoute
+  AuthenticatedWorkspacesRoute: typeof AuthenticatedWorkspacesRouteWithChildren
+  AuthenticatedDatasetsDatasetIdRoute: typeof AuthenticatedDatasetsDatasetIdRoute
   AuthenticatedDatasetsDatasetIdAnalysisRoute: typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
   AuthenticatedDatasetsDatasetIdAnomaliesRoute: typeof AuthenticatedDatasetsDatasetIdAnomaliesRoute
   AuthenticatedDatasetsDatasetIdChatRoute: typeof AuthenticatedDatasetsDatasetIdChatRoute
@@ -389,40 +394,22 @@ interface AuthenticatedDatasetsDatasetIdRouteChildren {
   AuthenticatedDatasetsDatasetIdReportsRoute: typeof AuthenticatedDatasetsDatasetIdReportsRoute
 }
 
-const AuthenticatedDatasetsDatasetIdRouteChildren: AuthenticatedDatasetsDatasetIdRouteChildren =
-  {
-    AuthenticatedDatasetsDatasetIdAnalysisRoute:
-      AuthenticatedDatasetsDatasetIdAnalysisRoute,
-    AuthenticatedDatasetsDatasetIdAnomaliesRoute:
-      AuthenticatedDatasetsDatasetIdAnomaliesRoute,
-    AuthenticatedDatasetsDatasetIdChatRoute:
-      AuthenticatedDatasetsDatasetIdChatRoute,
-    AuthenticatedDatasetsDatasetIdForecastRoute:
-      AuthenticatedDatasetsDatasetIdForecastRoute,
-    AuthenticatedDatasetsDatasetIdReportsRoute:
-      AuthenticatedDatasetsDatasetIdReportsRoute,
-  }
-
-const AuthenticatedDatasetsDatasetIdRouteWithChildren =
-  AuthenticatedDatasetsDatasetIdRoute._addFileChildren(
-    AuthenticatedDatasetsDatasetIdRouteChildren,
-  )
-
-interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
-  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedDatasetsRoute: typeof AuthenticatedDatasetsRoute
-  AuthenticatedWorkspacesRoute: typeof AuthenticatedWorkspacesRouteWithChildren
-  AuthenticatedDatasetsDatasetIdRoute: typeof AuthenticatedDatasetsDatasetIdRouteWithChildren
-}
-
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDatasetsRoute: AuthenticatedDatasetsRoute,
   AuthenticatedWorkspacesRoute: AuthenticatedWorkspacesRouteWithChildren,
-  AuthenticatedDatasetsDatasetIdRoute:
-    AuthenticatedDatasetsDatasetIdRouteWithChildren,
+  AuthenticatedDatasetsDatasetIdRoute: AuthenticatedDatasetsDatasetIdRoute,
+  AuthenticatedDatasetsDatasetIdAnalysisRoute:
+    AuthenticatedDatasetsDatasetIdAnalysisRoute,
+  AuthenticatedDatasetsDatasetIdAnomaliesRoute:
+    AuthenticatedDatasetsDatasetIdAnomaliesRoute,
+  AuthenticatedDatasetsDatasetIdChatRoute:
+    AuthenticatedDatasetsDatasetIdChatRoute,
+  AuthenticatedDatasetsDatasetIdForecastRoute:
+    AuthenticatedDatasetsDatasetIdForecastRoute,
+  AuthenticatedDatasetsDatasetIdReportsRoute:
+    AuthenticatedDatasetsDatasetIdReportsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -439,3 +426,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

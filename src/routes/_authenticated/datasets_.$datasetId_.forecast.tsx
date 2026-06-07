@@ -31,7 +31,7 @@ import type {
 } from "@/lib/forecasting/types";
 import type { TimePoint } from "@/lib/analysis/types";
 
-export const Route = createFileRoute("/_authenticated/datasets_/$datasetId/forecast")({
+export const Route = createFileRoute("/_authenticated/datasets_/$datasetId_/forecast")({
   head: () => ({ meta: [{ title: "Forecast — Signal AI Suite" }] }),
   component: ForecastPage,
 });

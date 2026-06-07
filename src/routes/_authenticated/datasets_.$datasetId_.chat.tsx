@@ -28,7 +28,7 @@ import {
   sendChatMessage,
 } from "@/lib/conversations.functions";
 
-export const Route = createFileRoute("/_authenticated/datasets_/$datasetId/chat")({
+export const Route = createFileRoute("/_authenticated/datasets_/$datasetId_/chat")({
   head: () => ({ meta: [{ title: "Chat — Signal AI Suite" }] }),
   component: ChatPage,
 });

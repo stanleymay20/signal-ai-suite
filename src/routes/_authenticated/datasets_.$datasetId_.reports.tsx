@@ -15,7 +15,7 @@ import {
   listReports,
 } from "@/lib/reports.functions";
 
-export const Route = createFileRoute("/_authenticated/datasets_/$datasetId/reports")({
+export const Route = createFileRoute("/_authenticated/datasets_/$datasetId_/reports")({
   head: () => ({ meta: [{ title: "Reports — Signal AI Suite" }] }),
   component: ReportsPage,
 });
