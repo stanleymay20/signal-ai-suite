@@ -42,9 +42,13 @@ function usd(n: number): string {
 }
 
 function AdminPage() {
+  const qc = useQueryClient();
   const adminFn = useServerFn(isCurrentUserAdmin);
   const healthFn = useServerFn(getSystemHealth);
   const eventsFn = useServerFn(listUsageEvents);
+  const usersFn = useServerFn(listAllUsers);
+  const workspacesFn = useServerFn(listAllWorkspaces);
+  const setRoleFn = useServerFn(setUserRole);
 
   const adminQ = useQuery({
     queryKey: ["is-admin"],
@@ -64,6 +68,29 @@ function AdminPage() {
     queryFn: () => eventsFn({ data: { limit: 50 } }),
     enabled: isAdmin,
   });
+
+  const usersQ = useQuery({
+    queryKey: ["admin-users"],
+    queryFn: () => usersFn({ data: { limit: 200 } }),
+    enabled: isAdmin,
+  });
+
+  const workspacesQ = useQuery({
+    queryKey: ["admin-workspaces"],
+    queryFn: () => workspacesFn({ data: { limit: 200 } }),
+    enabled: isAdmin,
+  });
+
+  const roleMut = useMutation({
+    mutationFn: (v: { userId: string; role: "admin" | "member" }) =>
+      setRoleFn({ data: v }),
+    onSuccess: () => {
+      toast.success("Role updated");
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
 
   if (adminQ.isLoading) {
     return (
