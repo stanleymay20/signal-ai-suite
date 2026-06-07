@@ -132,6 +132,14 @@ export function runForecast(history: TimePoint[], opts: RunForecastOptions): For
     const backtestPred = canBacktest
       ? generate(model, train, holdoutTs, maWindow, period).map((p) => p.yhat)
       : [];
+    const backtestPoints = canBacktest
+      ? holdout.map((p, i) => ({
+          t: p.t,
+          actual: p.v,
+          predicted: backtestPred[i],
+          residual: p.v - backtestPred[i],
+        }))
+      : [];
     const metrics = canBacktest
       ? computeMetrics(holdoutActual, backtestPred)
       : { mae: null, rmse: null, mape: null, holdoutSize: 0 };
@@ -149,6 +157,7 @@ export function runForecast(history: TimePoint[], opts: RunForecastOptions): For
       assumptions: modelAssumptions(model, params),
       residualStd: std,
       parameters: params,
+      backtestPoints,
     });
   }
 
