@@ -98,6 +98,11 @@ function DatasetDetail() {
                   <TrendingUp className="mr-1 h-4 w-4" /> Forecast
                 </Link>
               </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/datasets/$datasetId/anomalies" params={{ datasetId }}>
+                  <Activity className="mr-1 h-4 w-4" /> Anomalies
+                </Link>
+              </Button>
             </>
           )}
           <Button variant="outline" size="sm" disabled={downloadMut.isPending} onClick={() => downloadMut.mutate()}>
