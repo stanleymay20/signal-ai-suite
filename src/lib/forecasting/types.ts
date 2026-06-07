@@ -27,6 +27,13 @@ export interface TrainRange {
   granularity: Granularity | null;
 }
 
+export interface BacktestPoint {
+  t: string;
+  actual: number;
+  predicted: number;
+  residual: number;
+}
+
 export interface ModelResult {
   model: ForecastModel;
   points: ForecastPoint[];
@@ -35,6 +42,8 @@ export interface ModelResult {
   assumptions: string[];
   residualStd: number;
   parameters: Record<string, number | string>;
+  /** Per-timestamp holdout predictions used to compute metrics. Empty when backtest was not possible. */
+  backtestPoints: BacktestPoint[];
 }
 
 export interface ForecastBundle {
