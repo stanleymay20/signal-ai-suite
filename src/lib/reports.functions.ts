@@ -20,6 +20,7 @@ import {
   type ReportModel,
   type ReportType,
 } from "./reports";
+import { startTelemetry, type MinimalUsageClient } from "./observability/telemetry";
 
 const uuid = z.string().uuid();
 const reportType = z.enum([
