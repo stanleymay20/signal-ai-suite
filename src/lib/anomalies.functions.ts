@@ -135,7 +135,7 @@ export const runAnomalyDetectionFn = createServerFn({ method: "POST" })
         .maybeSingle();
       if (fc) {
         forecastId = fc.id;
-        forecastSource = extractForecastSource(fc as ForecastRow);
+        forecastSource = extractForecastSource(fc as unknown as ForecastRow);
       }
     }
 
