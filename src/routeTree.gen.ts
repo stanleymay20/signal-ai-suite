@@ -17,6 +17,7 @@ import { Route as AuthenticatedWorkspacesRouteImport } from './routes/_authentic
 import { Route as AuthenticatedDatasetsRouteImport } from './routes/_authenticated/datasets'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedWorkspacesWorkspaceIdRouteImport } from './routes/_authenticated/workspaces.$workspaceId'
+import { Route as AuthenticatedDatasetsDatasetIdRouteImport } from './routes/_authenticated/datasets_.$datasetId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -58,6 +59,12 @@ const AuthenticatedWorkspacesWorkspaceIdRoute =
     path: '/$workspaceId',
     getParentRoute: () => AuthenticatedWorkspacesRoute,
   } as any)
+const AuthenticatedDatasetsDatasetIdRoute =
+  AuthenticatedDatasetsDatasetIdRouteImport.update({
+    id: '/datasets_/$datasetId',
+    path: '/datasets/$datasetId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/datasets': typeof AuthenticatedDatasetsRoute
   '/workspaces': typeof AuthenticatedWorkspacesRouteWithChildren
+  '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRoute
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
 }
 export interface FileRoutesByTo {
@@ -75,6 +83,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/datasets': typeof AuthenticatedDatasetsRoute
   '/workspaces': typeof AuthenticatedWorkspacesRouteWithChildren
+  '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRoute
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
 }
 export interface FileRoutesById {
@@ -86,6 +95,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/datasets': typeof AuthenticatedDatasetsRoute
   '/_authenticated/workspaces': typeof AuthenticatedWorkspacesRouteWithChildren
+  '/_authenticated/datasets_/$datasetId': typeof AuthenticatedDatasetsDatasetIdRoute
   '/_authenticated/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
 }
 export interface FileRouteTypes {
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/datasets'
     | '/workspaces'
+    | '/datasets/$datasetId'
     | '/workspaces/$workspaceId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/datasets'
     | '/workspaces'
+    | '/datasets/$datasetId'
     | '/workspaces/$workspaceId'
   id:
     | '__root__'
@@ -116,6 +128,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/datasets'
     | '/_authenticated/workspaces'
+    | '/_authenticated/datasets_/$datasetId'
     | '/_authenticated/workspaces/$workspaceId'
   fileRoutesById: FileRoutesById
 }
@@ -184,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkspacesWorkspaceIdRouteImport
       parentRoute: typeof AuthenticatedWorkspacesRoute
     }
+    '/_authenticated/datasets_/$datasetId': {
+      id: '/_authenticated/datasets_/$datasetId'
+      path: '/datasets/$datasetId'
+      fullPath: '/datasets/$datasetId'
+      preLoaderRoute: typeof AuthenticatedDatasetsDatasetIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -206,12 +226,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDatasetsRoute: typeof AuthenticatedDatasetsRoute
   AuthenticatedWorkspacesRoute: typeof AuthenticatedWorkspacesRouteWithChildren
+  AuthenticatedDatasetsDatasetIdRoute: typeof AuthenticatedDatasetsDatasetIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDatasetsRoute: AuthenticatedDatasetsRoute,
   AuthenticatedWorkspacesRoute: AuthenticatedWorkspacesRouteWithChildren,
+  AuthenticatedDatasetsDatasetIdRoute: AuthenticatedDatasetsDatasetIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -226,3 +248,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
