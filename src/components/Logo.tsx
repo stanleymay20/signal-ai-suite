@@ -6,7 +6,7 @@
  *   - <Logo iconOnly /> icon mark + compact wordmark   (use in sidebars / tight chrome)
  */
 
-import logoIcon from "/brand/logo-icon.png?url";
+const LOGO_ICON_URL = "/brand/logo-icon.png";
 
 export function Logo({
   className = "",
@@ -20,7 +20,7 @@ export function Logo({
   return (
     <span className={`inline-flex items-center gap-3 ${className}`}>
       <img
-        src={logoIcon}
+        src={LOGO_ICON_URL}
         alt="Signal AI Suite logo"
         width={iconOnly ? 32 : 40}
         height={iconOnly ? 32 : 40}
