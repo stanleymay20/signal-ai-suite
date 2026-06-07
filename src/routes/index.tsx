@@ -20,7 +20,10 @@ export const Route = createFileRoute("/")({
         content:
           "Upload a CSV. Ask anything. Signal AI Suite forecasts, detects anomalies, and explains trends with grounded, auditable AI.",
       },
-      { property: "og:title", content: "Signal AI Suite — Conversational Time-Series Intelligence" },
+      {
+        property: "og:title",
+        content: "Signal AI Suite — Conversational Time-Series Intelligence",
+      },
       {
         property: "og:description",
         content:
@@ -256,8 +259,8 @@ function Landing() {
             No vendor lock-in. Ever.
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-primary-foreground/70">
-            Signal AI Suite speaks Ollama, vLLM, OpenAI-compatible APIs, Qwen, DeepSeek and Llama. Run
-            fully local for regulated industries.
+            Signal AI Suite speaks Ollama, vLLM, OpenAI-compatible APIs, Qwen, DeepSeek and Llama.
+            Run fully local for regulated industries.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-2 font-mono text-xs">
             {["Ollama", "vLLM", "OpenAI-compatible", "Qwen", "DeepSeek", "Llama", "Lovable AI"].map(
