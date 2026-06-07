@@ -42,7 +42,6 @@ function bytesToBase64(bytes: Uint8Array): string {
     bin += String.fromCharCode(...bytes.subarray(i, i + chunk));
   }
   // btoa exists in Workers and Node ≥16.
-  // eslint-disable-next-line no-undef
   return btoa(bin);
 }
 
