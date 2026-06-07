@@ -138,12 +138,14 @@ function AuthPage() {
       {/* Auth pane */}
       <div className="flex items-center justify-center bg-background p-6">
         <div className="w-full max-w-md">
-          <div className="mb-8 lg:hidden">
-            <Logo />
+          <div className="mb-8 flex flex-col items-center text-center">
+            <Logo showTagline />
           </div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight">Welcome</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Sign in to your Signal AI Suite workspace.
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-center">
+            Welcome to Signal AI Suite
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground text-center">
+            Sign in to turn your data into decisions.
           </p>
 
           <Button
