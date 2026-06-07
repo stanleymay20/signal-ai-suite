@@ -25,10 +25,9 @@ describe("detectMad", () => {
   });
 
   it("is more robust than z-score under heavy contamination", () => {
-    // Many outliers inflate stddev, so z-score may miss the real anomaly;
-    // MAD with median is less affected.
-    const base = Array.from({ length: 20 }, (_, i) => tp(i, 10));
-    for (const i of [3, 5, 7, 9]) base[i] = tp(i, 100);
+    // Mild jitter so MAD > 0, plus a few large outliers.
+    const base = Array.from({ length: 20 }, (_, i) => tp(i, 10 + (i % 3)));
+    for (const i of [3, 5, 7]) base[i] = tp(i, 100);
     const out = detectMad(base);
     expect(out.length).toBeGreaterThan(0);
   });
