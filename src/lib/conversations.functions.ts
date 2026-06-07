@@ -109,8 +109,14 @@ export const sendChatMessage = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase } = context;
-
-    // 1. Load conversation + dataset.
+    const telemetryClient = supabase as unknown as MinimalUsageClient;
+    const tele = startTelemetry(telemetryClient, {
+      action: "chat.message",
+      actorId: context.userId,
+      resourceType: "conversation",
+      resourceId: data.conversationId,
+    });
+    try {
     const { data: conv, error: cErr } = await supabase
       .from("conversations")
       .select("id, dataset_id, workspace_id")
