@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
-import { LayoutDashboard, FolderKanban, LogOut, User as UserIcon } from "lucide-react";
+import { LayoutDashboard, FolderKanban, Database, LogOut, User as UserIcon } from "lucide-react";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/datasets", label: "Datasets", icon: Database },
   { to: "/workspaces", label: "Workspaces", icon: FolderKanban },
 ] as const;
 
