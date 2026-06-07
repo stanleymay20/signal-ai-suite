@@ -21,7 +21,7 @@ import { toast } from "sonner";
 import { ArrowRight, FolderKanban, Plus, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/workspaces")({
-  head: () => ({ meta: [{ title: "Workspaces — TimeSeriesGPT" }] }),
+  head: () => ({ meta: [{ title: "Workspaces — Signal AI Suite" }] }),
   component: WorkspacesPage,
 });
 

@@ -14,10 +14,10 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — TimeSeriesGPT" },
+      { title: "Sign in — Signal AI Suite" },
       {
         name: "description",
-        content: "Sign in to TimeSeriesGPT to analyze and forecast your time-series data.",
+        content: "Sign in to Signal AI Suite to analyze and forecast your time-series data.",
       },
     ],
   }),
@@ -125,7 +125,7 @@ function AuthPage() {
             grounded in your own numbers.
           </p>
           <div className="rounded-lg border border-primary-foreground/15 bg-primary-foreground/5 p-4 font-mono text-xs text-primary-foreground/80">
-            <p className="text-gold">▍ Why teams pick TimeSeriesGPT</p>
+            <p className="text-gold">▍ Why teams pick Signal AI Suite</p>
             <ul className="mt-3 space-y-1.5">
               <li>· Explainable forecasts with confidence intervals</li>
               <li>· Multi-tenant workspaces, RLS by default</li>
@@ -143,7 +143,7 @@ function AuthPage() {
           </div>
           <h1 className="font-display text-3xl font-semibold tracking-tight">Welcome</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Sign in to your TimeSeriesGPT workspace.
+            Sign in to your Signal AI Suite workspace.
           </p>
 
           <Button

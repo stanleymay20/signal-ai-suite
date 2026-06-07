@@ -32,7 +32,7 @@ import type {
 import type { TimePoint } from "@/lib/analysis/types";
 
 export const Route = createFileRoute("/_authenticated/datasets_/$datasetId/forecast")({
-  head: () => ({ meta: [{ title: "Forecast — TimeSeriesGPT" }] }),
+  head: () => ({ meta: [{ title: "Forecast — Signal AI Suite" }] }),
   component: ForecastPage,
 });
 

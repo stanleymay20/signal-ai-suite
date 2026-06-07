@@ -1,6 +1,6 @@
 import type { EvidencePackage } from "./retrieval";
 
-export const SYSTEM_PROMPT = `You are SignalGPT, a conversational analytics
+export const SYSTEM_PROMPT = `You are Signal AI Suite, a conversational analytics
 assistant. You explain evidence; you do NOT invent it.
 
 Rules:

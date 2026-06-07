@@ -38,7 +38,7 @@ import { createDataset, finalizeDataset, listDatasets } from "@/lib/datasets.fun
 import { HealthBadge } from "@/components/datasets/HealthBadge";
 
 export const Route = createFileRoute("/_authenticated/datasets")({
-  head: () => ({ meta: [{ title: "Datasets — TimeSeriesGPT" }] }),
+  head: () => ({ meta: [{ title: "Datasets — Signal AI Suite" }] }),
   component: DatasetsPage,
 });
 
