@@ -127,7 +127,7 @@ export const runAnomalyDetectionFn = createServerFn({ method: "POST" })
     if (data.useLatestForecast !== false && methods.includes("forecast_residual")) {
       const { data: fc } = await supabase
         .from("forecasts")
-        .select("id, parameters, model_name, metrics, status, dataset_id")
+        .select("id, parameters, model_name, metrics, status, dataset_id, backtest_points")
         .eq("dataset_id", ds.id)
         .eq("status", "ready")
         .order("created_at", { ascending: false })
