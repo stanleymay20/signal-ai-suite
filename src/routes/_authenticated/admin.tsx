@@ -275,9 +275,96 @@ function AdminPage() {
               </div>
             </Panel>
           </div>
+
+          <div className="mt-8 grid gap-6 lg:grid-cols-3">
+            <Panel title="Users" className="lg:col-span-2">
+              {usersQ.isLoading && (
+                <p className="text-sm text-muted-foreground">Loading users…</p>
+              )}
+              <div className="max-h-96 overflow-y-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="text-xs uppercase tracking-wider text-muted-foreground">
+                    <tr>
+                      <th className="py-2">User</th>
+                      <th className="py-2">Role</th>
+                      <th className="py-2">Joined</th>
+                      <th className="py-2 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(usersQ.data ?? []).map((u) => {
+                      const isSelf = u.id === adminQ.data?.isAdmin
+                        ? false // adminQ doesn't carry id; check disabled via roleMut error
+                        : false;
+                      const nextRole = u.role === "admin" ? "member" : "admin";
+                      return (
+                        <tr key={u.id} className="border-t border-border/60 align-top">
+                          <td className="py-2">
+                            <div className="font-medium">{u.full_name ?? "—"}</div>
+                            <div className="text-xs text-muted-foreground">{u.email}</div>
+                          </td>
+                          <td className="py-2">
+                            <span
+                              className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs ${
+                                u.role === "admin"
+                                  ? "bg-emerald/20 text-emerald"
+                                  : "bg-muted text-muted-foreground"
+                              }`}
+                            >
+                              <Shield className="h-3 w-3" />
+                              {u.role}
+                            </span>
+                          </td>
+                          <td className="py-2 text-xs text-muted-foreground">
+                            {new Date(u.created_at).toLocaleDateString()}
+                          </td>
+                          <td className="py-2 text-right">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={roleMut.isPending || isSelf}
+                              onClick={() =>
+                                roleMut.mutate({ userId: u.id, role: nextRole })
+                              }
+                            >
+                              Make {nextRole}
+                            </Button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </Panel>
+
+            <Panel title="Workspaces">
+              {workspacesQ.isLoading && (
+                <p className="text-sm text-muted-foreground">Loading workspaces…</p>
+              )}
+              <ul className="space-y-2">
+                {(workspacesQ.data ?? []).map((w) => (
+                  <li
+                    key={w.id}
+                    className="rounded-lg border border-border bg-background p-3 text-sm"
+                  >
+                    <div className="flex items-center gap-2 font-medium">
+                      <Building2 className="h-4 w-4 text-muted-foreground" />
+                      {w.name}
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Owner {w.owner_id.slice(0, 8)}… ·{" "}
+                      {new Date(w.created_at).toLocaleDateString()}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </Panel>
+          </div>
         </>
       )}
     </AppShell>
+
   );
 }
 
