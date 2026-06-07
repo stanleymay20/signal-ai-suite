@@ -333,6 +333,7 @@ export type Database = {
       forecasts: {
         Row: {
           assumptions: Json
+          backtest_points: Json
           computed_by: string | null
           confidence_intervals: Json
           created_at: string
@@ -355,6 +356,7 @@ export type Database = {
         }
         Insert: {
           assumptions?: Json
+          backtest_points?: Json
           computed_by?: string | null
           confidence_intervals?: Json
           created_at?: string
@@ -377,6 +379,7 @@ export type Database = {
         }
         Update: {
           assumptions?: Json
+          backtest_points?: Json
           computed_by?: string | null
           confidence_intervals?: Json
           created_at?: string
