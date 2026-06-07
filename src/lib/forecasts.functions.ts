@@ -5,6 +5,7 @@ import { parseCsv, parseXlsx } from "./data-profiling/parseFile";
 import { buildSeries } from "./analysis/timeSeries";
 import { runForecast } from "./forecasting/runForecast";
 import type { ForecastModel } from "./forecasting/types";
+import { startTelemetry, type MinimalUsageClient } from "./observability/telemetry";
 
 const uuid = z.string().uuid();
 const granularitySchema = z.enum(["day", "week", "month", "quarter", "year"]);
@@ -29,6 +30,13 @@ export const runDatasetForecast = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const tele = startTelemetry(supabase as unknown as MinimalUsageClient, {
+      action: "forecast.run",
+      actorId: userId,
+      resourceType: "dataset",
+      resourceId: data.datasetId,
+      metadata: { horizon: data.horizon, target: data.targetColumn },
+    });
 
     const { data: ds, error: dsErr } = await supabase
       .from("datasets")
