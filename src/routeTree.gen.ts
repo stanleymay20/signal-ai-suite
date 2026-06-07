@@ -18,6 +18,7 @@ import { Route as AuthenticatedDatasetsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedWorkspacesWorkspaceIdRouteImport } from './routes/_authenticated/workspaces.$workspaceId'
 import { Route as AuthenticatedDatasetsDatasetIdRouteImport } from './routes/_authenticated/datasets_.$datasetId'
+import { Route as AuthenticatedDatasetsDatasetIdAnalysisRouteImport } from './routes/_authenticated/datasets_.$datasetId.analysis'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -65,6 +66,12 @@ const AuthenticatedDatasetsDatasetIdRoute =
     path: '/datasets/$datasetId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDatasetsDatasetIdAnalysisRoute =
+  AuthenticatedDatasetsDatasetIdAnalysisRouteImport.update({
+    id: '/analysis',
+    path: '/analysis',
+    getParentRoute: () => AuthenticatedDatasetsDatasetIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -73,8 +80,9 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/datasets': typeof AuthenticatedDatasetsRoute
   '/workspaces': typeof AuthenticatedWorkspacesRouteWithChildren
-  '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRoute
+  '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRouteWithChildren
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
+  '/datasets/$datasetId/analysis': typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -83,8 +91,9 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/datasets': typeof AuthenticatedDatasetsRoute
   '/workspaces': typeof AuthenticatedWorkspacesRouteWithChildren
-  '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRoute
+  '/datasets/$datasetId': typeof AuthenticatedDatasetsDatasetIdRouteWithChildren
   '/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
+  '/datasets/$datasetId/analysis': typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -95,8 +104,9 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/datasets': typeof AuthenticatedDatasetsRoute
   '/_authenticated/workspaces': typeof AuthenticatedWorkspacesRouteWithChildren
-  '/_authenticated/datasets_/$datasetId': typeof AuthenticatedDatasetsDatasetIdRoute
+  '/_authenticated/datasets_/$datasetId': typeof AuthenticatedDatasetsDatasetIdRouteWithChildren
   '/_authenticated/workspaces/$workspaceId': typeof AuthenticatedWorkspacesWorkspaceIdRoute
+  '/_authenticated/datasets_/$datasetId/analysis': typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/workspaces'
     | '/datasets/$datasetId'
     | '/workspaces/$workspaceId'
+    | '/datasets/$datasetId/analysis'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/workspaces'
     | '/datasets/$datasetId'
     | '/workspaces/$workspaceId'
+    | '/datasets/$datasetId/analysis'
   id:
     | '__root__'
     | '/'
@@ -130,6 +142,7 @@ export interface FileRouteTypes {
     | '/_authenticated/workspaces'
     | '/_authenticated/datasets_/$datasetId'
     | '/_authenticated/workspaces/$workspaceId'
+    | '/_authenticated/datasets_/$datasetId/analysis'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -204,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDatasetsDatasetIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/datasets_/$datasetId/analysis': {
+      id: '/_authenticated/datasets_/$datasetId/analysis'
+      path: '/analysis'
+      fullPath: '/datasets/$datasetId/analysis'
+      preLoaderRoute: typeof AuthenticatedDatasetsDatasetIdAnalysisRouteImport
+      parentRoute: typeof AuthenticatedDatasetsDatasetIdRoute
+    }
   }
 }
 
@@ -222,18 +242,34 @@ const AuthenticatedWorkspacesRouteWithChildren =
     AuthenticatedWorkspacesRouteChildren,
   )
 
+interface AuthenticatedDatasetsDatasetIdRouteChildren {
+  AuthenticatedDatasetsDatasetIdAnalysisRoute: typeof AuthenticatedDatasetsDatasetIdAnalysisRoute
+}
+
+const AuthenticatedDatasetsDatasetIdRouteChildren: AuthenticatedDatasetsDatasetIdRouteChildren =
+  {
+    AuthenticatedDatasetsDatasetIdAnalysisRoute:
+      AuthenticatedDatasetsDatasetIdAnalysisRoute,
+  }
+
+const AuthenticatedDatasetsDatasetIdRouteWithChildren =
+  AuthenticatedDatasetsDatasetIdRoute._addFileChildren(
+    AuthenticatedDatasetsDatasetIdRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDatasetsRoute: typeof AuthenticatedDatasetsRoute
   AuthenticatedWorkspacesRoute: typeof AuthenticatedWorkspacesRouteWithChildren
-  AuthenticatedDatasetsDatasetIdRoute: typeof AuthenticatedDatasetsDatasetIdRoute
+  AuthenticatedDatasetsDatasetIdRoute: typeof AuthenticatedDatasetsDatasetIdRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDatasetsRoute: AuthenticatedDatasetsRoute,
   AuthenticatedWorkspacesRoute: AuthenticatedWorkspacesRouteWithChildren,
-  AuthenticatedDatasetsDatasetIdRoute: AuthenticatedDatasetsDatasetIdRoute,
+  AuthenticatedDatasetsDatasetIdRoute:
+    AuthenticatedDatasetsDatasetIdRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -248,3 +284,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
