@@ -79,33 +79,36 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "TimeSeriesGPT — AI Time-Series Intelligence" },
+      { title: "Signal AI Suite" },
       {
         name: "description",
         content:
-          "Upload time-series datasets and analyze, forecast, and explain them with an enterprise-grade AI co-pilot.",
+          "Evidence-grounded analytics intelligence for forecasting, anomaly detection, and decision reporting.",
       },
-      { name: "author", content: "TimeSeriesGPT" },
-      { property: "og:title", content: "TimeSeriesGPT — AI Time-Series Intelligence" },
+      { name: "author", content: "Signal AI Suite" },
+      { property: "og:title", content: "Signal AI Suite" },
       {
         property: "og:description",
-        content:
-          "ChatGPT + Tableau + Prophet for time-series analytics. Explainable forecasts, anomaly detection, and executive reports.",
+        content: "Turning data into decisions with grounded AI.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "/og-image.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Signal AI Suite" },
+      {
+        name: "twitter:description",
+        content: "Turning data into decisions with grounded AI.",
+      },
+      { name: "twitter:image", content: "/og-image.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      {
-        rel: "preconnect",
-        href: "https://fonts.googleapis.com",
-      },
-      {
-        rel: "preconnect",
-        href: "https://fonts.gstatic.com",
-        crossOrigin: "anonymous",
-      },
+      { rel: "icon", href: "/favicon.ico", sizes: "any" },
+      { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16x16.png" },
+      { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32x32.png" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap",
