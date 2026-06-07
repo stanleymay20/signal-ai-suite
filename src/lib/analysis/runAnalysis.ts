@@ -45,22 +45,36 @@ export function runAnalysis(
   }
 
   const trend = series.length >= 2 ? computeTrend(series) : null;
-  const movingAverages = defaultMovingAverageWindows(series.length).map((w) => movingAverage(series, w));
+  const movingAverages = defaultMovingAverageWindows(series.length).map((w) =>
+    movingAverage(series, w),
+  );
   const seasonality = series.length >= 7 ? computeSeasonality(series) : null;
 
   const distributions = numericNames
-    .map((c) => computeDistribution(c, rows.map((r) => r[c])))
+    .map((c) =>
+      computeDistribution(
+        c,
+        rows.map((r) => r[c]),
+      ),
+    )
     .filter((d): d is NonNullable<typeof d> => d !== null);
 
   const correlation = numericNames.length >= 2 ? correlationMatrix(rows, numericNames) : null;
-  const missingness = computeMissingness(rows, columns.map((c) => c.name));
+  const missingness = computeMissingness(
+    rows,
+    columns.map((c) => c.name),
+  );
   const anomalies = detectAnomalies(series);
 
   const insights = buildInsights({
     targetColumn: opts.targetColumn,
     granularity,
     pointCount: series.length,
-    trend, seasonality, correlation, missingness, anomalies,
+    trend,
+    seasonality,
+    correlation,
+    missingness,
+    anomalies,
   });
 
   return {

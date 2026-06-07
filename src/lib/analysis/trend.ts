@@ -9,10 +9,15 @@ export function computeTrend(points: TimePoint[]): TrendResult | null {
   const n = xs.length;
   const mx = xs.reduce((a, b) => a + b, 0) / n;
   const my = ys.reduce((a, b) => a + b, 0) / n;
-  let num = 0, denX = 0, denY = 0;
+  let num = 0,
+    denX = 0,
+    denY = 0;
   for (let i = 0; i < n; i++) {
-    const dx = xs[i] - mx, dy = ys[i] - my;
-    num += dx * dy; denX += dx * dx; denY += dy * dy;
+    const dx = xs[i] - mx,
+      dy = ys[i] - my;
+    num += dx * dy;
+    denX += dx * dx;
+    denY += dy * dy;
   }
   if (denX === 0) return null;
   const slope = num / denX;
@@ -27,5 +32,14 @@ export function computeTrend(points: TimePoint[]): TrendResult | null {
   const direction: TrendResult["direction"] =
     Math.abs(changeAbs) < 1e-9 ? "flat" : changeAbs > 0 ? "up" : "down";
 
-  return { slopePerDay: slope, intercept, rSquared, startValue, endValue, changeAbs, changePct, direction };
+  return {
+    slopePerDay: slope,
+    intercept,
+    rSquared,
+    startValue,
+    endValue,
+    changeAbs,
+    changePct,
+    direction,
+  };
 }

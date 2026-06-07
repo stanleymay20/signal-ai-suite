@@ -15,7 +15,10 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Sign in — TimeSeriesGPT" },
-      { name: "description", content: "Sign in to TimeSeriesGPT to analyze and forecast your time-series data." },
+      {
+        name: "description",
+        content: "Sign in to TimeSeriesGPT to analyze and forecast your time-series data.",
+      },
     ],
   }),
   component: AuthPage,
@@ -103,7 +106,10 @@ function AuthPage() {
       <div className="relative hidden flex-col justify-between gradient-navy p-10 text-primary-foreground lg:flex">
         <div className="absolute inset-0 grid-terminal opacity-20" aria-hidden />
         <div className="relative">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm text-primary-foreground/80 transition hover:text-primary-foreground">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-primary-foreground/80 transition hover:text-primary-foreground"
+          >
             <ArrowLeft className="h-4 w-4" /> Back to site
           </Link>
           <div className="mt-12">
@@ -115,8 +121,8 @@ function AuthPage() {
             The analytics desk that <span className="gradient-gold-text">explains itself.</span>
           </h2>
           <p className="max-w-md text-sm text-primary-foreground/70">
-            Sign in to upload data, forecast revenue, hunt anomalies, and ship boardroom
-            briefings — grounded in your own numbers.
+            Sign in to upload data, forecast revenue, hunt anomalies, and ship boardroom briefings —
+            grounded in your own numbers.
           </p>
           <div className="rounded-lg border border-primary-foreground/15 bg-primary-foreground/5 p-4 font-mono text-xs text-primary-foreground/80">
             <p className="text-gold">▍ Why teams pick TimeSeriesGPT</p>
@@ -135,9 +141,7 @@ function AuthPage() {
           <div className="mb-8 lg:hidden">
             <Logo />
           </div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight">
-            Welcome
-          </h1>
+          <h1 className="font-display text-3xl font-semibold tracking-tight">Welcome</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Sign in to your TimeSeriesGPT workspace.
           </p>
@@ -171,7 +175,14 @@ function AuthPage() {
 
             <TabsContent value="signin">
               <form onSubmit={(e) => handleEmail(e, "signin")} className="space-y-4">
-                <Field id="email" name="email" label="Email" type="email" autoComplete="email" required />
+                <Field
+                  id="email"
+                  name="email"
+                  label="Email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                />
                 <Field
                   id="password"
                   name="password"
@@ -190,7 +201,14 @@ function AuthPage() {
             <TabsContent value="signup">
               <form onSubmit={(e) => handleEmail(e, "signup")} className="space-y-4">
                 <Field id="full_name" name="full_name" label="Full name" autoComplete="name" />
-                <Field id="email" name="email" label="Email" type="email" autoComplete="email" required />
+                <Field
+                  id="email"
+                  name="email"
+                  label="Email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                />
                 <Field
                   id="password"
                   name="password"

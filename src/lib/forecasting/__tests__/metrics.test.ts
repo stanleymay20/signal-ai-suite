@@ -13,7 +13,7 @@ describe("metrics", () => {
   });
   it("mape skips zero actuals and is null when all zero", () => {
     expect(mape([0, 0], [1, 2])).toBeNull();
-    expect(mape([100, 200], [110, 180])).toBeCloseTo((0.1 + 0.1) / 2 * 100);
+    expect(mape([100, 200], [110, 180])).toBeCloseTo(((0.1 + 0.1) / 2) * 100);
   });
   it("computeMetrics returns holdoutSize", () => {
     const m = computeMetrics([1, 2], [1, 3]);

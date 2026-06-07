@@ -7,7 +7,8 @@ export function movingAverage(points: TimePoint[], window: number): MovingAverag
   let sum = 0;
   const buf: number[] = [];
   for (const p of points) {
-    buf.push(p.v); sum += p.v;
+    buf.push(p.v);
+    sum += p.v;
     if (buf.length > window) sum -= buf.shift() as number;
     out.push({ t: p.t, ma: buf.length === window ? sum / window : null });
   }

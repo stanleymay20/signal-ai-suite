@@ -38,8 +38,7 @@ function Dashboard() {
     },
   });
 
-  const displayName =
-    profileQ.data?.full_name?.trim() || user.email?.split("@")[0] || "operator";
+  const displayName = profileQ.data?.full_name?.trim() || user.email?.split("@")[0] || "operator";
 
   const stats = [
     { label: "Workspaces", value: wsQ.data?.length ?? 0, icon: FolderKanban },
@@ -71,9 +70,7 @@ function Dashboard() {
               <Icon className="h-4 w-4 text-emerald" />
             </div>
             <p className="mt-3 font-display text-3xl font-semibold">{value}</p>
-            {hint && (
-              <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
-            )}
+            {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
           </div>
         ))}
       </div>
@@ -122,9 +119,7 @@ function Dashboard() {
             Multi-tenant by design. RLS enforced.
           </p>
           <div className="mt-4 space-y-2">
-            {wsQ.isLoading && (
-              <p className="text-sm text-muted-foreground">Loading…</p>
-            )}
+            {wsQ.isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
             {wsQ.data?.slice(0, 4).map((w) => (
               <Link
                 key={w.id}
@@ -153,7 +148,12 @@ function Dashboard() {
 
 const ROADMAP = [
   { n: 1, name: "Foundation", body: "Auth, profiles, workspaces, RLS, audit", status: "done" },
-  { n: 2, name: "Data Ingestion", body: "CSV/Excel/TSV upload, profiling, health score", status: "next" },
+  {
+    n: 2,
+    name: "Data Ingestion",
+    body: "CSV/Excel/TSV upload, profiling, health score",
+    status: "next",
+  },
   { n: 3, name: "Exploratory Analysis", body: "Trends, seasonality, correlations", status: "next" },
   { n: 4, name: "Forecasting Engine", body: "Prophet, ARIMA, SARIMA, XGBoost", status: "next" },
   { n: 5, name: "Anomaly Detection", body: "Isolation Forest, Z-score, IQR", status: "next" },

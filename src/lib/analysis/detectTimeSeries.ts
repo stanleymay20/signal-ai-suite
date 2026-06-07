@@ -33,7 +33,9 @@ export function detectTimeSeries(columns: ColumnProfile[]): TimeSeriesCandidates
         const ra = numericRange(a);
         const rb = numericRange(b);
         return rb - ra;
-      })[0]?.name ?? numericColumns[0] ?? null;
+      })[0]?.name ??
+    numericColumns[0] ??
+    null;
 
   return { dateColumns, numericColumns, suggestedDate, suggestedTarget };
 }

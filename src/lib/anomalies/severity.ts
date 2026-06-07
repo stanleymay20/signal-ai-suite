@@ -13,7 +13,12 @@ export function severityFromRatio(ratio: number): AnomalySeverity {
 }
 
 export function impactPct(deviation: number | null, seriesMean: number | null): number | null {
-  if (deviation === null || seriesMean === null || !Number.isFinite(seriesMean) || seriesMean === 0) {
+  if (
+    deviation === null ||
+    seriesMean === null ||
+    !Number.isFinite(seriesMean) ||
+    seriesMean === 0
+  ) {
     return null;
   }
   return Math.round((Math.abs(deviation) / Math.abs(seriesMean)) * 100);

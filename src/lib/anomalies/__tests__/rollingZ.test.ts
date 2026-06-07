@@ -3,7 +3,9 @@ import { detectRollingZ } from "../rollingZ";
 import type { TimePoint } from "../../analysis/types";
 
 const tp = (i: number, v: number): TimePoint => ({
-  t: new Date(Date.UTC(2024, 0, 1 + i)).toISOString(), v, n: 1,
+  t: new Date(Date.UTC(2024, 0, 1 + i)).toISOString(),
+  v,
+  n: 1,
 });
 
 describe("detectRollingZ", () => {

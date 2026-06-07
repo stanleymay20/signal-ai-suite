@@ -30,16 +30,25 @@ export function advance(iso: string, granularity: Granularity, step = 1): string
 /** Seasonal period (in buckets) implied by a granularity, if any. */
 export function seasonalPeriod(granularity: Granularity | null): number | null {
   switch (granularity) {
-    case "day": return 7;
-    case "week": return 52;
-    case "month": return 12;
-    case "quarter": return 4;
-    default: return null;
+    case "day":
+      return 7;
+    case "week":
+      return 52;
+    case "month":
+      return 12;
+    case "quarter":
+      return 4;
+    default:
+      return null;
   }
 }
 
 /** Build a sequence of future timestamps starting one step after `lastIso`. */
-export function futureTimestamps(lastIso: string, granularity: Granularity, horizon: number): string[] {
+export function futureTimestamps(
+  lastIso: string,
+  granularity: Granularity,
+  horizon: number,
+): string[] {
   const out: string[] = [];
   let prev = lastIso;
   for (let i = 0; i < horizon; i++) {

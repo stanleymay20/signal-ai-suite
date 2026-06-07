@@ -18,14 +18,42 @@ function makeRows(n: number) {
 }
 
 const cols: ColumnProfile[] = [
-  { name: "ts", position: 0, dataType: "date", nullable: false, uniqueRatio: 1, missingPercentage: 0,
-    stats: { count: 60, missing: 0, unique: 60 } },
-  { name: "revenue", position: 1, dataType: "numeric", nullable: false, uniqueRatio: 0.9, missingPercentage: 0,
-    stats: { count: 60, missing: 0, unique: 60, min: 100, max: 220 } },
-  { name: "visitors", position: 2, dataType: "integer", nullable: false, uniqueRatio: 0.2, missingPercentage: 0,
-    stats: { count: 60, missing: 0, unique: 7, min: 50, max: 68 } },
-  { name: "country", position: 3, dataType: "categorical", nullable: false, uniqueRatio: 0.05, missingPercentage: 0,
-    stats: { count: 60, missing: 0, unique: 2 } },
+  {
+    name: "ts",
+    position: 0,
+    dataType: "date",
+    nullable: false,
+    uniqueRatio: 1,
+    missingPercentage: 0,
+    stats: { count: 60, missing: 0, unique: 60 },
+  },
+  {
+    name: "revenue",
+    position: 1,
+    dataType: "numeric",
+    nullable: false,
+    uniqueRatio: 0.9,
+    missingPercentage: 0,
+    stats: { count: 60, missing: 0, unique: 60, min: 100, max: 220 },
+  },
+  {
+    name: "visitors",
+    position: 2,
+    dataType: "integer",
+    nullable: false,
+    uniqueRatio: 0.2,
+    missingPercentage: 0,
+    stats: { count: 60, missing: 0, unique: 7, min: 50, max: 68 },
+  },
+  {
+    name: "country",
+    position: 3,
+    dataType: "categorical",
+    nullable: false,
+    uniqueRatio: 0.05,
+    missingPercentage: 0,
+    stats: { count: 60, missing: 0, unique: 2 },
+  },
 ];
 
 describe("runAnalysis", () => {

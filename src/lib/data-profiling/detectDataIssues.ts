@@ -19,13 +19,15 @@ export function detectDataIssues(d: Input): DataIssue[] {
   }
   if (d.missingCellPercentage >= 30) {
     issues.push({
-      severity: "warning", code: "high_missing_cells",
+      severity: "warning",
+      code: "high_missing_cells",
       message: `High overall missing cells: ${d.missingCellPercentage}%.`,
     });
   }
   if (d.duplicateRowPercentage >= 5) {
     issues.push({
-      severity: "warning", code: "duplicate_rows",
+      severity: "warning",
+      code: "duplicate_rows",
       message: `${d.duplicateRowPercentage}% of rows are duplicates.`,
     });
   }
@@ -33,25 +35,33 @@ export function detectDataIssues(d: Input): DataIssue[] {
   for (const c of d.columns) {
     if (c.missingPercentage >= 50) {
       issues.push({
-        severity: "warning", code: "column_high_missing", column: c.name,
+        severity: "warning",
+        code: "column_high_missing",
+        column: c.name,
         message: `Column "${c.name}" is ${c.missingPercentage}% missing.`,
       });
     }
     if (c.stats.count > 0 && c.uniqueRatio === 1 && c.dataType !== "unknown") {
       issues.push({
-        severity: "info", code: "column_all_unique", column: c.name,
+        severity: "info",
+        code: "column_all_unique",
+        column: c.name,
         message: `Column "${c.name}" has all unique values (possible identifier).`,
       });
     }
     if (c.stats.count > 0 && c.uniqueRatio === 0) {
       issues.push({
-        severity: "warning", code: "column_constant", column: c.name,
+        severity: "warning",
+        code: "column_constant",
+        column: c.name,
         message: `Column "${c.name}" has only one value.`,
       });
     }
     if (c.dataType === "unknown" && c.stats.count > 0) {
       issues.push({
-        severity: "info", code: "column_type_unknown", column: c.name,
+        severity: "info",
+        code: "column_type_unknown",
+        column: c.name,
         message: `Column "${c.name}" type could not be inferred.`,
       });
     }

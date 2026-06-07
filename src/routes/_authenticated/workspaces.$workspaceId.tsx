@@ -95,9 +95,7 @@ function WorkspaceDetail() {
             <section className="rounded-xl border border-border bg-card p-6">
               <h2 className="font-display text-xl font-semibold">Overview</h2>
               <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
-                <Field label="Created">
-                  {new Date(wsQ.data.created_at).toLocaleString()}
-                </Field>
+                <Field label="Created">{new Date(wsQ.data.created_at).toLocaleString()}</Field>
                 <Field label="Role">{isOwner ? "Owner" : "Member"}</Field>
                 <Field label="Workspace ID">
                   <span className="font-mono text-xs">{wsQ.data.id}</span>
@@ -108,8 +106,8 @@ function WorkspaceDetail() {
             <section className="rounded-xl border border-dashed border-border bg-card p-6">
               <h2 className="font-display text-xl font-semibold">Datasets</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Phase 2 will land here: CSV / Excel / TSV upload, schema detection, and
-                dataset health scoring.
+                Phase 2 will land here: CSV / Excel / TSV upload, schema detection, and dataset
+                health scoring.
               </p>
             </section>
           </div>
@@ -145,12 +143,10 @@ function WorkspaceDetail() {
 
             {isOwner && (
               <section className="rounded-xl border border-destructive/40 bg-card p-6">
-                <h2 className="font-display text-lg font-semibold text-destructive">
-                  Danger zone
-                </h2>
+                <h2 className="font-display text-lg font-semibold text-destructive">Danger zone</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Deleting a workspace removes all of its datasets, analyses, and
-                  conversations. This cannot be undone.
+                  Deleting a workspace removes all of its datasets, analyses, and conversations.
+                  This cannot be undone.
                 </p>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -173,9 +169,7 @@ function WorkspaceDetail() {
                           deleteMut.mutate();
                         }}
                       >
-                        {deleteMut.isPending && (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        )}
+                        {deleteMut.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Delete
                       </AlertDialogAction>
                     </AlertDialogFooter>

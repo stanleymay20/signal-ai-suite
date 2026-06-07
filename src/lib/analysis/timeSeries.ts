@@ -43,11 +43,16 @@ function startOfYear(d: Date): Date {
 
 function bucket(d: Date, g: Granularity): Date {
   switch (g) {
-    case "day": return startOfDay(d);
-    case "week": return startOfWeek(d);
-    case "month": return startOfMonth(d);
-    case "quarter": return startOfQuarter(d);
-    case "year": return startOfYear(d);
+    case "day":
+      return startOfDay(d);
+    case "week":
+      return startOfWeek(d);
+    case "month":
+      return startOfMonth(d);
+    case "quarter":
+      return startOfQuarter(d);
+    case "year":
+      return startOfYear(d);
   }
 }
 
@@ -92,15 +97,22 @@ export function buildSeries(
   }
   if (pairs.length === 0) return { granularity: opts.granularity ?? "day", points: [] };
 
-  let min = pairs[0].d, max = pairs[0].d;
-  for (const p of pairs) { if (p.d < min) min = p.d; if (p.d > max) max = p.d; }
+  let min = pairs[0].d,
+    max = pairs[0].d;
+  for (const p of pairs) {
+    if (p.d < min) min = p.d;
+    if (p.d > max) max = p.d;
+  }
   const g = opts.granularity ?? chooseGranularity(min, max);
 
   const buckets = new Map<number, { sum: number; n: number }>();
   for (const p of pairs) {
     const key = bucket(p.d, g).getTime();
     const b = buckets.get(key);
-    if (b) { b.sum += p.v; b.n += 1; } else buckets.set(key, { sum: p.v, n: 1 });
+    if (b) {
+      b.sum += p.v;
+      b.n += 1;
+    } else buckets.set(key, { sum: p.v, n: 1 });
   }
 
   const points: TimePoint[] = [...buckets.entries()]

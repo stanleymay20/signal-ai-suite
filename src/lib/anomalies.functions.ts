@@ -4,31 +4,42 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { parseCsv, parseXlsx } from "./data-profiling/parseFile";
 import { buildSeries } from "./analysis/timeSeries";
 import { runAnomalyDetection } from "./anomalies/runAnomalyDetection";
-import type {
-  AnomalyMethod, ForecastResidualSource, MethodConfig,
-} from "./anomalies/types";
+import type { AnomalyMethod, ForecastResidualSource, MethodConfig } from "./anomalies/types";
 import type { Granularity, TimePoint } from "./analysis/types";
 
 const uuid = z.string().uuid();
 const granularitySchema = z.enum(["day", "week", "month", "quarter", "year"]);
-const methodSchema = z.enum([
-  "zscore", "mad", "iqr", "rolling_zscore", "forecast_residual",
-]);
+const methodSchema = z.enum(["zscore", "mad", "iqr", "rolling_zscore", "forecast_residual"]);
 
-const configSchema = z.object({
-  zscore: z.object({ threshold: z.number().min(1).max(10).optional(), enabled: z.boolean().optional() }).optional(),
-  mad: z.object({ threshold: z.number().min(1).max(10).optional(), enabled: z.boolean().optional() }).optional(),
-  iqr: z.object({ multiplier: z.number().min(0.5).max(5).optional(), enabled: z.boolean().optional() }).optional(),
-  rollingZscore: z.object({
-    window: z.number().int().min(3).max(200).optional(),
-    threshold: z.number().min(1).max(10).optional(),
-    enabled: z.boolean().optional(),
-  }).optional(),
-  forecastResidual: z.object({
-    threshold: z.number().min(1).max(10).optional(),
-    enabled: z.boolean().optional(),
-  }).optional(),
-}).optional();
+const configSchema = z
+  .object({
+    zscore: z
+      .object({ threshold: z.number().min(1).max(10).optional(), enabled: z.boolean().optional() })
+      .optional(),
+    mad: z
+      .object({ threshold: z.number().min(1).max(10).optional(), enabled: z.boolean().optional() })
+      .optional(),
+    iqr: z
+      .object({
+        multiplier: z.number().min(0.5).max(5).optional(),
+        enabled: z.boolean().optional(),
+      })
+      .optional(),
+    rollingZscore: z
+      .object({
+        window: z.number().int().min(3).max(200).optional(),
+        threshold: z.number().min(1).max(10).optional(),
+        enabled: z.boolean().optional(),
+      })
+      .optional(),
+    forecastResidual: z
+      .object({
+        threshold: z.number().min(1).max(10).optional(),
+        enabled: z.boolean().optional(),
+      })
+      .optional(),
+  })
+  .optional();
 
 interface ForecastRow {
   id: string;
@@ -73,28 +84,35 @@ function extractForecastSource(forecast: ForecastRow | null): ForecastResidualSo
 export const runAnomalyDetectionFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
-    z.object({
-      datasetId: uuid,
-      dateColumn: z.string().min(1).max(255),
-      targetColumn: z.string().min(1).max(255),
-      granularity: granularitySchema.optional(),
-      aggregate: z.enum(["mean", "sum"]).optional(),
-      methods: z.array(methodSchema).min(1).max(5).optional(),
-      config: configSchema,
-      useLatestForecast: z.boolean().optional(),
-    }).parse(input),
+    z
+      .object({
+        datasetId: uuid,
+        dateColumn: z.string().min(1).max(255),
+        targetColumn: z.string().min(1).max(255),
+        granularity: granularitySchema.optional(),
+        aggregate: z.enum(["mean", "sum"]).optional(),
+        methods: z.array(methodSchema).min(1).max(5).optional(),
+        config: configSchema,
+        useLatestForecast: z.boolean().optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
     const { data: ds, error: dsErr } = await supabase
-      .from("datasets").select("*").eq("id", data.datasetId).maybeSingle();
+      .from("datasets")
+      .select("*")
+      .eq("id", data.datasetId)
+      .maybeSingle();
     if (dsErr) throw new Error(dsErr.message);
     if (!ds) throw new Error("Dataset not found");
     if (ds.status !== "ready") throw new Error("Dataset is not ready");
 
     const { data: cols, error: colErr } = await supabase
-      .from("dataset_columns").select("column_name").eq("dataset_id", ds.id);
+      .from("dataset_columns")
+      .select("column_name")
+      .eq("dataset_id", ds.id);
     if (colErr) throw new Error(colErr.message);
     const names = new Set((cols ?? []).map((c) => c.column_name));
     if (!names.has(data.dateColumn)) throw new Error("Unknown date column");
@@ -141,9 +159,10 @@ export const runAnomalyDetectionFn = createServerFn({ method: "POST" })
       const dl = await supabase.storage.from("datasets").download(ds.storage_path);
       if (dl.error || !dl.data) throw new Error(dl.error?.message ?? "Download failed");
 
-      const parsed = ds.file_type === "csv"
-        ? parseCsv(await dl.data.text())
-        : parseXlsx(await dl.data.arrayBuffer());
+      const parsed =
+        ds.file_type === "csv"
+          ? parseCsv(await dl.data.text())
+          : parseXlsx(await dl.data.arrayBuffer());
       if (parsed.columns.length === 0) throw new Error("Could not parse dataset file");
 
       const series = buildSeries(parsed.rows, {
@@ -160,15 +179,18 @@ export const runAnomalyDetectionFn = createServerFn({ method: "POST" })
         forecast: forecastSource,
       });
 
-      const { error: updErr } = await supabase.from("anomaly_runs").update({
-        status: "ready",
-        granularity: series.granularity,
-        series: JSON.parse(JSON.stringify(bundle.series)),
-        anomalies: JSON.parse(JSON.stringify(bundle.anomalies)),
-        summary: JSON.parse(JSON.stringify(bundle.summary)),
-        methods: bundle.methods,
-        error_message: null,
-      }).eq("id", runId);
+      const { error: updErr } = await supabase
+        .from("anomaly_runs")
+        .update({
+          status: "ready",
+          granularity: series.granularity,
+          series: JSON.parse(JSON.stringify(bundle.series)),
+          anomalies: JSON.parse(JSON.stringify(bundle.anomalies)),
+          summary: JSON.parse(JSON.stringify(bundle.summary)),
+          methods: bundle.methods,
+          error_message: null,
+        })
+        .eq("id", runId);
       if (updErr) throw new Error(updErr.message);
 
       await supabase.from("audit_logs").insert({
@@ -186,7 +208,9 @@ export const runAnomalyDetectionFn = createServerFn({ method: "POST" })
       return { runId, totalAnomalies: bundle.summary.totalAnomalies };
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Anomaly detection failed";
-      await supabase.from("anomaly_runs").update({ status: "failed", error_message: msg })
+      await supabase
+        .from("anomaly_runs")
+        .update({ status: "failed", error_message: msg })
         .eq("id", runId);
       throw new Error(msg);
     }
@@ -197,7 +221,10 @@ export const getAnomalyRun = createServerFn({ method: "GET" })
   .inputValidator((input) => z.object({ runId: uuid }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
-      .from("anomaly_runs").select("*").eq("id", data.runId).maybeSingle();
+      .from("anomaly_runs")
+      .select("*")
+      .eq("id", data.runId)
+      .maybeSingle();
     if (error) throw new Error(error.message);
     return row;
   });
@@ -207,8 +234,11 @@ export const getLatestAnomalyRun = createServerFn({ method: "GET" })
   .inputValidator((input) => z.object({ datasetId: uuid }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: rows, error } = await context.supabase
-      .from("anomaly_runs").select("*").eq("dataset_id", data.datasetId)
-      .order("created_at", { ascending: false }).limit(1);
+      .from("anomaly_runs")
+      .select("*")
+      .eq("dataset_id", data.datasetId)
+      .order("created_at", { ascending: false })
+      .limit(1);
     if (error) throw new Error(error.message);
     return rows?.[0] ?? null;
   });
@@ -232,7 +262,10 @@ export const deleteAnomalyRun = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: row, error: gErr } = await supabase
-      .from("anomaly_runs").select("id, dataset_id").eq("id", data.runId).maybeSingle();
+      .from("anomaly_runs")
+      .select("id, dataset_id")
+      .eq("id", data.runId)
+      .maybeSingle();
     if (gErr) throw new Error(gErr.message);
     if (!row) throw new Error("Anomaly run not found");
     const { error } = await supabase.from("anomaly_runs").delete().eq("id", data.runId);

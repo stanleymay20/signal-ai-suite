@@ -1,6 +1,11 @@
 import type {
-  AnalysisResult, AnomalyPoint, CorrelationMatrix, Insight,
-  MissingnessEntry, SeasonalityResult, TrendResult,
+  AnalysisResult,
+  AnomalyPoint,
+  CorrelationMatrix,
+  Insight,
+  MissingnessEntry,
+  SeasonalityResult,
+  TrendResult,
 } from "./types";
 
 function formatPct(n: number | null): string {
@@ -23,20 +28,27 @@ export function buildInsights(input: {
   const target = input.targetColumn ?? "value";
 
   if (input.pointCount === 0) {
-    out.push({ severity: "warning", code: "no_series",
-      message: "No time-series points could be computed from the chosen columns." });
+    out.push({
+      severity: "warning",
+      code: "no_series",
+      message: "No time-series points could be computed from the chosen columns.",
+    });
     return out;
   }
 
   if (input.trend) {
     const t = input.trend;
     if (t.direction === "flat") {
-      out.push({ severity: "info", code: "trend_flat",
-        message: `"${target}" is essentially flat over the observed period.` });
+      out.push({
+        severity: "info",
+        code: "trend_flat",
+        message: `"${target}" is essentially flat over the observed period.`,
+      });
     } else {
       const fit = t.rSquared >= 0.6 ? "strong" : t.rSquared >= 0.3 ? "moderate" : "weak";
       out.push({
-        severity: "info", code: `trend_${t.direction}`,
+        severity: "info",
+        code: `trend_${t.direction}`,
         message: `"${target}" trends ${t.direction} by ${formatPct(t.changePct)} (R²=${t.rSquared.toFixed(2)}, ${fit} fit).`,
       });
     }
@@ -45,7 +57,8 @@ export function buildInsights(input: {
   if (input.seasonality?.detected && input.seasonality.strongest) {
     const label = input.seasonality.strongest === "monthOfYear" ? "monthly" : "day-of-week";
     out.push({
-      severity: "info", code: "seasonality",
+      severity: "info",
+      code: "seasonality",
       message: `${label.charAt(0).toUpperCase()}${label.slice(1)} seasonality detected (strength ${input.seasonality.strength}).`,
     });
   }
@@ -79,7 +92,8 @@ export function buildInsights(input: {
     }
     if (best && Math.abs(best.r) >= 0.7) {
       out.push({
-        severity: "info", code: "strong_correlation",
+        severity: "info",
+        code: "strong_correlation",
         message: `Strong correlation between "${best.a}" and "${best.b}" (r=${best.r.toFixed(2)}).`,
       });
     }

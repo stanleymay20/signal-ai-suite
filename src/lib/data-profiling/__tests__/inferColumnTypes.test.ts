@@ -41,7 +41,9 @@ describe("inferColumnType", () => {
     ).toBe("datetime");
   });
   it("flags low-cardinality strings as categorical", () => {
-    const vals = Array.from({ length: 30 }, (_, i) => (i % 3 === 0 ? "A" : i % 3 === 1 ? "B" : "C"));
+    const vals = Array.from({ length: 30 }, (_, i) =>
+      i % 3 === 0 ? "A" : i % 3 === 1 ? "B" : "C",
+    );
     expect(inferColumnType(vals, 3 / 30)).toBe("categorical");
   });
   it("treats high-cardinality text as string", () => {

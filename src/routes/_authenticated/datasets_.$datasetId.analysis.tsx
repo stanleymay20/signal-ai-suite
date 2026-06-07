@@ -4,12 +4,29 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import {
-  ArrowLeft, Play, Loader2, AlertTriangle, Info, AlertCircle, TrendingUp,
-  TrendingDown, Minus, Activity,
+  ArrowLeft,
+  Play,
+  Loader2,
+  AlertTriangle,
+  Info,
+  AlertCircle,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Activity,
 } from "lucide-react";
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, ReferenceDot, Legend,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  ReferenceDot,
+  Legend,
 } from "recharts";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
@@ -17,8 +34,16 @@ import { getDataset } from "@/lib/datasets.functions";
 import { runDatasetAnalysis, getLatestAnalysis } from "@/lib/analyses.functions";
 import { detectTimeSeries } from "@/lib/analysis/detectTimeSeries";
 import type {
-  AnalysisResult, AnomalyPoint, CorrelationMatrix, DistributionResult,
-  Insight, MissingnessEntry, MovingAverageSeries, SeasonalityResult, TimePoint, TrendResult,
+  AnalysisResult,
+  AnomalyPoint,
+  CorrelationMatrix,
+  DistributionResult,
+  Insight,
+  MissingnessEntry,
+  MovingAverageSeries,
+  SeasonalityResult,
+  TimePoint,
+  TrendResult,
 } from "@/lib/analysis/types";
 import type { ColumnProfile } from "@/lib/data-profiling/types";
 
@@ -83,7 +108,12 @@ function AnalysisPage() {
           dateColumn: dateCol || null,
           targetColumn: targetCol || null,
           granularity: (granularity || undefined) as
-            | "day" | "week" | "month" | "quarter" | "year" | undefined,
+            | "day"
+            | "week"
+            | "month"
+            | "quarter"
+            | "year"
+            | undefined,
           aggregate,
         },
       }),
@@ -95,20 +125,27 @@ function AnalysisPage() {
   });
 
   if (dsQ.isLoading) {
-    return <AppShell title="Loading…"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></AppShell>;
+    return (
+      <AppShell title="Loading…">
+        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      </AppShell>
+    );
   }
   if (dsQ.isError || !dsQ.data) {
     return (
       <AppShell title="Dataset not found">
-        <Link to="/datasets" className="text-sm text-primary hover:underline">← Back to datasets</Link>
+        <Link to="/datasets" className="text-sm text-primary hover:underline">
+          ← Back to datasets
+        </Link>
       </AppShell>
     );
   }
 
   const { dataset } = dsQ.data;
   const ready = dataset.status === "ready";
-  const result = (lastAnalysis?.status === "ready" ? lastAnalysis.results_json : null) as
-    | AnalysisResult | null;
+  const result = (
+    lastAnalysis?.status === "ready" ? lastAnalysis.results_json : null
+  ) as AnalysisResult | null;
 
   return (
     <AppShell
@@ -124,7 +161,8 @@ function AnalysisPage() {
     >
       {!ready && (
         <div className="rounded-lg border border-border bg-card p-4 text-sm">
-          Dataset is not ready for analysis. Current status: <span className="font-mono">{dataset.status}</span>
+          Dataset is not ready for analysis. Current status:{" "}
+          <span className="font-mono">{dataset.status}</span>
         </div>
       )}
 
@@ -132,24 +170,45 @@ function AnalysisPage() {
         <section className="rounded-xl border border-border bg-card p-5">
           <h2 className="font-display text-base font-semibold">Configure analysis</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Choose a date column and a numeric target to compute trends, seasonality, and anomaly candidates.
+            Choose a date column and a numeric target to compute trends, seasonality, and anomaly
+            candidates.
           </p>
 
           <div className="mt-4 grid gap-4 md:grid-cols-4">
             <Field label="Date column">
-              <select className="select" value={dateCol} onChange={(e) => setDateCol(e.target.value)}>
+              <select
+                className="select"
+                value={dateCol}
+                onChange={(e) => setDateCol(e.target.value)}
+              >
                 <option value="">— None —</option>
-                {candidates.dateColumns.map((n) => <option key={n} value={n}>{n}</option>)}
+                {candidates.dateColumns.map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
               </select>
             </Field>
             <Field label="Target (numeric)">
-              <select className="select" value={targetCol} onChange={(e) => setTargetCol(e.target.value)}>
+              <select
+                className="select"
+                value={targetCol}
+                onChange={(e) => setTargetCol(e.target.value)}
+              >
                 <option value="">— None —</option>
-                {candidates.numericColumns.map((n) => <option key={n} value={n}>{n}</option>)}
+                {candidates.numericColumns.map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
               </select>
             </Field>
             <Field label="Granularity">
-              <select className="select" value={granularity} onChange={(e) => setGranularity(e.target.value)}>
+              <select
+                className="select"
+                value={granularity}
+                onChange={(e) => setGranularity(e.target.value)}
+              >
                 <option value="">Auto</option>
                 <option value="day">Day</option>
                 <option value="week">Week</option>
@@ -159,7 +218,11 @@ function AnalysisPage() {
               </select>
             </Field>
             <Field label="Aggregate">
-              <select className="select" value={aggregate} onChange={(e) => setAggregate(e.target.value as "mean" | "sum")}>
+              <select
+                className="select"
+                value={aggregate}
+                onChange={(e) => setAggregate(e.target.value as "mean" | "sum")}
+              >
                 <option value="mean">Mean</option>
                 <option value="sum">Sum</option>
               </select>
@@ -173,9 +236,13 @@ function AnalysisPage() {
               disabled={runMut.isPending || lastAnalysis?.status === "running"}
             >
               {runMut.isPending || lastAnalysis?.status === "running" ? (
-                <><Loader2 className="mr-1 h-4 w-4 animate-spin" /> Analyzing…</>
+                <>
+                  <Loader2 className="mr-1 h-4 w-4 animate-spin" /> Analyzing…
+                </>
               ) : (
-                <><Play className="mr-1 h-4 w-4" /> Run analysis</>
+                <>
+                  <Play className="mr-1 h-4 w-4" /> Run analysis
+                </>
               )}
             </Button>
             {lastAnalysis?.status === "failed" && (
@@ -209,7 +276,9 @@ function AnalysisPage() {
 
           {result.seasonality && <SeasonalityCard seasonality={result.seasonality} />}
 
-          {result.distributions.length > 0 && <DistributionsCard distributions={result.distributions} />}
+          {result.distributions.length > 0 && (
+            <DistributionsCard distributions={result.distributions} />
+          )}
 
           {result.correlation && <CorrelationCard matrix={result.correlation} />}
 
@@ -243,13 +312,23 @@ function useMemoEffect(fn: () => void, key: string) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{label}</span>
+      <span className="mb-1 block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </span>
       {children}
     </label>
   );
 }
 
-function Card({ title, action, children }: { title: string; action?: React.ReactNode; children: React.ReactNode }) {
+function Card({
+  title,
+  action,
+  children,
+}: {
+  title: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
     <section className="rounded-xl border border-border bg-card">
       <header className="flex items-center justify-between border-b border-border px-5 py-3">
@@ -263,21 +342,36 @@ function Card({ title, action, children }: { title: string; action?: React.React
 
 function InsightsCard({ insights }: { insights: Insight[] }) {
   if (insights.length === 0) {
-    return <Card title="Automatic insights"><p className="text-sm text-muted-foreground">No notable insights detected.</p></Card>;
+    return (
+      <Card title="Automatic insights">
+        <p className="text-sm text-muted-foreground">No notable insights detected.</p>
+      </Card>
+    );
   }
   return (
     <Card title="Automatic insights">
       <ul className="space-y-3">
         {insights.map((i, idx) => {
-          const Icon = i.severity === "critical" ? AlertTriangle : i.severity === "warning" ? AlertCircle : Info;
-          const tone = i.severity === "critical" ? "text-destructive"
-            : i.severity === "warning" ? "text-gold-foreground" : "text-emerald";
+          const Icon =
+            i.severity === "critical"
+              ? AlertTriangle
+              : i.severity === "warning"
+                ? AlertCircle
+                : Info;
+          const tone =
+            i.severity === "critical"
+              ? "text-destructive"
+              : i.severity === "warning"
+                ? "text-gold-foreground"
+                : "text-emerald";
           return (
             <li key={idx} className="flex items-start gap-3 text-sm">
               <Icon className={`mt-0.5 h-4 w-4 flex-shrink-0 ${tone}`} />
               <div>
                 <p>{i.message}</p>
-                <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{i.code}</p>
+                <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                  {i.code}
+                </p>
               </div>
             </li>
           );
@@ -288,10 +382,19 @@ function InsightsCard({ insights }: { insights: Insight[] }) {
 }
 
 function TrendCard({
-  series, trend, movingAverages, anomalies, targetColumn, granularity,
+  series,
+  trend,
+  movingAverages,
+  anomalies,
+  targetColumn,
+  granularity,
 }: {
-  series: TimePoint[]; trend: TrendResult; movingAverages: MovingAverageSeries[];
-  anomalies: AnomalyPoint[]; targetColumn: string | null; granularity: string | null;
+  series: TimePoint[];
+  trend: TrendResult;
+  movingAverages: MovingAverageSeries[];
+  anomalies: AnomalyPoint[];
+  targetColumn: string | null;
+  granularity: string | null;
 }) {
   const chartData = useMemo(() => {
     const byT: Record<string, Record<string, string | number | null>> = {};
@@ -305,9 +408,14 @@ function TrendCard({
   }, [series, movingAverages]);
 
   const anomalySet = new Set(anomalies.map((a) => a.t));
-  const Icon = trend.direction === "up" ? TrendingUp : trend.direction === "down" ? TrendingDown : Minus;
-  const tone = trend.direction === "up" ? "text-emerald"
-    : trend.direction === "down" ? "text-destructive" : "text-muted-foreground";
+  const Icon =
+    trend.direction === "up" ? TrendingUp : trend.direction === "down" ? TrendingDown : Minus;
+  const tone =
+    trend.direction === "up"
+      ? "text-emerald"
+      : trend.direction === "down"
+        ? "text-destructive"
+        : "text-muted-foreground";
 
   return (
     <Card
@@ -316,7 +424,9 @@ function TrendCard({
         <div className={`flex items-center gap-2 text-sm ${tone}`}>
           <Icon className="h-4 w-4" />
           <span className="font-mono tabular-nums">
-            {trend.changePct === null ? "n/a" : `${trend.changePct >= 0 ? "+" : ""}${trend.changePct.toFixed(1)}%`}
+            {trend.changePct === null
+              ? "n/a"
+              : `${trend.changePct >= 0 ? "+" : ""}${trend.changePct.toFixed(1)}%`}
           </span>
           <span className="text-xs text-muted-foreground">R²={trend.rSquared.toFixed(2)}</span>
         </div>
@@ -326,32 +436,61 @@ function TrendCard({
         <ResponsiveContainer>
           <LineChart data={chartData} margin={{ top: 8, right: 24, bottom: 0, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis dataKey="t" tickFormatter={(t) => formatT(t)} fontSize={11} stroke="hsl(var(--muted-foreground))" />
+            <XAxis
+              dataKey="t"
+              tickFormatter={(t) => formatT(t)}
+              fontSize={11}
+              stroke="hsl(var(--muted-foreground))"
+            />
             <YAxis fontSize={11} stroke="hsl(var(--muted-foreground))" width={56} />
             <Tooltip
               contentStyle={{
-                background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))",
-                borderRadius: 8, fontSize: 12,
+                background: "hsl(var(--popover))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: 8,
+                fontSize: 12,
               }}
               labelFormatter={(t) => new Date(String(t)).toLocaleDateString()}
             />
             <Legend wrapperStyle={{ fontSize: 11 }} />
-            <Line type="monotone" dataKey="v" name={targetColumn ?? "value"}
-              stroke="hsl(var(--primary))" dot={false} strokeWidth={2} />
+            <Line
+              type="monotone"
+              dataKey="v"
+              name={targetColumn ?? "value"}
+              stroke="hsl(var(--primary))"
+              dot={false}
+              strokeWidth={2}
+            />
             {movingAverages.map((ma, i) => (
-              <Line key={ma.window} type="monotone" dataKey={`ma${ma.window}`} name={`MA${ma.window}`}
+              <Line
+                key={ma.window}
+                type="monotone"
+                dataKey={`ma${ma.window}`}
+                name={`MA${ma.window}`}
                 stroke={i === 0 ? "hsl(var(--gold))" : "hsl(var(--emerald))"}
-                strokeDasharray="4 3" dot={false} strokeWidth={1.5} />
+                strokeDasharray="4 3"
+                dot={false}
+                strokeWidth={1.5}
+              />
             ))}
-            {series.filter((p) => anomalySet.has(p.t)).map((p) => (
-              <ReferenceDot key={p.t} x={p.t} y={p.v} r={5}
-                fill="hsl(var(--destructive))" stroke="hsl(var(--destructive))" />
-            ))}
+            {series
+              .filter((p) => anomalySet.has(p.t))
+              .map((p) => (
+                <ReferenceDot
+                  key={p.t}
+                  x={p.t}
+                  y={p.v}
+                  r={5}
+                  fill="hsl(var(--destructive))"
+                  stroke="hsl(var(--destructive))"
+                />
+              ))}
           </LineChart>
         </ResponsiveContainer>
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
-        {series.length} buckets · slope {trend.slopePerDay.toFixed(4)}/day · {anomalies.length} anomalies marked
+        {series.length} buckets · slope {trend.slopePerDay.toFixed(4)}/day · {anomalies.length}{" "}
+        anomalies marked
       </p>
     </Card>
   );
@@ -359,11 +498,14 @@ function TrendCard({
 
 function SeasonalityCard({ seasonality }: { seasonality: SeasonalityResult }) {
   return (
-    <Card title="Seasonality" action={
-      <span className="font-mono text-xs text-muted-foreground">
-        strength {seasonality.strength} · {seasonality.detected ? "detected" : "weak / none"}
-      </span>
-    }>
+    <Card
+      title="Seasonality"
+      action={
+        <span className="font-mono text-xs text-muted-foreground">
+          strength {seasonality.strength} · {seasonality.detected ? "detected" : "weak / none"}
+        </span>
+      }
+    >
       <div className="grid gap-6 md:grid-cols-2">
         <SeasonalityChart title="Mean by month" data={seasonality.monthOfYear} />
         <SeasonalityChart title="Mean by day of week" data={seasonality.dayOfWeek} />
@@ -372,17 +514,32 @@ function SeasonalityCard({ seasonality }: { seasonality: SeasonalityResult }) {
   );
 }
 
-function SeasonalityChart({ title, data }: { title: string; data: Array<{ label: string; mean: number; count: number }> }) {
+function SeasonalityChart({
+  title,
+  data,
+}: {
+  title: string;
+  data: Array<{ label: string; mean: number; count: number }>;
+}) {
   return (
     <div>
-      <h3 className="mb-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{title}</h3>
+      <h3 className="mb-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {title}
+      </h3>
       <div className="h-56">
         <ResponsiveContainer>
           <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
             <XAxis dataKey="label" fontSize={11} stroke="hsl(var(--muted-foreground))" />
             <YAxis fontSize={11} stroke="hsl(var(--muted-foreground))" width={48} />
-            <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }} />
+            <Tooltip
+              contentStyle={{
+                background: "hsl(var(--popover))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: 8,
+                fontSize: 12,
+              }}
+            />
             <Bar dataKey="mean" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
@@ -424,36 +581,52 @@ function DistributionsCard({ distributions }: { distributions: DistributionResul
 }
 
 function Stat({ k, v }: { k: string; v: string }) {
-  return <div><dt className="inline">{k}: </dt><dd className="inline text-foreground">{v}</dd></div>;
+  return (
+    <div>
+      <dt className="inline">{k}: </dt>
+      <dd className="inline text-foreground">{v}</dd>
+    </div>
+  );
 }
 
 function CorrelationCard({ matrix }: { matrix: CorrelationMatrix }) {
   return (
-    <Card title="Correlation matrix" action={<span className="font-mono text-[10px] text-muted-foreground">Pearson</span>}>
+    <Card
+      title="Correlation matrix"
+      action={<span className="font-mono text-[10px] text-muted-foreground">Pearson</span>}
+    >
       <div className="overflow-x-auto">
         <table className="border-separate border-spacing-0 text-xs">
           <thead>
             <tr>
               <th className="px-2 py-1" />
               {matrix.columns.map((c) => (
-                <th key={c} className="px-2 py-1 font-mono text-[10px] text-muted-foreground">{c}</th>
+                <th key={c} className="px-2 py-1 font-mono text-[10px] text-muted-foreground">
+                  {c}
+                </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {matrix.columns.map((row, i) => (
               <tr key={row}>
-                <th className="px-2 py-1 text-right font-mono text-[10px] text-muted-foreground">{row}</th>
+                <th className="px-2 py-1 text-right font-mono text-[10px] text-muted-foreground">
+                  {row}
+                </th>
                 {matrix.columns.map((_, j) => {
                   const r = matrix.values[i][j];
-                  const bg = r === null
-                    ? "hsl(var(--muted))"
-                    : r > 0
-                      ? `color-mix(in oklab, hsl(var(--emerald)) ${Math.round(Math.abs(r) * 80)}%, transparent)`
-                      : `color-mix(in oklab, hsl(var(--destructive)) ${Math.round(Math.abs(r) * 80)}%, transparent)`;
+                  const bg =
+                    r === null
+                      ? "hsl(var(--muted))"
+                      : r > 0
+                        ? `color-mix(in oklab, hsl(var(--emerald)) ${Math.round(Math.abs(r) * 80)}%, transparent)`
+                        : `color-mix(in oklab, hsl(var(--destructive)) ${Math.round(Math.abs(r) * 80)}%, transparent)`;
                   return (
-                    <td key={j} className="px-2 py-1 text-center font-mono tabular-nums"
-                      style={{ background: bg, minWidth: 56 }}>
+                    <td
+                      key={j}
+                      className="px-2 py-1 text-center font-mono tabular-nums"
+                      style={{ background: bg, minWidth: 56 }}
+                    >
                       {r === null ? "—" : r.toFixed(2)}
                     </td>
                   );
@@ -477,10 +650,15 @@ function MissingnessCard({ items }: { items: MissingnessEntry[] }) {
             <div>
               <div className="flex items-baseline justify-between">
                 <span className="font-mono text-xs">{m.column}</span>
-                <span className="font-mono text-[10px] tabular-nums text-muted-foreground">{m.percentage}%</span>
+                <span className="font-mono text-[10px] tabular-nums text-muted-foreground">
+                  {m.percentage}%
+                </span>
               </div>
               <div className="mt-1 h-1.5 w-full overflow-hidden rounded bg-muted">
-                <div className="h-full bg-destructive/70" style={{ width: `${Math.min(100, m.percentage)}%` }} />
+                <div
+                  className="h-full bg-destructive/70"
+                  style={{ width: `${Math.min(100, m.percentage)}%` }}
+                />
               </div>
             </div>
             <span className="font-mono text-[10px] tabular-nums text-muted-foreground whitespace-nowrap">
@@ -495,9 +673,14 @@ function MissingnessCard({ items }: { items: MissingnessEntry[] }) {
 
 function AnomaliesCard({ anomalies }: { anomalies: AnomalyPoint[] }) {
   return (
-    <Card title="Anomaly candidates" action={
-      <span className="font-mono text-[10px] text-muted-foreground"><Activity className="inline h-3 w-3" /> z-score ≥ 3</span>
-    }>
+    <Card
+      title="Anomaly candidates"
+      action={
+        <span className="font-mono text-[10px] text-muted-foreground">
+          <Activity className="inline h-3 w-3" /> z-score ≥ 3
+        </span>
+      }
+    >
       <ul className="divide-y divide-border text-sm">
         {anomalies.map((a, i) => (
           <li key={i} className="flex items-center justify-between py-2">

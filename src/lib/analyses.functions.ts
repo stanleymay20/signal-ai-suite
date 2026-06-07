@@ -13,25 +13,33 @@ const granularitySchema = z.enum(["day", "week", "month", "quarter", "year"]);
 export const runDatasetAnalysis = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
-    z.object({
-      datasetId: uuid,
-      dateColumn: z.string().min(1).max(255).nullable(),
-      targetColumn: z.string().min(1).max(255).nullable(),
-      granularity: granularitySchema.optional(),
-      aggregate: z.enum(["mean", "sum"]).optional(),
-    }).parse(input),
+    z
+      .object({
+        datasetId: uuid,
+        dateColumn: z.string().min(1).max(255).nullable(),
+        targetColumn: z.string().min(1).max(255).nullable(),
+        granularity: granularitySchema.optional(),
+        aggregate: z.enum(["mean", "sum"]).optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
     const { data: ds, error: dsErr } = await supabase
-      .from("datasets").select("*").eq("id", data.datasetId).maybeSingle();
+      .from("datasets")
+      .select("*")
+      .eq("id", data.datasetId)
+      .maybeSingle();
     if (dsErr) throw new Error(dsErr.message);
     if (!ds) throw new Error("Dataset not found");
     if (ds.status !== "ready") throw new Error("Dataset is not ready for analysis");
 
     const { data: colRows, error: colErr } = await supabase
-      .from("dataset_columns").select("*").eq("dataset_id", ds.id).order("position");
+      .from("dataset_columns")
+      .select("*")
+      .eq("dataset_id", ds.id)
+      .order("position");
     if (colErr) throw new Error(colErr.message);
     if (!colRows || colRows.length === 0) throw new Error("Dataset has no column profile");
 
@@ -47,7 +55,8 @@ export const runDatasetAnalysis = createServerFn({ method: "POST" })
 
     const colNames = new Set(columns.map((c) => c.name));
     if (data.dateColumn && !colNames.has(data.dateColumn)) throw new Error("Unknown date column");
-    if (data.targetColumn && !colNames.has(data.targetColumn)) throw new Error("Unknown target column");
+    if (data.targetColumn && !colNames.has(data.targetColumn))
+      throw new Error("Unknown target column");
 
     // Insert a pending row early so the UI can poll status
     const analysisId = crypto.randomUUID();
@@ -82,14 +91,17 @@ export const runDatasetAnalysis = createServerFn({ method: "POST" })
         aggregate: data.aggregate,
       });
 
-      const { error: updErr } = await supabase.from("analyses").update({
-        status: "ready",
-        granularity: result.granularity,
-        results_json: JSON.parse(JSON.stringify(result)),
-        insights_json: JSON.parse(JSON.stringify(result.insights)),
-        anomalies_json: JSON.parse(JSON.stringify(result.anomalies)),
-        error_message: null,
-      }).eq("id", analysisId);
+      const { error: updErr } = await supabase
+        .from("analyses")
+        .update({
+          status: "ready",
+          granularity: result.granularity,
+          results_json: JSON.parse(JSON.stringify(result)),
+          insights_json: JSON.parse(JSON.stringify(result.insights)),
+          anomalies_json: JSON.parse(JSON.stringify(result.anomalies)),
+          error_message: null,
+        })
+        .eq("id", analysisId);
       if (updErr) throw new Error(updErr.message);
 
       await supabase.from("audit_logs").insert({
@@ -107,7 +119,9 @@ export const runDatasetAnalysis = createServerFn({ method: "POST" })
       return { analysisId, granularity: result.granularity, insightCount: result.insights.length };
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Analysis failed";
-      await supabase.from("analyses").update({ status: "failed", error_message: msg })
+      await supabase
+        .from("analyses")
+        .update({ status: "failed", error_message: msg })
         .eq("id", analysisId);
       throw new Error(msg);
     }

@@ -23,16 +23,18 @@ export function predictMovingAverage(
 }
 
 /** Linear OLS on x=index, y=value; extrapolate. */
-export function predictLinearTrend(
-  history: TimePoint[],
-  futureTs: string[],
-): ForecastPoint[] {
+export function predictLinearTrend(history: TimePoint[], futureTs: string[]): ForecastPoint[] {
   const n = history.length;
   if (n < 2) return predictNaive(history, futureTs);
-  let sx = 0, sy = 0, sxx = 0, sxy = 0;
+  let sx = 0,
+    sy = 0,
+    sxx = 0,
+    sxy = 0;
   for (let i = 0; i < n; i++) {
-    sx += i; sy += history[i].v;
-    sxx += i * i; sxy += i * history[i].v;
+    sx += i;
+    sy += history[i].v;
+    sxx += i * i;
+    sxy += i * history[i].v;
   }
   const denom = n * sxx - sx * sx;
   if (denom === 0) return predictNaive(history, futureTs);
