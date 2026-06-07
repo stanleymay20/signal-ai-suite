@@ -60,8 +60,7 @@ export async function recordUsageEvent(
       prompt_tokens: clampToken(outcome.promptTokens),
       completion_tokens: clampToken(outcome.completionTokens),
       total_tokens: clampToken(
-        outcome.totalTokens ??
-          (outcome.promptTokens ?? 0) + (outcome.completionTokens ?? 0),
+        outcome.totalTokens ?? (outcome.promptTokens ?? 0) + (outcome.completionTokens ?? 0),
       ),
       cost_usd: Number.isFinite(outcome.costUsd ?? NaN)
         ? Math.max(0, outcome.costUsd as number)
@@ -140,7 +139,7 @@ const COST_TABLE: Record<string, { input: number; output: number }> = {
   "gpt-4.1-mini": { input: 0.0004, output: 0.0016 },
   "google/gemini-2.5-flash": { input: 0.000075, output: 0.0003 },
   "google/gemini-2.5-pro": { input: 0.00125, output: 0.005 },
-  "llama3": { input: 0, output: 0 },
+  llama3: { input: 0, output: 0 },
   "llama3.1": { input: 0, output: 0 },
 };
 

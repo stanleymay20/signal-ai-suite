@@ -7,12 +7,7 @@
 
 import { buildEvidencePackage, hasAnyEvidence, type EvidencePackage } from "@/lib/ai/retrieval";
 import { resolveAIProvider } from "@/lib/ai/providers";
-import {
-  buildReport,
-  generateNarratives,
-  snapshotEvidence,
-  type ReportType,
-} from "@/lib/reports";
+import { buildReport, generateNarratives, snapshotEvidence, type ReportType } from "@/lib/reports";
 import type { JobRow } from "./dispatcher.server";
 
 type AnyClient = {
@@ -23,7 +18,10 @@ function toJson<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T;
 }
 
-export async function runReportJob(job: JobRow, client: AnyClient): Promise<Record<string, unknown>> {
+export async function runReportJob(
+  job: JobRow,
+  client: AnyClient,
+): Promise<Record<string, unknown>> {
   const reportType = (job.payload?.type ?? "executive_summary") as ReportType;
   const datasetId = job.dataset_id;
   if (!datasetId) throw new Error("report job missing dataset_id");

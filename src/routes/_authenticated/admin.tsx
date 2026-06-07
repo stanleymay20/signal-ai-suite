@@ -82,15 +82,13 @@ function AdminPage() {
   });
 
   const roleMut = useMutation({
-    mutationFn: (v: { userId: string; role: "admin" | "member" }) =>
-      setRoleFn({ data: v }),
+    mutationFn: (v: { userId: string; role: "admin" | "member" }) => setRoleFn({ data: v }),
     onSuccess: () => {
       toast.success("Role updated");
       qc.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
-
 
   if (adminQ.isLoading) {
     return (
@@ -175,13 +173,19 @@ function AdminPage() {
                 </thead>
                 <tbody>
                   {health.byAction.length === 0 && (
-                    <tr><td colSpan={7} className="py-4 text-center text-muted-foreground">No events yet.</td></tr>
+                    <tr>
+                      <td colSpan={7} className="py-4 text-center text-muted-foreground">
+                        No events yet.
+                      </td>
+                    </tr>
                   )}
                   {health.byAction.map((s) => (
                     <tr key={s.action} className="border-t border-border/60">
                       <td className="py-2 font-mono text-xs">{s.action}</td>
                       <td className="py-2 text-right">{fmt(s.count)}</td>
-                      <td className={`py-2 text-right ${s.errorRate > 0.1 ? "text-destructive" : ""}`}>
+                      <td
+                        className={`py-2 text-right ${s.errorRate > 0.1 ? "text-destructive" : ""}`}
+                      >
                         {pct(s.errorRate)}
                       </td>
                       <td className="py-2 text-right">{fmt(s.p50DurationMs)}</td>
@@ -200,9 +204,14 @@ function AdminPage() {
               )}
               <ul className="space-y-3">
                 {health.byProviderModel.map((s) => (
-                  <li key={`${s.provider}/${s.model}`} className="rounded-lg border border-border bg-background p-3">
+                  <li
+                    key={`${s.provider}/${s.model}`}
+                    className="rounded-lg border border-border bg-background p-3"
+                  >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs">{s.provider}/{s.model}</span>
+                      <span className="font-mono text-xs">
+                        {s.provider}/{s.model}
+                      </span>
                       <span className="text-sm font-semibold">{usd(s.totalCostUsd)}</span>
                     </div>
                     <p className="mt-1 text-xs text-muted-foreground">
@@ -226,7 +235,9 @@ function AdminPage() {
                       <Users className="h-4 w-4 text-muted-foreground" />
                       <span className="font-mono text-xs">{u.actorId.slice(0, 8)}…</span>
                     </span>
-                    <span className="font-mono text-xs">{fmt(u.count)} · {usd(u.totalCostUsd)}</span>
+                    <span className="font-mono text-xs">
+                      {fmt(u.count)} · {usd(u.totalCostUsd)}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -262,7 +273,10 @@ function AdminPage() {
                             {e.status}
                           </span>
                           {e.error_message && (
-                            <p className="mt-1 max-w-xs truncate text-xs text-destructive" title={e.error_message}>
+                            <p
+                              className="mt-1 max-w-xs truncate text-xs text-destructive"
+                              title={e.error_message}
+                            >
                               {e.error_message}
                             </p>
                           )}
@@ -278,9 +292,7 @@ function AdminPage() {
 
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
             <Panel title="Users" className="lg:col-span-2">
-              {usersQ.isLoading && (
-                <p className="text-sm text-muted-foreground">Loading users…</p>
-              )}
+              {usersQ.isLoading && <p className="text-sm text-muted-foreground">Loading users…</p>}
               <div className="max-h-96 overflow-y-auto">
                 <table className="w-full text-left text-sm">
                   <thead className="text-xs uppercase tracking-wider text-muted-foreground">
@@ -320,9 +332,7 @@ function AdminPage() {
                               size="sm"
                               variant="outline"
                               disabled={roleMut.isPending}
-                              onClick={() =>
-                                roleMut.mutate({ userId: u.id, role: nextRole })
-                              }
+                              onClick={() => roleMut.mutate({ userId: u.id, role: nextRole })}
                             >
                               Make {nextRole}
                             </Button>
@@ -361,7 +371,6 @@ function AdminPage() {
         </>
       )}
     </AppShell>
-
   );
 }
 

@@ -69,7 +69,6 @@ function downloadSigned(filename: string, signedUrl: string) {
   a.remove();
 }
 
-
 function ReportsPage() {
   const { datasetId } = Route.useParams();
   const qc = useQueryClient();
@@ -129,7 +128,6 @@ function ReportsPage() {
     onSuccess: (r) => downloadSigned(r.filename, r.signedUrl),
     onError: (e: Error) => toast.error(e.message),
   });
-
 
   return (
     <AppShell
