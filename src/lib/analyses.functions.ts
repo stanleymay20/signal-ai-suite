@@ -42,7 +42,7 @@ export const runDatasetAnalysis = createServerFn({ method: "POST" })
       nullable: c.nullable,
       uniqueRatio: c.unique_ratio ?? 0,
       missingPercentage: c.missing_percentage ?? 0,
-      stats: (c.stats ?? {}) as ColumnProfile["stats"],
+      stats: (c.stats ?? {}) as unknown as ColumnProfile["stats"],
     }));
 
     const colNames = new Set(columns.map((c) => c.name));
