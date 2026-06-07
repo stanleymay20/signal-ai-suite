@@ -64,16 +64,16 @@ function DatasetsPage() {
     queryFn: async () => {
       if (!wsQ.data?.length) return [];
       const targets = selectedWs ? [selectedWs] : wsQ.data.map((w) => w.id);
-      const all = await Promise.all(targets.map((id) => list({ data: { workspaceId: id } })));
       const wsMap = new Map(wsQ.data.map((w) => [w.id, w.name]));
-      return all.flat().map((d) => ({
-        ...d,
-        workspace_id: targets[all.findIndex((arr) => arr.includes(d))] ?? "",
-      })).map((d, _i, arr) => {
-        // re-attach workspace via lookup across original arrays
-        const wsId = arr.find((x) => x.id === d.id)?.workspace_id ?? "";
-        return { ...d, workspace_name: wsMap.get(wsId) ?? "" };
-      });
+      const results = await Promise.all(
+        targets.map(async (id) => {
+          const rows = await list({ data: { workspaceId: id } });
+          return rows.map((r) => ({ ...r, workspace_id: id, workspace_name: wsMap.get(id) ?? "" }));
+        }),
+      );
+      return results.flat().sort((a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
     },
   });
 
