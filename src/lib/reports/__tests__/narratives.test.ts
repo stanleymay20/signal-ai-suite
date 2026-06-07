@@ -49,17 +49,21 @@ describe("generateNarratives", () => {
     expect(out.provider).toBe("fake");
   });
 
-  it("passes the deterministic evidence block in the system message", async () => {
+  it("passes evidence + grounding rules in the prompt sent to the provider", async () => {
     const base = buildReport({ type: "executive_summary", pkg: fullPkg() });
     const provider = fakeProvider(() => "ok");
     await generateNarratives({ report: base, pkg: fullPkg(), provider });
     const calls = (provider.chat as unknown as { mock: { calls: unknown[][] } }).mock.calls;
-    const firstSystem = (calls[0][0] as Array<{ role: string; content: string }>)[0];
-    expect(firstSystem.role).toBe("system");
-    expect(firstSystem.content).toContain("EVIDENCE");
-    expect(firstSystem.content).toContain("sales.csv");
-    // Grounding rules must be present.
-    expect(firstSystem.content).toMatch(/do not invent/i);
+    const messages = calls[0][0] as Array<{ role: string; content: string }>;
+    const system = messages[0];
+    const user = messages[1];
+    expect(system.role).toBe("system");
+    // Grounding rules live in the system message.
+    expect(system.content).toMatch(/do not invent/i);
+    // Evidence (dataset name + EVIDENCE marker) is in the user message.
+    expect(user.role).toBe("user");
+    expect(user.content).toContain("sales.csv");
+    expect(user.content).toContain("PROFILE:");
   });
 
   it("falls back gracefully when the provider throws", async () => {
