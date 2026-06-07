@@ -107,7 +107,56 @@ export const generateReport = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { pkg, workspaceId } = await loadEvidence(supabase, data.datasetId);
+
+    const { data: ds, error: dErr } = await supabase
+      .from("datasets")
+      .select("id, filename, workspace_id")
+      .eq("id", data.datasetId)
+      .maybeSingle();
+    if (dErr) throw new Error(dErr.message);
+    if (!ds) throw new Error("Dataset not found");
+
+    const [profileQ, analysisQ, forecastQ, anomalyQ] = await Promise.all([
+      supabase
+        .from("dataset_profiles")
+        .select("quality_score, summary_json, issues_json")
+        .eq("dataset_id", ds.id)
+        .maybeSingle(),
+      supabase
+        .from("analyses")
+        .select(
+          "id, created_at, date_column, target_column, granularity, results_json, insights_json, anomalies_json",
+        )
+        .eq("dataset_id", ds.id)
+        .eq("status", "ready")
+        .order("created_at", { ascending: false })
+        .limit(1),
+      supabase
+        .from("forecasts")
+        .select(
+          "id, created_at, horizon, granularity, model_name, metrics, model_comparison, assumptions, forecast_points",
+        )
+        .eq("dataset_id", ds.id)
+        .eq("status", "ready")
+        .order("created_at", { ascending: false })
+        .limit(1),
+      supabase
+        .from("anomaly_runs")
+        .select("id, created_at, methods, summary, anomalies")
+        .eq("dataset_id", ds.id)
+        .eq("status", "ready")
+        .order("created_at", { ascending: false })
+        .limit(1),
+    ]);
+
+    const pkg: EvidencePackage = buildEvidencePackage({
+      datasetId: ds.id,
+      datasetName: ds.filename,
+      profile: profileQ.data ?? null,
+      analysis: analysisQ.data?.[0] ?? null,
+      forecast: forecastQ.data?.[0] ?? null,
+      anomalyRun: anomalyQ.data?.[0] ?? null,
+    });
 
     if (!hasAnyEvidence(pkg)) {
       throw new Error(
@@ -132,22 +181,24 @@ export const generateReport = createServerFn({ method: "POST" })
 
     const snapshot = snapshotEvidence(pkg, now.toISOString());
 
+    const insertPayload = {
+      workspace_id: ds.workspace_id,
+      dataset_id: data.datasetId,
+      created_by: userId,
+      type: data.type,
+      title: narrated.report.title,
+      sections: toJson(narrated.report.sections),
+      narratives: toJson(narrated.narratives),
+      citations: toJson(narrated.report.citations),
+      risk_score: toJson(narrated.report.risk),
+      evidence_snapshot: toJson(snapshot),
+      ai_model: narrated.model,
+      ai_provider: narrated.provider,
+    } as never;
+
     const { data: row, error } = await supabase
       .from("reports")
-      .insert({
-        workspace_id: workspaceId,
-        dataset_id: data.datasetId,
-        created_by: userId,
-        type: data.type,
-        title: narrated.report.title,
-        sections: toJson(narrated.report.sections),
-        narratives: toJson(narrated.narratives),
-        citations: toJson(narrated.report.citations),
-        risk_score: toJson(narrated.report.risk),
-        evidence_snapshot: toJson(snapshot),
-        ai_model: narrated.model,
-        ai_provider: narrated.provider,
-      })
+      .insert(insertPayload)
       .select("*")
       .single();
     if (error) throw new Error(error.message);
