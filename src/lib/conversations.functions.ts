@@ -289,9 +289,23 @@ export const sendChatMessage = createServerFn({ method: "POST" })
       .update({ updated_at: new Date().toISOString() })
       .eq("id", conv.id);
 
+    await tele.success({
+      provider: providerName,
+      model: modelName,
+      promptTokens,
+      completionTokens,
+      totalTokens: promptTokens + completionTokens,
+      costUsd: estimateCostUsd(modelName, promptTokens, completionTokens),
+      metadata: { citations: citations.length },
+    });
+
     return {
       message: aRow,
       citations,
       followups: suggestFollowups(pkg),
     };
+    } catch (err) {
+      await tele.error(err);
+      throw err;
+    }
   });
