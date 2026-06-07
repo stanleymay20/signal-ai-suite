@@ -30,12 +30,13 @@ is derived from real DB rows, not from the model.
 | [06 — Anomaly Pipeline](./06-anomaly-pipeline.md) | Detection methods, severity, forecast residuals |
 | [07 — AI Grounding Flow](./07-ai-grounding-flow.md) | Evidence package, citation engine, prompts |
 | [08 — Release Notes](./08-release-notes-v0.7.0-rc1.md) | RC scope, phase log, known limitations |
+| [09 — Reporting Pipeline](./09-reporting-pipeline.md) | Phase 7 — hybrid deterministic + AI narrative reports, PDF/PPTX |
 
-## Quality signals at v0.7.0-rc1
+## Quality signals at Phase 7
 
-- 130 unit tests passing
-- Typecheck clean, ESLint clean
+- 154 unit tests passing
+- Typecheck clean, ESLint clean (0 errors)
 - CI green
-- RLS enforced on every user-facing table
-- Audit log entries for analysis / forecast / anomaly / conversation lifecycle events
-- No AI-generated metrics, forecasts, anomalies, or causal claims
+- RLS enforced on every user-facing table including `reports`
+- Audit log entries for `report.generated`, `report.deleted`, `report.exported`
+- No AI-generated metrics, forecasts, anomalies, citations, or risk scores
