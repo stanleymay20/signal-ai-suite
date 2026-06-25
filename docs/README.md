@@ -46,4 +46,4 @@ is derived from real DB rows, not from the model.
 - Background job queue with worker route `/api/public/hooks/jobs-tick` (pg_cron every minute)
 - Daily retention purge of usage events (90 d), audit logs (180 d), rate-limit buckets (7 d)
 - Admin Control Center extended with Users and Workspaces panels (role toggle is audit-logged)
-- No AI-generated metrics, forecasts, anomalies, citations, or risk scores
+- The AI layer explains evidence; it never fabricates metrics, forecasts, anomalies, citations, or risk scores
