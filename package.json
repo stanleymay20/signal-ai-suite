@@ -1,5 +1,7 @@
 {
-  "name": "tanstack_start_ts",
+  "name": "signal-ai-suite",
+  "version": "0.7.0",
+  "description": "Evidence-grounded analytics copilot for tabular data: profiling, forecasting, anomaly detection, executive reporting and grounded chat.",
   "private": true,
   "sideEffects": false,
   "type": "module",
