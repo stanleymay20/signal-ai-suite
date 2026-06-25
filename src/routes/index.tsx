@@ -223,7 +223,7 @@ function Landing() {
                 ],
                 [
                   "Explore",
-                  "Auto-generated trend, seasonality and correlation charts with an executive summary.",
+                  "Automated trend, seasonality and correlation charts with an executive summary.",
                 ],
                 [
                   "Forecast",
@@ -263,16 +263,14 @@ function Landing() {
             Run fully local for regulated industries.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-2 font-mono text-xs">
-            {["Ollama", "vLLM", "OpenAI-compatible", "Qwen", "DeepSeek", "Llama", "Lovable AI"].map(
-              (p) => (
-                <span
-                  key={p}
-                  className="rounded-full border border-primary-foreground/20 bg-primary-foreground/5 px-3 py-1 text-primary-foreground/90"
-                >
-                  {p}
-                </span>
-              ),
-            )}
+            {["Ollama", "vLLM", "OpenAI-compatible", "Qwen", "DeepSeek", "Llama"].map((p) => (
+              <span
+                key={p}
+                className="rounded-full border border-primary-foreground/20 bg-primary-foreground/5 px-3 py-1 text-primary-foreground/90"
+              >
+                {p}
+              </span>
+            ))}
           </div>
           <div className="mt-10">
             <Link to="/auth">

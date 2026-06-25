@@ -9,25 +9,25 @@ latency percentiles, error rates, top users, and the recent event log.
 
 ## `usage_events` table
 
-| column            | type        | notes                                        |
-|-------------------|-------------|----------------------------------------------|
-| `id`              | uuid        | PK                                           |
-| `actor_id`        | uuid        | nullable FK → `auth.users`                   |
-| `workspace_id`    | uuid        | optional                                     |
-| `action`          | text        | e.g. `chat.message`, `report.generate`       |
-| `resource_type`   | text        | e.g. `dataset`, `conversation`               |
-| `resource_id`     | uuid        | the resource the action targeted             |
-| `status`          | text        | `success` or `error` (check constraint)      |
-| `duration_ms`     | int         | wall-clock time spent inside the handler     |
-| `provider`        | text        | AI provider (when applicable)                |
-| `model`           | text        | AI model                                     |
-| `prompt_tokens`   | int         | from `ChatUsage`                             |
-| `completion_tokens` | int       | from `ChatUsage`                             |
-| `total_tokens`    | int         | sum                                          |
-| `cost_usd`        | numeric     | from `estimateCostUsd(model, p, c)`          |
-| `error_message`   | text        | first 1000 chars on `status='error'`         |
-| `metadata`        | jsonb       | extra context (report id, methods, …)        |
-| `created_at`      | timestamptz | default `now()`                              |
+| column              | type        | notes                                    |
+| ------------------- | ----------- | ---------------------------------------- |
+| `id`                | uuid        | PK                                       |
+| `actor_id`          | uuid        | nullable FK → `auth.users`               |
+| `workspace_id`      | uuid        | optional                                 |
+| `action`            | text        | e.g. `chat.message`, `report.generate`   |
+| `resource_type`     | text        | e.g. `dataset`, `conversation`           |
+| `resource_id`       | uuid        | the resource the action targeted         |
+| `status`            | text        | `success` or `error` (check constraint)  |
+| `duration_ms`       | int         | wall-clock time spent inside the handler |
+| `provider`          | text        | AI provider (when applicable)            |
+| `model`             | text        | AI model                                 |
+| `prompt_tokens`     | int         | from `ChatUsage`                         |
+| `completion_tokens` | int         | from `ChatUsage`                         |
+| `total_tokens`      | int         | sum                                      |
+| `cost_usd`          | numeric     | from `estimateCostUsd(model, p, c)`      |
+| `error_message`     | text        | first 1000 chars on `status='error'`     |
+| `metadata`          | jsonb       | extra context (report id, methods, …)    |
+| `created_at`        | timestamptz | default `now()`                          |
 
 ### Access rules
 
@@ -59,17 +59,17 @@ swallows the error. Telemetry must never break the underlying feature.
 
 ## Wired actions
 
-| action             | recorded inside                              |
-|--------------------|----------------------------------------------|
-| `chat.message`     | `sendChatMessage` (with provider/model/tokens/cost) |
-| `report.generate`  | `generateReport` (with provider/model)       |
-| `forecast.run`     | `runDatasetForecast`                         |
-| `anomaly.run`      | `runAnomalyDetectionFn`                      |
+| action            | recorded inside                                     |
+| ----------------- | --------------------------------------------------- |
+| `chat.message`    | `sendChatMessage` (with provider/model/tokens/cost) |
+| `report.generate` | `generateReport` (with provider/model)              |
+| `forecast.run`    | `runDatasetForecast`                                |
+| `anomaly.run`     | `runAnomalyDetectionFn`                             |
 
 Each call records `success` with `duration_ms` on the happy path, or
 `error` with `error_message` on the failure path. The existing
-`audit_logs` table is **kept**: audit logs capture *what changed* (CRUD),
-while `usage_events` captures *how the system performed*.
+`audit_logs` table is **kept**: audit logs capture _what changed_ (CRUD),
+while `usage_events` captures _how the system performed_.
 
 ---
 
@@ -80,7 +80,7 @@ Route: `/admin` (gated by `profiles.role = 'admin'`).
 Server functions (in `src/lib/admin.functions.ts`):
 
 - `isCurrentUserAdmin()` — quick check used by the nav.
-- `getSystemHealth({ windowHours })` — aggregates the last *N* hours
+- `getSystemHealth({ windowHours })` — aggregates the last _N_ hours
   into `overview`, `byAction`, `byProviderModel`, `topUsers` using the
   pure helpers in `src/lib/observability/aggregations.ts`.
 - `listUsageEvents({ limit, status, action })` — paginated recent log.

@@ -20,9 +20,9 @@ through — Phase 6 deliberately ships a synchronous chat surface.
 
 ## Implementations
 
-| Class | Endpoint shape | Notes |
-| --- | --- | --- |
-| `OllamaProvider` | `POST {baseUrl}/api/chat` | Default. `stream: false`. Reports tokens via `prompt_eval_count` / `eval_count`. |
+| Class                      | Endpoint shape                    | Notes                                                                                                                                                                                    |
+| -------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `OllamaProvider`           | `POST {baseUrl}/api/chat`         | Default. `stream: false`. Reports tokens via `prompt_eval_count` / `eval_count`.                                                                                                         |
 | `OpenAICompatibleProvider` | `POST {baseUrl}/chat/completions` | Works with OpenAI, Lovable AI Gateway, vLLM, LM Studio, Together, vast.ai vLLM, etc. Sends `Authorization: Bearer` when `apiKey` is set; honours extra headers (e.g. `Lovable-API-Key`). |
 
 Both providers accept an injectable `fetchImpl`, which is what enables the
@@ -32,7 +32,7 @@ global `fetch`.
 ## Env-driven selection
 
 ```ts
-resolveAIProvider(env)
+resolveAIProvider(env);
 ```
 
 Precedence:
@@ -51,7 +51,7 @@ self-hosted gateways) plug in by setting `OPENAI_BASE_URL` and
 
 ## Why a thin interface
 
-The AI is a *presentation layer over evidence*. It receives a fully built
+The AI is a _presentation layer over evidence_. It receives a fully built
 Evidence Package and a deterministic citation list and is asked to phrase
 them. Anything richer (tool calls, retrieval-in-the-model, agentic loops)
 would invite the model to bypass the pipeline — which is the failure mode

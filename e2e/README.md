@@ -13,7 +13,7 @@ Set the following env vars before running:
 
 | Variable             | Required | Purpose                                          |
 | -------------------- | -------- | ------------------------------------------------ |
-| `E2E_BASE_URL`       | yes      | Target origin (e.g. `https://<preview>.lovable.app`) |
+| `E2E_BASE_URL`       | yes      | Target origin (e.g. `https://app.example.com`)   |
 | `E2E_TEST_EMAIL`     | yes      | Pre-provisioned member user                      |
 | `E2E_TEST_PASSWORD`  | yes      | Password for the above                           |
 | `E2E_ADMIN_EMAIL`    | no       | Pre-provisioned admin user                       |
