@@ -8,11 +8,13 @@ policy. End-to-end tests and a deployment checklist follow in Phase 9b.
 ## 1. Rate limiting
 
 ### Goals
+
 - Bound runaway loops, abuse, and accidental cost spikes.
 - Apply per-user, per-action so one workspace cannot starve another.
 - Be best-effort: telemetry/queue glitches must never block legitimate work.
 
 ### Data model
+
 - Table `rate_limits(user_id, action, window_start, count)` — primary key
   `(user_id, action, window_start)`. Indexed on `window_start` for purge.
 - Function `public.check_rate_limit(_user_id, _action, _max, _window_seconds)`
@@ -21,6 +23,7 @@ policy. End-to-end tests and a deployment checklist follow in Phase 9b.
 - Buckets are fixed windows derived from `floor(epoch / window) * window`.
 
 ### Defaults (`src/lib/observability/rateLimit.ts`)
+
 | Action            | Max | Window |
 | ----------------- | --- | ------ |
 | `chat.message`    | 30  | 60s    |
@@ -30,6 +33,7 @@ policy. End-to-end tests and a deployment checklist follow in Phase 9b.
 | `report.export`   | 30  | 60s    |
 
 ### Wiring
+
 `enforceRateLimit(supabase, userId, RATE_LIMITS.X)` runs at the top of every
 hot server function (`sendChatMessage`, `generateReport`, `runDatasetForecast`,
 `runAnomalyDetectionFn`, `exportReportPdf/Pptx`). On exhaustion it throws a
@@ -55,19 +59,22 @@ mobile/email clients consume the same URL.
 ## 3. Background job queue
 
 ### Why
+
 Some operations (large dataset profiling, multi-model forecasts, executive
 report generation) can take longer than is comfortable inside a request.
 A queue moves them off the request path and makes retries first-class.
 
 ### Schema
+
 - Enum `job_status`: `queued | running | succeeded | failed | cancelled`.
 - Enum `job_type`: `dataset_profile | analysis | forecast | anomaly | report`.
 - Table `jobs(workspace_id, dataset_id?, created_by, type, status, payload,
-  result, error_message, attempts, max_attempts, scheduled_at, …)`.
+result, error_message, attempts, max_attempts, scheduled_at, …)`.
 - RLS: workspace members read/insert their workspace's jobs; only admins (or
   service role) mutate lifecycle.
 
 ### Worker
+
 - `public.claim_next_job()` (SECURITY DEFINER) atomically picks one queued
   row with `FOR UPDATE SKIP LOCKED` and flips it to `running`.
 - Route `POST /api/public/hooks/jobs-tick` (auth via Supabase publishable
@@ -79,6 +86,7 @@ A queue moves them off the request path and makes retries first-class.
   then transitioned to `failed` with `error_message`.
 
 ### Scheduling
+
 `pg_cron` job `signal-ai-jobs-tick` runs every minute and posts to the
 hook URL with the project's anon key.
 
@@ -86,6 +94,7 @@ hook URL with the project's anon key.
 
 Single SQL function `public.purge_telemetry_retention(usage_days,
 audit_days, rate_limit_days)` deletes:
+
 - `usage_events` older than 90 days (default)
 - `audit_logs` older than 180 days
 - `rate_limits` buckets older than 7 days
@@ -97,6 +106,7 @@ The function is SECURITY DEFINER and `EXECUTE` is restricted to
 ## 5. Admin user management
 
 The `/admin` Control Center now includes:
+
 - **Users panel** — full profile list with role chip and a one-click
   "Make admin / member" toggle (audit-logged as `admin.role_changed`).
 - **Workspaces panel** — owner and creation date for every workspace.

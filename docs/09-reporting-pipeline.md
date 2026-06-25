@@ -35,13 +35,13 @@ PDF / PPTX renderers (renderPdf.ts / renderPptx.ts)
 
 ## Report types
 
-| Type | Audience | Distinct sections |
-| --- | --- | --- |
-| `executive_summary` | Execs | Profile + Forecast + Anomaly KPIs, exec summary, recommendations |
-| `boardroom` | Board / leadership | Headline, KPIs, commentary, top anomalies table, decisions requested |
-| `risk_brief` | Risk owners | Risk drivers + score, interpretation, mitigations |
-| `forecast_brief` | Analysts | Forecast KPIs, model comparison, assumptions, interpretation, caveats |
-| `anomaly_investigation` | Investigators | Anomaly summary, top anomalies, interpretation, recommended actions |
+| Type                    | Audience           | Distinct sections                                                     |
+| ----------------------- | ------------------ | --------------------------------------------------------------------- |
+| `executive_summary`     | Execs              | Profile + Forecast + Anomaly KPIs, exec summary, recommendations      |
+| `boardroom`             | Board / leadership | Headline, KPIs, commentary, top anomalies table, decisions requested  |
+| `risk_brief`            | Risk owners        | Risk drivers + score, interpretation, mitigations                     |
+| `forecast_brief`        | Analysts           | Forecast KPIs, model comparison, assumptions, interpretation, caveats |
+| `anomaly_investigation` | Investigators      | Anomaly summary, top anomalies, interpretation, recommended actions   |
 
 ## Non-negotiable architecture
 

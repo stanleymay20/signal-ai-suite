@@ -7,28 +7,30 @@ release.
 ## 1. Environment variables
 
 ### Client (browser-visible, `VITE_*`)
-| Variable                       | Required | Notes                                                       |
-| ------------------------------ | -------- | ----------------------------------------------------------- |
-| `VITE_SUPABASE_URL`            | yes      | Production Supabase URL                                     |
-| `VITE_SUPABASE_PUBLISHABLE_KEY`| yes      | Publishable / anon key (safe to ship in the bundle)         |
-| `VITE_SUPABASE_PROJECT_ID`     | yes      | Used by generated types only                                |
+
+| Variable                        | Required | Notes                                               |
+| ------------------------------- | -------- | --------------------------------------------------- |
+| `VITE_SUPABASE_URL`             | yes      | Production Supabase URL                             |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | yes      | Publishable / anon key (safe to ship in the bundle) |
+| `VITE_SUPABASE_PROJECT_ID`      | yes      | Used by generated types only                        |
 
 ### Server (Cloudflare Worker / TanStack runtime)
-| Variable                       | Required | Notes                                                       |
-| ------------------------------ | -------- | ----------------------------------------------------------- |
-| `SUPABASE_URL`                 | yes      | Same value as `VITE_SUPABASE_URL`                           |
-| `SUPABASE_PUBLISHABLE_KEY`     | yes      | Used by `requireSupabaseAuth` middleware                    |
-| `SUPABASE_SERVICE_ROLE_KEY`    | yes      | Service-role; admin client + report upload + jobs           |
-| `LOVABLE_API_KEY`              | yes      | Lovable AI Gateway access                                   |
+
+| Variable                    | Required | Notes                                             |
+| --------------------------- | -------- | ------------------------------------------------- |
+| `SUPABASE_URL`              | yes      | Same value as `VITE_SUPABASE_URL`                 |
+| `SUPABASE_PUBLISHABLE_KEY`  | yes      | Used by `requireSupabaseAuth` middleware          |
+| `SUPABASE_SERVICE_ROLE_KEY` | yes      | Service-role; admin client + report upload + jobs |
+| `LOVABLE_API_KEY`           | yes      | Lovable AI Gateway access                         |
 
 Optional / situational:
 
-| Variable                       | When needed                                                 |
-| ------------------------------ | ----------------------------------------------------------- |
-| `OPENAI_API_KEY`               | If switching `AI_PROVIDER=openai`                           |
-| `OLLAMA_URL`                   | If using a self-hosted Ollama runtime                       |
-| `AI_PROVIDER`                  | Override provider selection (`lovable` default)             |
-| `AI_MODEL`                     | Override default model id                                   |
+| Variable         | When needed                                     |
+| ---------------- | ----------------------------------------------- |
+| `OPENAI_API_KEY` | If switching `AI_PROVIDER=openai`               |
+| `OLLAMA_URL`     | If using a self-hosted Ollama runtime           |
+| `AI_PROVIDER`    | Override provider selection (`lovable` default) |
+| `AI_MODEL`       | Override default model id                       |
 
 > **Never** rename service keys to `VITE_*` — that would ship them to the
 > browser. **Never** read secrets at module scope in shared files; read inside
@@ -52,10 +54,10 @@ Optional / situational:
 
 ## 3. Storage buckets
 
-| Bucket     | Public? | Purpose                                  | Path scheme                                          |
-| ---------- | ------- | ---------------------------------------- | ---------------------------------------------------- |
-| `datasets` | private | Raw user uploads (CSV / XLSX)            | `<workspace_id>/<dataset_id>/<filename>`             |
-| `reports`  | private | Rendered PDF / PPTX exports              | `<workspace_id>/<report_id>/<format>/<filename>`     |
+| Bucket     | Public? | Purpose                       | Path scheme                                      |
+| ---------- | ------- | ----------------------------- | ------------------------------------------------ |
+| `datasets` | private | Raw user uploads (CSV / XLSX) | `<workspace_id>/<dataset_id>/<filename>`         |
+| `reports`  | private | Rendered PDF / PPTX exports   | `<workspace_id>/<report_id>/<format>/<filename>` |
 
 - [ ] Both buckets exist and are **private**.
 - [ ] No public bucket policies attached.
@@ -92,7 +94,7 @@ SELECT cron.schedule(
 ```
 
 - [ ] Both jobs scheduled, last run successful (`select * from
-      cron.job_run_details order by start_time desc limit 10;`).
+    cron.job_run_details order by start_time desc limit 10;`).
 - [ ] Production host in job A matches `project--<id>.lovable.app` or the
       custom domain — must be a **stable** URL.
 
@@ -136,8 +138,7 @@ Pulled from Phase 8 telemetry + Phase 9a additions.
 - [ ] `/admin` Control Center reachable by at least 2 admins.
 - [ ] Alert when **error rate** on `chat.message` / `report.generate` /
       `forecast.run` / `anomaly.run` > 2 % over a 15 min window.
-- [ ] Alert when **p95 latency** for chat > 8 s or for report generation
-      > 30 s sustained over 15 min.
+- [ ] Alert when **p95 latency** for chat > 8 s or for report generation > 30 s sustained over 15 min.
 - [ ] Alert when **token spend** in 24 h exceeds the configured cap.
 - [ ] Alert when `cron.job_run_details` shows ≥ 2 consecutive failed runs
       for either scheduled job.
@@ -156,7 +157,7 @@ Tag-and-revert flow:
    → restore previous tag → click **Update** in the publish dialog.
 3. To roll back the **backend** (server functions / routes): the same
    restore covers it — they ship in the same bundle.
-4. To roll back **database migrations**: prepare a paired *down*
+4. To roll back **database migrations**: prepare a paired _down_
    migration alongside each new schema-changing migration. If none exists,
    restore from the most recent Supabase backup (§7).
 5. To roll back **pg_cron** changes: keep the previous `cron.schedule` SQL

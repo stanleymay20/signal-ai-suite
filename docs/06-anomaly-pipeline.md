@@ -5,12 +5,12 @@ cover the detectors and the orchestrator.
 
 ## Methods
 
-| Method | Idea | Notes |
-| --- | --- | --- |
-| `zscore` | Distance from mean in units of σ | Sensitive to non-normality |
-| `mad` | Median absolute deviation, scaled by 1.4826 | Robust to outliers in the calibration window |
-| `iqr` | Tukey fences (Q1 − 1.5·IQR, Q3 + 1.5·IQR) | Non-parametric |
-| `rolling_z` | Z-score over a moving window | Adapts to local level / variance |
+| Method              | Idea                                                   | Notes                                                        |
+| ------------------- | ------------------------------------------------------ | ------------------------------------------------------------ |
+| `zscore`            | Distance from mean in units of σ                       | Sensitive to non-normality                                   |
+| `mad`               | Median absolute deviation, scaled by 1.4826            | Robust to outliers in the calibration window                 |
+| `iqr`               | Tukey fences (Q1 − 1.5·IQR, Q3 + 1.5·IQR)              | Non-parametric                                               |
+| `rolling_z`         | Z-score over a moving window                           | Adapts to local level / variance                             |
 | `forecast_residual` | Residual = actual − predicted, scaled by `residualStd` | Uses exact per-timestamp backtest predictions from Phase 4.1 |
 
 Each detector returns a uniform shape:
@@ -56,7 +56,7 @@ from `forecasts.backtest_points` (with a legacy fallback to
 approximation has been deleted. A dedicated test
 (`forecastResidualExact.test.ts`) asserts that the `expected` value on a
 flagged point equals the model's exact backtest prediction and is
-explicitly *not* equal to the holdout mean.
+explicitly _not_ equal to the holdout mean.
 
 ## Audit
 

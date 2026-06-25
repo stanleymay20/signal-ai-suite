@@ -8,7 +8,7 @@ evidence instead of inventing it.
 ## Highlights
 
 - **Pipeline-first.** `Dataset → Profile → Analysis → Forecast → Anomalies →
-  Evidence Package → AI Explanation Layer`. The AI layer never bypasses the
+Evidence Package → AI Explanation Layer`. The AI layer never bypasses the
   pipeline.
 - **Provider-agnostic AI.** Ollama, vLLM, OpenAI-compatible endpoints,
   Qwen, DeepSeek, Llama. Self-host or use a managed gateway.
@@ -30,14 +30,14 @@ cp .env.example .env       # then fill in real values
 bun run dev
 ```
 
-| Script              | Purpose                                |
-| ------------------- | -------------------------------------- |
-| `bun run dev`       | Vite dev server                        |
-| `bun run build`     | Production build                       |
-| `bun run lint`      | ESLint                                 |
-| `bun run test`      | Vitest unit suite                      |
-| `bun run test:e2e`  | Playwright end-to-end suite            |
-| `bun run format`    | Prettier                               |
+| Script             | Purpose                     |
+| ------------------ | --------------------------- |
+| `bun run dev`      | Vite dev server             |
+| `bun run build`    | Production build            |
+| `bun run lint`     | ESLint                      |
+| `bun run test`     | Vitest unit suite           |
+| `bun run test:e2e` | Playwright end-to-end suite |
+| `bun run format`   | Prettier                    |
 
 ## Documentation
 

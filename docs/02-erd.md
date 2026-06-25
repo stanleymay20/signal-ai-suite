@@ -24,20 +24,20 @@ workspaces ◀───── workspace_members ─── user_id ─▶ auth.us
 
 ## Tables (domain fields)
 
-| Table | Purpose | Key domain fields |
-| --- | --- | --- |
-| `profiles` | Per-user metadata mirroring `auth.users` | `full_name`, `email`, `avatar_url`, `role` |
-| `workspaces` | Tenancy unit | `owner_id`, `name`, `description` |
-| `workspace_members` | Membership | `workspace_id`, `user_id`, `role` |
-| `datasets` | Uploaded tabular file metadata | `workspace_id`, `name`, `storage_path`, `row_count`, `column_count`, `status` |
-| `dataset_columns` | Inferred schema | `dataset_id`, `name`, `inferred_type`, `null_count`, `distinct_count` |
-| `dataset_profiles` | Phase 2 profile snapshot | `quality_score`, `summary_json`, `issues_json` |
-| `analyses` | Phase 3 EDA run | `date_column`, `target_column`, `granularity`, `results_json`, `insights_json`, `anomalies_json` |
-| `forecasts` | Phase 4 forecast run | `horizon`, `granularity`, `model_name`, `forecast_points`, `confidence_intervals`, `metrics`, `model_comparison`, `assumptions`, `backtest_points` |
-| `anomaly_runs` | Phase 5 anomaly run | `methods`, `parameters`, `summary`, `anomalies`, `status` (`anomaly_status` enum) |
-| `conversations` | Phase 6 chat thread | `workspace_id`, `dataset_id`, `title` |
-| `messages` | Chat message | `conversation_id`, `role` (`message_role` enum), `content`, `citations`, `model` |
-| `audit_logs` | Immutable activity log | `user_id`, `action`, `entity_type`, `entity_id`, `payload` |
+| Table               | Purpose                                  | Key domain fields                                                                                                                                  |
+| ------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `profiles`          | Per-user metadata mirroring `auth.users` | `full_name`, `email`, `avatar_url`, `role`                                                                                                         |
+| `workspaces`        | Tenancy unit                             | `owner_id`, `name`, `description`                                                                                                                  |
+| `workspace_members` | Membership                               | `workspace_id`, `user_id`, `role`                                                                                                                  |
+| `datasets`          | Uploaded tabular file metadata           | `workspace_id`, `name`, `storage_path`, `row_count`, `column_count`, `status`                                                                      |
+| `dataset_columns`   | Inferred schema                          | `dataset_id`, `name`, `inferred_type`, `null_count`, `distinct_count`                                                                              |
+| `dataset_profiles`  | Phase 2 profile snapshot                 | `quality_score`, `summary_json`, `issues_json`                                                                                                     |
+| `analyses`          | Phase 3 EDA run                          | `date_column`, `target_column`, `granularity`, `results_json`, `insights_json`, `anomalies_json`                                                   |
+| `forecasts`         | Phase 4 forecast run                     | `horizon`, `granularity`, `model_name`, `forecast_points`, `confidence_intervals`, `metrics`, `model_comparison`, `assumptions`, `backtest_points` |
+| `anomaly_runs`      | Phase 5 anomaly run                      | `methods`, `parameters`, `summary`, `anomalies`, `status` (`anomaly_status` enum)                                                                  |
+| `conversations`     | Phase 6 chat thread                      | `workspace_id`, `dataset_id`, `title`                                                                                                              |
+| `messages`          | Chat message                             | `conversation_id`, `role` (`message_role` enum), `content`, `citations`, `model`                                                                   |
+| `audit_logs`        | Immutable activity log                   | `user_id`, `action`, `entity_type`, `entity_id`, `payload`                                                                                         |
 
 ## Enums
 

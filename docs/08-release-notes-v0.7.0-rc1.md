@@ -6,16 +6,16 @@
 
 ## What's in this RC
 
-| Phase | Title | Status |
-| --- | --- | --- |
-| 1 | Foundation (auth, workspaces, RLS, audit) | ✅ |
-| 2 | Data ingestion + profiling | ✅ |
-| 3 | Exploratory analysis | ✅ |
-| 4 | Forecasting | ✅ |
-| 4.1 | Forecast-residual hardening (exact backtest persistence) | ✅ |
-| 5 | Anomaly detection (5 methods) | ✅ |
-| 5.1 | Forecast-residual exactness | ✅ |
-| 6 | Conversational intelligence layer | ✅ |
+| Phase | Title                                                    | Status |
+| ----- | -------------------------------------------------------- | ------ |
+| 1     | Foundation (auth, workspaces, RLS, audit)                | ✅     |
+| 2     | Data ingestion + profiling                               | ✅     |
+| 3     | Exploratory analysis                                     | ✅     |
+| 4     | Forecasting                                              | ✅     |
+| 4.1   | Forecast-residual hardening (exact backtest persistence) | ✅     |
+| 5     | Anomaly detection (5 methods)                            | ✅     |
+| 5.1   | Forecast-residual exactness                              | ✅     |
+| 6     | Conversational intelligence layer                        | ✅     |
 
 ## Quality bar at this RC
 

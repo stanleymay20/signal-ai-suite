@@ -11,11 +11,11 @@ output (already aggregated to the chosen granularity).
 
 ## Models
 
-| Model | Description |
-| --- | --- |
-| `naive` | Last observed value carried forward. Baseline. |
-| `moving_average` | Window mean of last *k* observations. |
-| `linear_trend` | Ordinary least squares on the training window. |
+| Model            | Description                                             |
+| ---------------- | ------------------------------------------------------- |
+| `naive`          | Last observed value carried forward. Baseline.          |
+| `moving_average` | Window mean of last _k_ observations.                   |
+| `linear_trend`   | Ordinary least squares on the training window.          |
 | `seasonal_naive` | Same-period-last-cycle (requires detected seasonality). |
 
 All four run on every dataset; the best is selected by RMSE on the
@@ -28,16 +28,21 @@ each model on the remaining training portion, and produces a
 **per-timestamp** backtest:
 
 ```ts
-interface BacktestPoint { t: string; actual: number; predicted: number; residual: number }
+interface BacktestPoint {
+  t: string;
+  actual: number;
+  predicted: number;
+  residual: number;
+}
 interface ModelResult {
   model: ForecastModel;
-  points: ForecastPoint[];           // future horizon
+  points: ForecastPoint[]; // future horizon
   intervals: ConfidenceInterval[];
-  metrics: { mae, rmse, mape, holdoutSize };
+  metrics: { mae; rmse; mape; holdoutSize };
   assumptions: string[];
   residualStd: number;
   parameters: Record<string, number | string>;
-  backtestPoints: BacktestPoint[];   // exact holdout predictions
+  backtestPoints: BacktestPoint[]; // exact holdout predictions
 }
 ```
 
