@@ -1,59 +1,155 @@
 # Signal AI Suite
 
-Evidence-grounded analytics copilot for tabular data. Upload a CSV/XLSX, get
-deterministic profiling, exploratory analysis, forecasting, anomaly detection,
-executive-grade reports, and a conversational assistant that explains the
-evidence instead of inventing it.
+**Evidence-Grounded Applied AI · Forecasting · Anomaly Detection · Provider-Agnostic LLM Layer**
 
-## Highlights
+Signal AI Suite is an analytics copilot for tabular data. It combines deterministic data analysis with a constrained AI explanation layer so the model explains **evidence the system has already computed** instead of inventing metrics or bypassing the analytical pipeline.
 
-- **Pipeline-first.** `Dataset → Profile → Analysis → Forecast → Anomalies →
-Evidence Package → AI Explanation Layer`. The AI layer never bypasses the
-  pipeline.
-- **Provider-agnostic AI.** Ollama, vLLM, OpenAI-compatible endpoints,
-  Qwen, DeepSeek, Llama. Self-host or use a managed gateway.
-- **Forecasting.** Prophet, ARIMA, SARIMA, Exponential Smoothing, XGBoost
-  baselines with backtested metrics and persisted predictions.
-- **Anomaly detection.** Z-Score, MAD, IQR, Rolling Z, Forecast Residual —
-  with deterministic severity, contributions, and impact estimates.
-- **Executive reporting.** Executive Summary, Boardroom, Risk Brief,
-  Forecast Brief, Anomaly Investigation. Deterministic structure + AI
-  narrative slots, exported to PDF / PPTX through signed URLs.
-- **Enterprise hardening.** Workspace-scoped RLS, audit logging, telemetry,
-  per-user rate limits, background job queue, retention purge.
+```text
+Dataset
+   ↓
+Profile / deterministic analysis
+   ↓
+Forecasting + anomaly detection
+   ↓
+Evidence package + citations
+   ↓
+AI explanation layer
+   ↓
+Report / conversational interface
+```
+
+## Recruiter quick scan
+
+**What this repository demonstrates**
+
+- provider-agnostic LLM integration;
+- Ollama and OpenAI-compatible provider adapters;
+- compatibility with OpenAI-style gateways, vLLM, LM Studio and similar endpoints;
+- evidence-grounded prompting and deterministic citation context;
+- forecasting with model comparison/backtesting;
+- multiple anomaly-detection strategies;
+- structured executive reporting;
+- workspace-scoped Row-Level Security;
+- telemetry, audit logging and cost/usage observability;
+- per-user rate limiting and background job processing;
+- Vitest unit tests, Playwright E2E and CI across lint/typecheck/test/build.
+
+## AI architecture
+
+The AI layer is deliberately downstream of the analytical pipeline.
+
+The provider interface lets the application switch between self-hosted and managed runtimes without changing the evidence contract. Current abstractions include:
+
+- **Ollama** for local/self-hosted inference;
+- **OpenAI-compatible endpoints** for OpenAI-style APIs, vLLM, LM Studio, Together and compatible gateways.
+
+The model receives an evidence package and deterministic citation list. It is used to explain results, not to decide what evidence exists.
+
+## Analytical capabilities
+
+### Forecasting
+
+Implemented forecasting paths include:
+
+- Prophet;
+- ARIMA;
+- SARIMA;
+- Exponential Smoothing;
+- XGBoost baselines.
+
+Forecast runs persist model outputs and comparison metrics so model selection can be inspected rather than hidden behind a single prediction.
+
+### Anomaly detection
+
+The system includes:
+
+- Z-Score;
+- MAD;
+- IQR;
+- Rolling Z;
+- Forecast Residual detection.
+
+The application separates deterministic anomaly evidence from AI-authored narrative.
+
+### Reporting
+
+Report modes include:
+
+- Executive Summary;
+- Boardroom;
+- Risk Brief;
+- Forecast Brief;
+- Anomaly Investigation.
+
+Report structure is deterministic, with AI narrative slots layered over computed evidence. Export flows support PDF/PPTX delivery through signed URLs.
+
+## Production engineering
+
+The repository contains production-oriented controls beyond the model layer:
+
+- workspace-scoped RLS;
+- audit logging;
+- usage telemetry and cost estimation;
+- per-user rate limits;
+- background job queue;
+- telemetry/audit retention controls;
+- signed export URLs;
+- deployment and rollback checklist.
+
+See [`docs/`](./docs) for architecture, ERD, RLS, provider abstraction, forecasting, anomaly detection, AI grounding, observability, enterprise hardening and deployment documentation.
+
+## Quality gates
+
+```bash
+bun run lint
+bun run typecheck
+bun run test
+bun run build
+```
+
+The same core sequence is available as:
+
+```bash
+bun run audit:ci
+```
+
+End-to-end browser validation:
+
+```bash
+bun run test:e2e
+```
+
+CI runs linting, TypeScript checks, unit tests and the production build. Playwright E2E is maintained separately for preview/published or local environments.
 
 ## Quick start
 
 ```bash
 bun install
-cp .env.example .env       # then fill in real values
+cp .env.example .env
 bun run dev
 ```
 
-| Script             | Purpose                     |
-| ------------------ | --------------------------- |
-| `bun run dev`      | Vite dev server             |
-| `bun run build`    | Production build            |
-| `bun run lint`     | ESLint                      |
-| `bun run test`     | Vitest unit suite           |
-| `bun run test:e2e` | Playwright end-to-end suite |
-| `bun run format`   | Prettier                    |
+Do not commit live `.env` files or credentials.
+
+## Evidence boundaries
+
+Signal AI Suite is designed to reduce unsupported model claims by grounding AI explanations in precomputed evidence. That design does not make model output infallible.
+
+Forecast quality still depends on the dataset, horizon and assumptions; anomaly flags require contextual interpretation; and production reliability should be established from current deployment/test evidence rather than README language alone.
 
 ## Documentation
 
-Engineering documentation lives in [`docs/`](./docs):
-
-- `01-architecture.md` — runtime topology and layering rules
-- `02-erd.md` — database entities and relationships
-- `03-rls-model.md` — row-level security patterns
-- `04-provider-abstraction.md` — AI provider interface
-- `05-forecasting-pipeline.md`
-- `06-anomaly-pipeline.md`
-- `07-ai-grounding-flow.md`
-- `09-reporting-pipeline.md`
-- `10-observability.md`
-- `11-enterprise-hardening.md`
-- `12-deployment-checklist.md`
+- [Architecture](./docs/01-architecture.md)
+- [ERD](./docs/02-erd.md)
+- [RLS model](./docs/03-rls-model.md)
+- [AI provider abstraction](./docs/04-provider-abstraction.md)
+- [Forecasting pipeline](./docs/05-forecasting-pipeline.md)
+- [Anomaly pipeline](./docs/06-anomaly-pipeline.md)
+- [AI grounding flow](./docs/07-ai-grounding-flow.md)
+- [Reporting pipeline](./docs/09-reporting-pipeline.md)
+- [Observability](./docs/10-observability.md)
+- [Enterprise hardening](./docs/11-enterprise-hardening.md)
+- [Deployment checklist](./docs/12-deployment-checklist.md)
 
 ## Contributing
 
